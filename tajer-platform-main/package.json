@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@lottiefiles/dotlottie-react": "^0.14.4",
     "@opennextjs/cloudflare": "^1.5.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -30,6 +31,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "lottie-web": "^5.13.0",
     "lucide-react": "^0.468.0",
     "next": "15.3.3",
     "next-intl": "^4.1.0",

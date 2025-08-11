@@ -3,48 +3,49 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 
+export default function FeaturedCategories() {
+
+  const t = useTranslations('home');
+  const tc = useTranslations('common');
+  const tcg = useTranslations('categoriesNames');
 const categories = [
   {
     id: 1,
-    name: 'بقالة',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('grocery'),
+    image: '/grocerry.jpg',
     count: 120,
   },
   {
     id: 2,
-    name: 'سوبر ماركت',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('supermarket'),
+    image: '/supermarket2.jpg',
     count: 85,
   },
   {
     id: 3,
-    name: 'مطاعم',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('restaurant'),
+    image: '/restaurant.jpg',
     count: 150,
   },
   {
     id: 4,
-    name: 'حلويات',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('sweetsShop'),
+    image: '/sweets.jpg',
     count: 60,
   },
   {
     id: 5,
-    name: 'مكتبات',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('bookstore'),
+    image: '/library.jpg',
     count: 45,
   },
   {
     id: 6,
-    name: 'كوفي شوب',
-    image: '/placeholder.svg?height=200&width=200',
+    name: tcg('coffeeShop'),
+    image: '/Toaster.jpg',
     count: 75,
   },
 ];
-
-export default function FeaturedCategories() {
-  const t = useTranslations('home');
-  const tc = useTranslations('common');
   return (
     <section className="py-12">
       <div className="text-center mb-10">
@@ -63,7 +64,7 @@ export default function FeaturedCategories() {
                     src={category.image || '/placeholder.svg'}
                     alt={category.name}
                     fill
-                    className="object-cover"
+                    className="object-cover scale-105 transition-transform duration-300 hover:scale-110 hover:opacity-80 object-center"
                   />
                 </div>
                 <h3 className="font-semibold">{category.name}</h3>

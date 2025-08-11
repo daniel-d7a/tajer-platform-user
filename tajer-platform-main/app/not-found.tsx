@@ -21,9 +21,7 @@ export const metadata: Metadata = {
 export default async function RootLayou() {
 
   return (
-
-  
-      <div className="min-h-screen bg-background" suppressHydrationWarning>
+      <div className=" h-auto bg-background" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider>

@@ -7,7 +7,7 @@
     "contact": "Contact Us",
     "faq": "FAQ",
     "terms": "Terms and Conditions",
-    "privacy": "Privacy Policy",
+    "privacy": "Privacy Policy", 
     "search": "Search for products...",
     "viewAll": "View All",
     "viewAllOffers": "View All Offers",
@@ -25,7 +25,8 @@
     "next": "Next",
     "previous": "Previous",
     "more": "More",
-    "ExpiresAt": "Expires At"
+    "ExpiresAt": "Expires At",
+    "title" :"Tajr | Wholesale Market for Every Merchant"
   },
   "LocaleSwitcher": {
     "label": "Change Language",
@@ -40,6 +41,11 @@
     "cart": "Shopping Cart",
     "menu": "Menu",
     "businessName": "Business Name"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "backToHome": "Go to Home Page"
   },
   "footer": {
     "footerLine": "Tajer is the wholesale market for every merchant. We provide an integrated platform for merchants and companies to communicate and execute deals with ease.",
@@ -117,6 +123,37 @@
     "price": "Price",
     "salePrice": "Sale Price",
     "viewProduct": "View Product"
+  },
+    "categoriesNames":{
+    "grocery": "grocery",
+    "supermarket": "supermarket",
+    "restaurant": "restaurant",
+    "sweetsShop": "sweetsShop",
+    "bookstore": "bookstore",
+    "coffeeShop": "coffeeShop"
+  },
+     "offers": {
+    "groceryOffer": "  Special offer on grocery products",
+    "beverageOffer": "Special offer on beverages",
+    "IceCreamOffer": "Summer offers on ice creams",
+    "cleaningProductsOffer": "Discounts on cleaning products"
+  },
+   "customerReview": {
+    "customer1": {
+      "groceryName": "Al-Amana Supermarket",
+      "Name": "Ahmed Mohammed",
+      "Review": "Tajer platform saved me a lot of time and effort in ordering goods for my store. The prices are competitive and the delivery is fast."
+    },
+    "customer2": {
+      "groceryName": "Al-Thawaqa Restaurant",
+      "Name": "Sarah Abdullah",
+      "Review": "Tajer platform helped me improve my business and increase my sales. I recommend everyone to try it!"
+    },
+    "customer3": {
+      "groceryName": "Neighborhood Grocery",
+      "Name": "Khaled Al-Omari",
+      "Review": "The exclusive offers provided by the platform helped me save on goods costs and increase my profit margin."
+    }
   },
   "cart": {
     "cart": "Shopping Cart",
@@ -201,24 +238,140 @@
   },
   "terms": {
     "title": "Terms and Conditions – Tajer Platform",
-    "intro": "Welcome to the Tajer platform – the wholesale market designed specifically to meet the needs of merchants in Jordan. By registering on the platform or using any of our services, you agree to be bound by the following terms and conditions.",
+    "intro": "Welcome to Tajer Platform – the wholesale marketplace designed specifically to meet the needs of merchants in Jordan. By registering on the platform or using any of our services, you agree to comply with the following terms and conditions.",
     "lastUpdate": "Last updated: June 13, 2025",
-    "backToHome": "Back to Home",
+    "backToHome": "Back to Home Page",
     "sections": {
       "introduction": "Introduction",
       "definitions": "Definitions",
-      "registration": "Registration and Use",
-      "intellectualProperty": "Intellectual Property Rights",
-      "ordersDelivery": "Orders and Delivery Policy",
-      "returnsRefunds": "Returns and Refunds Policy",
+      "registration": "Platform Usage",
+      "intellectualProperty": "Intellectual Property",
+      "ordersDelivery": "Orders, Fulfillment, and Delivery",
+      "returnsRefunds": "Returns and Refunds",
       "privacy": "Privacy and Data Protection",
-      "referral": "Referral Link and Delegates",
+      "referral": "Referral Link and Representatives",
       "liability": "Limitation of Liability",
-      "modifications": "Modifications",
-      "governingLaw": "Governing Law",
-      "agreement": "Agreement to Terms"
+      "modifications": "Agreement Modifications",
+      "governingLaw": "Governing Law and Dispute Resolution",
+      "agreement": "Agreement to Terms",
+      "Eligibility": "Eligibility and Registration",
+      "Compensation": "Compensation",
+      "BalanceSection": "Balance and Rewards",
+      "majeure": "Force Majeure",
+      "TerminationTitle": "Termination and Account Suspension",
+      "technicalTitle": "Technical Data Collection and Analytics"
     },
-    "agree": "I have read, understood, and fully agree to these terms without reservation."
+    "introductionContent": {
+      "introduction": "These terms and conditions (\"Agreement\") constitute a legally binding contract governing the relationship between the user (\"you\", \"user\", or \"client\") and \"Tajer\" (\"the Company\"), a legal entity registered in accordance with the applicable laws of the Hashemite Kingdom of Jordan.",
+      "notagree": "By using the electronic platform (whether via the website or the app), you acknowledge that you have read, understood, and fully agreed to be bound by this Agreement. If you do not agree to any of the terms, you must immediately stop using the platform."
+    },
+    "StrongWord": {
+      "tajer": "Tajer",
+      "platform": "Platform",
+      "client": "Client/User",
+      "representative": "Representative",
+      "Suppliers": "Suppliers",
+      "Company": "Company",
+      "Balance": "Balance/Wallet",
+      "privacy": "Agreement",
+      "DeliveryPartner": "Delivery Partners"
+    },
+    "Definitions": {
+      "DefinitionTagr": "Refers to the website and applications owned by the Company, including the backend infrastructure.",
+      "DefinitionClient": "Any business entity or establishment registered on the platform for the purpose of making wholesale purchases.",
+      "DefinitionRepresentative": "Refers to (\"Tajer\") and its employees, agents, and legal successors.",
+      "DefinitionDeliveryPartners": "Transport or shipping companies contracted by (\"Tajer\") to carry out deliveries.",
+      "DefinitionBalance": "Digital credits or points allocated to the user, used exclusively within the platform.",
+      "definitionSuppliers": "Third parties providing products available through the platform.",
+      "DefinitionsCompany": "Refers to Tajer Company, the owner and operator of the platform, holding all rights.",
+      "DefinitionsPrivacy": "These terms and conditions, in addition to the privacy policy and any other supplementary provisions."
+    },
+    "Registration": {
+      "Registration1": "The platform's services are limited to commercial (wholesale only) transactions. Use for personal or consumer purposes is prohibited.",
+      "Registration2": "Misuse of the platform, attempts to hack it, or unauthorized data extraction are strictly forbidden.",
+      "Registration3": "The Company reserves the right to suspend or terminate any user's account in case of suspected illegal activity or violation of this Agreement."
+    },
+    "EligibilityDetails": {
+      "EligibilityDetails1": "Platform use is restricted to officially registered business entities authorized to conduct commercial activities in Jordan.",
+      "EligibilityDetails2": "The user affirms that all information provided during registration is accurate, complete, and up to date.",
+      "EligibilityDetails3": "The Company reserves the right to verify the user's identity and suspend or terminate the account if any information is found to be incorrect or in violation.",
+      "EligibilityDetails4": "The user is fully responsible for managing login credentials, and the Company bears no liability for any unauthorized use."
+    },
+    "Intellectual": {
+      "Intellectual1": "All intellectual property rights, including designs, code, content, and logos, belong to (\"Tajer\").",
+      "Intellectual2": "Copying or using any part of the platform without prior written permission from the Company is prohibited.",
+      "Intellectual3": "Any unauthorized infringement of intellectual property rights constitutes a material breach of the Agreement and exposes the user to legal action."
+    },
+    "OrdersPolicy": {
+      "OrdersPolicy1": "The Company acts as an intermediary between the user and suppliers, with orders fulfilled through approved delivery partners.",
+      "OrdersPolicy2": "All orders are subject to product availability and the approval of the relevant supplier.",
+      "OrdersPolicy3": "Delivery times are estimates. The Company is not liable for delays caused by delivery partners or circumstances beyond its control, but will make every effort to ensure prompt delivery and fully protect your rights.",
+      "OrdersPolicy4": "The user is responsible for verifying the accuracy of order details and address before confirming.",
+      "OrdersPolicy5": "If delivery fails due to incorrect address or inaccurate information, the user will bear additional fees for redelivery."
+    },
+    "ReturnsPolicy": {
+      "ReturnsPolicy1": "Return requests are subject to the policies of the suppliers and the specific product.",
+      "ReturnsPolicy2": "Return requests must be submitted within 24 hours of receiving the product.",
+      "ReturnsPolicy3": "Opened, used, or perishable products will not be accepted unless a proven defect exists.",
+      "ReturnsPolicy4": "Refunds are credited as balance in the wallet unless otherwise agreed in writing.",
+      "ReturnsPolicy5": "The Company reserves the right to deduct shipping or processing fees from the refunded amount as applicable."
+    },
+    "dataProtectionPolicy": {
+      "dataProtectionPolicy1": "The Company securely and confidentially retains user data and does not sell or share it with any third party without prior consent, except as necessary to provide the service (such as delivery).",
+      "dataProtectionPolic2": "The full privacy policy can be reviewed via the link at the bottom of the website."
+    },
+    "ReferralLinkPolicy": {
+      "ReferralLinkPolicy1": "When registering using a referral link, the client is automatically registered under the representative's name.",
+      "ReferralLinkPolicy2": "The Company is not responsible for any contractual obligations between the client and the representative outside the platform.",
+      "ReferralLinkPolicy3": "Commissions are calculated only upon completion of the first confirmed order, according to the approved incentive policy."
+    },
+    "Compensation": {
+      "CompensationDetails": "The user agrees to indemnify, defend, and hold the Company harmless from any claims, damages, or expenses (including attorney fees) arising from:",
+      "CompensationInfo": {
+        "CompensationInfo1": "The user's breach of this Agreement;",
+        "CompensationInfo2": "Violation of applicable laws;",
+        "CompensationInfo3": "Misuse of the platform."
+      }
+    },
+    "majeure": {
+      "majeure1": "The Company is not liable for delays or failure to fulfill obligations due to force majeure circumstances beyond its control, such as natural disasters, epidemics, government decisions, or internet outages."
+    },
+    "Termination": {
+      "Termination1": "The Company has the right to suspend or terminate the user's account at any time without notice if there is a violation of the Agreement or a risk to the platform's security.",
+      "Termination2": "The user may request account deletion provided there are no outstanding financial obligations or pending orders.",
+      "Termination3": "After termination, the Company is not obligated to retain or restore account data."
+    },
+    "technical": {
+      "technical1": "The platform automatically collects certain technical data to enhance security, ensure service reliability, and analyze user behavior. This data includes, but is not limited to:",
+      "technicalInfo": {
+        "IP": "IP address",
+        "Device": "Device type and model",
+        "OS": "Operating system and browser version",
+        "Rosultion": "Screen resolution",
+        "Language": "Language preferences"
+      },
+      "technical2": "This data is collected solely for legitimate business purposes, including but not limited to: fraud prevention, performance improvement, security diagnostics, and internal statistical analysis.",
+      "technical3": "By using the platform, the user expressly acknowledges and agrees to the collection, processing, and storage of this technical data by the Company or its authorized service providers, in accordance with this document.",
+      "technical4": "The Company is committed to handling this data in accordance with applicable data protection laws and industry best security practices."
+    },
+    "LimitationPolicy": {
+      "LimitationPolicy1": "To the extent permitted by law, the Company shall not be liable for any indirect, consequential, punitive, or incidental damages.",
+      "LimitationPolicy2": "In all cases, the Company's financial liability does not exceed the amount paid by the user for the relevant order."
+    },
+    "ModificationsPolicy": {
+      "Modifications1": "The Company reserves the right to modify these terms at any time.",
+      "Modifications2": "Modifications become effective upon publication on the platform, and continued use of the platform after modifications constitutes acceptance."
+    },
+    "BalanceDefinitions": {
+      "BalanceDefinitions1": "Balance or digital points are non-transferable, non-redeemable for cash, and may only be used within the platform.",
+      "BalanceDefinitions2": "Promotional offers or rewards may be subject to expiration dates or additional restrictions.",
+      "BalanceDefinitions3": "The Company reserves the right to cancel or modify any balance granted as a result of technical error or unlawful activity."
+    },
+    "GoverningLow": {
+      "GoverningLow1": "This Agreement is governed by and construed in accordance with the laws of the Hashemite Kingdom of Jordan.",
+      "GoverningLow2": "Any disputes arising from this Agreement shall be referred to the competent courts in Amman."
+    },
+    "agree": "I have read, understood, and fully agreed to these terms without reservation."
   },
   "validation": {
     "required": "This field is required",

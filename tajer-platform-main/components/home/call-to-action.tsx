@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 export default function CallToAction() {
   const t = useTranslations('home');
   return (
-    <section className="py-16 bg-secondary/10">
+    <section className="py-16 bg-secondary/10 rounded-lg text-center">
       <div className="text-center">
         <h2 className="text-3xl font-bold">{t('joinTajer')}</h2>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -26,4 +26,4 @@ export default function CallToAction() {
       </div>
     </section>
   );
-}
+};

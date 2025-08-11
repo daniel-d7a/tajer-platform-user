@@ -4,42 +4,43 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
 
+
+export default function SpecialOffers() {
+  const t = useTranslations('home');
+  const tc = useTranslations('common');
+  const tof = useTranslations('offers');
 const offers = [
   {
     id: 1,
-    title: 'عرض خاص على منتجات البقالة',
+    title: tof('groceryOffer'),
     discount: '20%',
     image: '/placeholder.svg?height=300&width=400',
     expiresAt: '2025-07-01',
   },
   {
     id: 2,
-    title: 'تخفيضات على المشروبات الغازية',
+    title: tof('beverageOffer'),
     discount: '15%',
     image: '/placeholder.svg?height=300&width=400',
     expiresAt: '2025-07-15',
-  },
+  }, 
   {
     id: 3,
-    title: 'عروض الصيف على المثلجات',
+    title: tof('IceCreamOffer'),
     discount: '25%',
     image: '/placeholder.svg?height=300&width=400',
     expiresAt: '2025-08-01',
   },
   {
     id: 4,
-    title: 'خصومات على منتجات التنظيف',
+    title: tof('cleaningProductsOffer'),
     discount: '30%',
     image: '/placeholder.svg?height=300&width=400',
     expiresAt: '2025-07-10',
   },
 ];
-
-export default function SpecialOffers() {
-  const t = useTranslations('home');
-  const tc = useTranslations('common');
   return (
-    <section className="py-12 bg-muted/30">
+    <section className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t('specialOffers')}</h2>
         <p className="mt-2 text-muted-foreground">{t('specialOffersDesc')}</p>

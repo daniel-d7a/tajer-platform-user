@@ -10,14 +10,14 @@ export default function TermsPage() {
     <div className="container max-w-4xl mx-auto py-8">
       <div className="mb-6">
         <Link href="/">
-          <Button variant="ghost" className="mb-4">
+          <Button variant="ghost" className="mb-4 duration-300 bg-primary hover:bg-primary/90">
             <ArrowRight className="h-4 w-4 ml-2" />
             {t('backToHome')}
           </Button>
         </Link>
         <h1 className="text-3xl font-bold text-center mb-2">{t('title')}</h1>
         <p className="text-center text-sm text-muted-foreground mt-2">
-          آخر تحديث: 13 يونيو 2025 | Last updated: June 13, 2025
+          {t('lastUpdate')}
         </p>
       </div>
 
@@ -31,68 +31,90 @@ export default function TermsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="leading-relaxed">
-              مرحباً بك في منصة <strong>تاجر</strong> – سوق الجملة المصمم خصيصاً
-              لتلبية احتياجات التجار في الأردن. عند تسجيلك في المنصة أو استخدامك
-              لأي من خدماتنا، فإنك توافق على الالتزام بالشروط والأحكام التالية.
+                {t("introductionContent.introduction")}                
             </p>
             <p className="leading-relaxed">
-              إذا كنت لا توافق على أي جزء من هذه الشروط، نرجو منك عدم استخدام
-              المنصة.
+                  {t('introductionContent.notagree')}
             </p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              2. {t('sections.definitions')}
+              2.{t('sections.definitions')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div>
-                <strong>المنصة:</strong> تشير إلى موقع وتطبيق &quot;تاجر&quot;
-                المملوك بالكامل لشركة تاجر.
+                <strong>{t('StrongWord.platform')}:</strong> 
+                 {t('Definitions.DefinitionTagr')}
               </div>
               <div>
-                <strong>العميل/المستخدم:</strong> التاجر المسجل والذي يستخدم
-                المنصة لطلب المنتجات.
+                <strong>{t('StrongWord.client')}:</strong>    
+                   {t('Definitions.DefinitionClient')}
               </div>
+             <div>
+                <strong>{t('StrongWord.Company')}:</strong>
+                {t('Definitions.DefinitionsCompany')}
+              </div>
+                <div>
+                <strong>{t('StrongWord.Suppliers')}:</strong>
+                {t('Definitions.definitionSuppliers')}
+              </div>
+               <div>
+                <strong>{t('StrongWord.Balance')}:</strong> 
+                  {t('Definitions.DefinitionBalance')}              
+                </div>
+              
               <div>
-                <strong>المندوبة:</strong> أي شخص مفوض من قبل تاجر للترويج
-                للمنصة وجلب العملاء.
-              </div>
-              <div>
-                <strong>الشركة:</strong> تشير إلى شركة تاجر، المالكة والمشغلة
-                للمنصة.
-              </div>
-              <div>
-                <strong>سياسة الخصوصية:</strong> الوثيقة المصاحبة لهذه الشروط
-                والتي توضح كيفية استخدام وحماية بيانات المستخدم.
-              </div>
+                <strong>{t('StrongWord.privacy')}:</strong> 
+                  {t('Definitions.DefinitionsPrivacy')}              
+                </div>
             </div>
           </CardContent>
         </Card>
-
-        <Card>
+   <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              3. {t('sections.registration')}
+              3. {t('sections.Eligibility')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                يجب أن تكون المعلومات التي تقدمها أثناء التسجيل صحيحة، كاملة
-                ومحدثة.
+                {t('EligibilityDetails.EligibilityDetails1')}
               </li>
               <li>
-                تحتفظ الشركة بالحق في رفض التسجيل أو إلغاء أو تعليق الحساب إذا
-                تبين وجود بيانات مزيفة أو استخدام غير قانوني.
+                {t('EligibilityDetails.EligibilityDetails2')}
               </li>
               <li>
-                يجب أن يكون المستخدم تاجراً فعلياً وأن يستخدم المنصة فقط لأغراض
-                تجارية وليس للاستخدام الشخصي أو الفردي.
+                {t('EligibilityDetails.EligibilityDetails3')}
+              </li>
+                 <li>
+                {t('EligibilityDetails.EligibilityDetails4')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              4. {t('sections.registration')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                {t('Registration.Registration1')}
+              </li>
+              <li>
+                {t('Registration.Registration2')}
+            
+              </li>
+              <li>
+                {t('Registration.Registration3')}
+
               </li>
             </ul>
           </CardContent>
@@ -101,18 +123,19 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              4. {t('sections.intellectualProperty')}
+              5. {t('sections.intellectualProperty')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                جميع حقوق الملكية الفكرية في المنصة، بما في ذلك التصميم، الشعار،
-                المحتوى، البرمجيات، محفوظة لصالح شركة تاجر.
+                {t('Intellectual.Intellectual1')}
               </li>
               <li>
-                يُمنع إعادة إنتاج أو نسخ أو توزيع أو استخدام أي جزء من المنصة
-                دون إذن كتابي مسبق من الشركة.
+                {t('Intellectual.Intellectual2')} 
+              </li>
+                 <li>
+                {t('Intellectual.Intellectual3')} 
               </li>
             </ul>
           </CardContent>
@@ -121,22 +144,53 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              5. {t('sections.ordersDelivery')}
+              6. {t('sections.ordersDelivery')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                الشركة تعمل كوسيط بين التجار والمصانع، وتقوم بتحويل الطلبات إلى
-                شركات التوصيل مباشرة.
+                    {t('OrdersPolicy.OrdersPolicy1')}
               </li>
               <li>
-                الشركة غير مسؤولة عن أي تأخير في التوصيل أو مشاكل في الشحن، ولكن
-                ستبذل قصارى جهدها في التعاون لحل المشكلات.
+                    {t('OrdersPolicy.OrdersPolicy2')}
+                
               </li>
               <li>
-                في حال تم إرجاع أي طلب بسبب خطأ من العميل، يتم خصم رسوم التوصيل
-                أو أي رسوم معالجة حسب السياسة السارية.
+                    {t('OrdersPolicy.OrdersPolicy3')}
+              </li>
+                <li>
+                    {t('OrdersPolicy.OrdersPolicy4')}
+              </li>
+                <li>
+                    {t('OrdersPolicy.OrdersPolicy5')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              7. {t('sections.returnsRefunds')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                {t('ReturnsPolicy.ReturnsPolicy1')}
+              </li>
+              <li>
+                {t('ReturnsPolicy.ReturnsPolicy2')}
+    
+              </li>
+              <li>
+                {t('ReturnsPolicy.ReturnsPolicy3')}
+              </li>
+                <li>
+                {t('ReturnsPolicy.ReturnsPolicy4')}
+              </li>
+                <li>
+                {t('ReturnsPolicy.ReturnsPolicy5')}
               </li>
             </ul>
           </CardContent>
@@ -145,22 +199,19 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              6. {t('sections.returnsRefunds')}
+              8. {t('sections.BalanceSection')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                يتم التعامل مع كل حالة إرجاع على حدة حسب نوع المنتج والمورد
-                وسياسة التوصيل.
+                {t('BalanceDefinitions.BalanceDefinitions1')}
               </li>
               <li>
-                يحق للشركة رفض طلب الإرجاع في حال تم استخدام أو فتح المنتج أو
-                إذا لم يكن هناك سبب مقبول.
+                {t('BalanceDefinitions.BalanceDefinitions2')}
               </li>
-              <li>
-                في حال الموافقة، يتم إعادة المبلغ إلى رصيد العميل في المنصة، أو
-                حسب الاتفاق.
+                   <li>
+                {t('BalanceDefinitions.BalanceDefinitions3')}
               </li>
             </ul>
           </CardContent>
@@ -169,19 +220,90 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              7. {t('sections.privacy')}
+              9. {t('sections.referral')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                تحتفظ الشركة ببيانات المستخدمين بشكل آمن وسري، ولا يتم بيعها أو
-                مشاركتها مع أي طرف ثالث دون موافقة مسبقة، باستثناء ما تقتضيه
-                الحاجة لتقديم الخدمة (مثل التوصيل).
+                {t('ReferralLinkPolicy.ReferralLinkPolicy1')}
               </li>
               <li>
-                يمكن مراجعة سياسة الخصوصية الكاملة عبر الرابط الظاهر أسفل
-                الموقع.
+                    {t('ReferralLinkPolicy.ReferralLinkPolicy2')}
+              </li>
+              <li>
+                  {t('ReferralLinkPolicy.ReferralLinkPolicy3')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+   <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              10. {t('sections.Compensation')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <h3>
+                {t('Compensation.CompensationDetails')}
+              </h3>
+                <ul className="space-y-2 list-disc list-inside">
+
+              <li>
+                    {t('Compensation.CompensationInfo.CompensationInfo1')}
+              </li>
+                <li>
+                    {t('Compensation.CompensationInfo.CompensationInfo2')}
+              </li>
+                  <li>
+                    {t('Compensation.CompensationInfo.CompensationInfo3')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+            <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              11. {t('sections.majeure')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <h3>{t('majeure.majeure1')}</h3>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              12. {t('sections.liability')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                  {t('LimitationPolicy.LimitationPolicy1')}
+              </li>
+              <li>
+                  {t('LimitationPolicy.LimitationPolicy2')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+    <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              13. {t('sections.TerminationTitle')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                  {t('Termination.Termination1')}
+              </li>
+              <li>
+                  {t('Termination.Termination2')}
+              </li>
+                   <li>
+                  {t('Termination.Termination3')}
               </li>
             </ul>
           </CardContent>
@@ -190,22 +312,17 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              8. {t('sections.referral')}
+              14. {t('sections.modifications')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                عند التسجيل باستخدام رابط إحالة، يتم تسجيل العميل باسم المندوبة
-                بشكل تلقائي.
+                  {t('ModificationsPolicy.Modifications1')}
               </li>
               <li>
-                لا تتحمل الشركة مسؤولية أي التزام تعاقدي بين العميل والمندوبة
-                خارج المنصة.
-              </li>
-              <li>
-                يتم احتساب العمولات فقط عند تنفيذ أول طلب مؤكد، وفقاً لسياسة
-                الحوافز المعتمدة.
+                  {t('ModificationsPolicy.Modifications2')}
+
               </li>
             </ul>
           </CardContent>
@@ -214,19 +331,16 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              9. {t('sections.liability')}
+              15 {t('sections.governingLaw')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                الشركة غير مسؤولة عن أي خسائر مباشرة أو غير مباشرة أو أضرار
-                ناتجة عن استخدام المنصة أو اعتماد المستخدمين على المعلومات
-                المعروضة.
+                {t('GoverningLow.GoverningLow1')}
               </li>
               <li>
-                المستخدم يتحمل المسؤولية الكاملة عن دقة طلباته وعن صحة عنوان
-                التوصيل.
+                {t('GoverningLow.GoverningLow2')}
               </li>
             </ul>
           </CardContent>
@@ -235,49 +349,56 @@ export default function TermsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              10. {t('sections.modifications')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ul className="space-y-2 list-disc list-inside">
-              <li>
-                تحتفظ الشركة بحق تعديل هذه الشروط في أي وقت دون إشعار مسبق.
-              </li>
-              <li>
-                سيتم إشعار المستخدمين بالتعديلات عند تسجيل الدخول أو عبر البريد
-                الإلكتروني المسجل.
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">
-              11. {t('sections.governingLaw')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ul className="space-y-2 list-disc list-inside">
-              <li>
-                تخضع هذه الاتفاقية وتُفسر وفقاً لقوانين المملكة الأردنية
-                الهاشمية.
-              </li>
-              <li>يُحال أي نزاع إلى المحاكم الأردنية المختصة في عمان.</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">
-              12. {t('sections.agreement')}
+              16. {t('sections.agreement')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="leading-relaxed">
-              عند تسجيلك في المنصة، أو استخدامك لأي من خدماتها، فإنك تقر بأنك
-              قرأت هذه الشروط وفهمتها ووافقت عليها بالكامل دون تحفظ.
+              {t('agree')}
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              17. {t('sections.technicalTitle')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                {t('technical.technical1')}
+                <ul className="p-4 space-y-2 list-decimal list-inside">
+                  <li> {t('technical.technicalInfo.IP')}</li>
+                   <li> {t('technical.technicalInfo.Device')}</li>
+                    <li> {t('technical.technicalInfo.OS')}</li>
+                     <li> {t('technical.technicalInfo.Rosultion')}</li>
+                      <li> {t('technical.technicalInfo.Language')}</li>
+                </ul>
+              </li>
+              <li>
+                {t('technical.technical2')}
+              </li>
+               <li>
+                {t('technical.technical3')}
+              </li>
+               <li>
+                {t('technical.technical4')}
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+        
+         <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              18. {t('sections.agreement')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="leading-relaxed">
+              {t('agree')}
             </p>
           </CardContent>
         </Card>
@@ -285,11 +406,11 @@ export default function TermsPage() {
 
       <div className="mt-8 text-center">
         <Link href="/">
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button className="duration-300 bg-primary hover:bg-primary/90">
             {t('backToHome')}
           </Button>
         </Link>
       </div>
     </div>
   );
-}
+};
