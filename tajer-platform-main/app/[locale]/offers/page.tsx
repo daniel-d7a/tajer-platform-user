@@ -2,7 +2,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -21,7 +20,6 @@ export default function SpecialOffers() {
   const [offersData, setOffersData] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, SetErrorMessage] = useState("");
-
   useEffect(() => {
     const fetchOffers = async () => {
       try {
@@ -29,7 +27,7 @@ export default function SpecialOffers() {
           "https://tajer-backend.tajerplatform.workers.dev/api/public/offers"
         );
         const json = await res.json();
-        setOffersData(json.data.splice(0,5).filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
+        setOffersData(json.data.filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
       } catch (err) {
         console.error("something went wrong", err);
         SetErrorMessage("something went wrong, try again later please.");
@@ -40,14 +38,14 @@ export default function SpecialOffers() {
     fetchOffers();
   }, []);
   return (
-    <section className="py-12 bg-muted/30 rounded-lg">
+        <section className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
       <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
-          Array.from({ length: 4 }).map((_, idx) => (
+          Array.from({ length: 16 }).map((_, idx) => (
             <Card key={idx} className="animate-pulse h-64" />
           ))
         ) : offersData.length > 0 ? (
@@ -83,16 +81,6 @@ export default function SpecialOffers() {
           </div>
         )}
       </div>
-      <div className="text-center mt-8">
-        <Link href="/offers" >
-          <Badge
-            variant="outline"
-            className="text-base py-2 px-4  cursor-pointer hover:bg-secondary hover:text-white"
-          >
-            {tc("viewAllOffers")}
-          </Badge>
-        </Link>
-      </div>
     </section>
   );
-};
+}

@@ -7,6 +7,26 @@ import Testimonials from "@/components/home/testimonials"
 import CallToAction from "@/components/home/call-to-action"
 
 export default function Home() {
+  fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/register', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    commercialName: '',
+    phone: '',
+    email: null,
+    passwordHash: '',
+    city: '',
+    area: '',
+    locationDetails: null,
+    businessType: '',
+    referredByRepId: null,
+    referralCode: null
+  })
+})
+
+
   return (
     <div className="container mx-auto">
       <Hero />
@@ -15,6 +35,7 @@ export default function Home() {
       <HowItWorks />
       <Testimonials />
       <CallToAction />
+      
     </div>
   )
 }

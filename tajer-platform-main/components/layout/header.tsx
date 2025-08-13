@@ -7,6 +7,7 @@ import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/components/auth/auth-provider';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,7 +76,6 @@ export default function Header() {
               <span className="sr-only">{t('cart')}</span>
             </Button>
           </Link>
-
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
