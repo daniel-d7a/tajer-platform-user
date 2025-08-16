@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 function LoginFormSkeleton() {
   return <div>Loading...</div>;
 }
-
+ 
 export default function LoginPage() {
   const t = useTranslations('auth');
   return (

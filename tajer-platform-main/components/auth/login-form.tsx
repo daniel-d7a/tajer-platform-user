@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
+import { House } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -22,7 +22,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { useTranslations } from 'next-intl';
 
 const formSchema = z.object({
-  phone: z.string().min(10, {
+  phone: z.string().min(7, {
     message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل',
   }),
   password: z.string().min(1, {
@@ -32,12 +32,12 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const t = useTranslations('auth');
-
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/dashboard';
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,25 +46,31 @@ export default function LoginForm() {
       password: '',
     },
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+  async function  onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-
-    setTimeout(() => {
-      const userData = {
-        id: 1,
-        phone: values.phone,
-        businessName: 'متجر الأمانة',
-        businessType: 'بقالة',
-      };
-
-      login(userData);
+    try{
+      setIsLoading(true);
+      const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/login',{
+        method:'POST',
+          headers: { 
+          'Content-Type': 'application/json'
+          ,'Accept' : '*/*'
+        },
+          body: JSON.stringify({
+          phone:values.phone ,
+          passwordHash: values.password
+  })
+      });
+      if(response.ok){
+        login(values);
+        router.push(redirectTo);
+ const resData = await response.json(); 
+localStorage.setItem("data", JSON.stringify(resData.user));
+};
+    }finally{
       setIsLoading(false);
-      router.push(redirectTo);
-    }, 2000);
-  }
-
+    };
+  };
   return (
     <Card className="p-6">
       <Form {...form}>
@@ -76,13 +82,14 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel>{t('phone')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="07xxxxxxxx" {...field} />
+                  <Input 
+                  {...field}
+                   placeholder="07xxxxxxxx" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="password"
@@ -105,7 +112,6 @@ export default function LoginForm() {
               {t('forgotPassword')}
             </Link>
           </div>
-
           <Button
             type="submit"
             className="w-full bg-primary hover:bg-primary/90"
@@ -113,7 +119,6 @@ export default function LoginForm() {
           >
             {isLoading ? 'جاري تسجيل الدخول...' : t('login')}
           </Button>
-
           <div className="text-center text-sm">
             {t('noAccount')}
             <Link href="/register" className="text-primary hover:underline">
@@ -125,4 +130,4 @@ export default function LoginForm() {
       </Form>
     </Card>
   );
-}
+};

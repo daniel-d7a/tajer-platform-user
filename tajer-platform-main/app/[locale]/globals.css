@@ -69,6 +69,7 @@
   --primary-foreground: oklch(100% 0 0);
   --secondary: oklch(77% 0.12 64); /* Orange #fa9f4d */
   --secondary-foreground: oklch(100% 0 0);
+  --sideBar :rgb(28, 28, 32);
 }
 
 .dark {

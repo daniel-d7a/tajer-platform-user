@@ -28,7 +28,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
-
+import { useRouter, useSearchParams } from 'next/navigation';
 const businessTypes = [
   { value: 'grocery', label: 'بقالة' },
   { value: 'medium_supermarket', label: 'سوبر ماركت متوسط' },
@@ -84,15 +84,17 @@ const formSchema = z.object({
 });
 
 export default function RegisterForm() {
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
-    null
-  );
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
   const [isVerifying, setIsVerifying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const t = useTranslations('auth');
 
@@ -108,36 +110,6 @@ export default function RegisterForm() {
       termsAccepted: false,
     },
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    const submitData = {
-      ...values,
-      location: location,
-      detectedCity: detectedCity,
-    };
-    console.log(submitData);
-    setTimeout(() => {
-      setIsLoading(false);
-      window.location.href = '/dashboard';
-    }, 2000);
-  }
-
-  function sendVerificationCode() {
-    const phone = form.getValues('phone');
-    if (phone.length < 10) {
-      form.setError('phone', {
-        type: 'manual',
-        message: 'يرجى إدخال رقم هاتف صحيح',
-      });
-      return;
-    }
-
-    setIsVerifying(true);
-    setTimeout(() => {
-      setIsVerifying(false);
-    }, 2000);
-  }
 
   function getCityFromCoordinates(lat: number, lng: number): string {
     const jordanianCities = [
@@ -172,10 +144,9 @@ export default function RegisterForm() {
     }
 
     return closestCity.name;
-  }
+  };
 
   function detectLocation() {
-    console.log('تم الضغط على زر تحديد الموقع'); 
     setIsDetectingLocation(true);
     setLocationError(null);
     setDetectedCity(null);
@@ -186,32 +157,25 @@ export default function RegisterForm() {
       return;
     }
 
-    console.log('بدء تحديد الموقع...');
-
     navigator.geolocation.getCurrentPosition(
       position => {
-        console.log('تم الحصول على الموقع:', position);
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         setLocation({ lat, lng });
 
         const cityName = getCityFromCoordinates(lat, lng);
-        console.log('المدينة المكتشفة:', cityName);
-
         setDetectedCity(cityName);
 
         if (cityName !== 'خارج الأردن') {
           const matchingCity = cities.find(city => city.label === cityName);
           if (matchingCity) {
             form.setValue('city', matchingCity.value);
-            console.log('تم تعيين المدينة:', matchingCity.value);
           }
         }
 
         setIsDetectingLocation(false);
       },
       error => {
-        console.error('خطأ في تحديد الموقع:', error);
         setIsDetectingLocation(false);
 
         let errorMessage = 'حدث خطأ في تحديد الموقع';
@@ -238,8 +202,65 @@ export default function RegisterForm() {
         maximumAge: 60000,
       }
     );
-  }
+  };
 
+  function sendVerificationCode() {
+    const phone = form.getValues('phone');
+    if (phone.length < 10) {
+      form.setError('phone', {
+        type: 'manual',
+        message: 'يرجى إدخال رقم هاتف صحيح',
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    setTimeout(() => {
+      setIsVerifying(false);
+    }, 1000);
+  };
+
+    
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+    setApiError(null);
+    setSuccessMsg(null);
+
+    try {
+      const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/register', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+          ,'Accept' : '*/*'
+        },
+      body: JSON.stringify({
+
+  commercialName: values.businessName,
+  phone: values.phone,
+  email: null, 
+  passwordHash: values.password,
+  city: values.city,
+  area: values.city, 
+  locationDetails: null,
+  businessType: values.businessType,
+  role: 'MERCHANT',
+  referredByRepId: null,
+  referralCode: values.referralCode || null,
+})
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        setApiError(err.message || 'حدث خطأ غير متوقع');
+      } else {
+        setSuccessMsg(' تم إنشاء الحساب بنجاح! سيتم تحويلك قريبًا الي صفحه الرئيسيه الخاصه بك..');
+      };
+    } finally{
+      setIsLoading(false);
+      setIsLoading(false);
+      router.push(redirectTo);
+    }
+  
+  }
   return (
     <Card className="p-6">
       <Form {...form}>
@@ -251,16 +272,12 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>{t('businessName')}</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder={t('businessNamePlaceholder')}
-                    {...field}
-                  />
+                  <Input {...field} placeholder={t('businessNamePlaceholder')} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -270,7 +287,7 @@ export default function RegisterForm() {
                   <FormLabel>{t('phone')}</FormLabel>
                   <div className="flex gap-2">
                     <FormControl>
-                      <Input placeholder="07xxxxxxxx" {...field} />
+                      <Input {...field} placeholder="+962..." />
                     </FormControl>
                     <Button
                       type="button"
@@ -305,7 +322,6 @@ export default function RegisterForm() {
               />
             )}
           </div>
-
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">{t('location')}</h3>
@@ -317,14 +333,11 @@ export default function RegisterForm() {
                 className="flex items-center gap-2"
               >
                 <MapPin
-                  className={`h-4 w-4 ${
-                    isDetectingLocation ? 'animate-pulse' : ''
-                  }`}
+                  className={`h-4 w-4 ${isDetectingLocation ? 'animate-pulse' : ''}`}
                 />
                 {isDetectingLocation ? t('locating') : t('locateMe')}
               </Button>
             </div>
-
             {locationError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -343,6 +356,7 @@ export default function RegisterForm() {
                     <p className="text-lg">{detectedCity}</p>
                     {detectedCity === 'خارج الأردن' && (
                       <p className="text-sm text-muted-foreground">
+                        يرجي العلم انه لن يعمل التطبيق بشكل مناسب لانك من خارج الأردن 
                         يرجى اختيار المدينة يدوياً من القائمة أدناه
                       </p>
                     )}
@@ -359,7 +373,7 @@ export default function RegisterForm() {
                   <FormLabel>{t('city')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     disabled={!!detectedCity && detectedCity !== 'خارج الأردن'}
                   >
                     <FormControl>
@@ -380,7 +394,6 @@ export default function RegisterForm() {
               )}
             />
           </div>
-
           <FormField
             control={form.control}
             name="businessType"
@@ -389,7 +402,7 @@ export default function RegisterForm() {
                 <FormLabel>{t('businessType')}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -464,6 +477,18 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
+
+          {apiError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{apiError}</AlertDescription>
+            </Alert>
+          )}
+          {successMsg && (
+            <Alert >
+              <AlertDescription>{successMsg}</AlertDescription>
+            </Alert>
+          )}
 
           <Button
             type="submit"

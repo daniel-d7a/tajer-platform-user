@@ -1,6 +1,6 @@
 import RegisterForm from '@/components/auth/register-form';
 
-
+ 
 import { useTranslations } from 'next-intl';
 
 export default function RegisterPage() {
