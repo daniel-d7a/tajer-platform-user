@@ -7,7 +7,6 @@ import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/components/auth/auth-provider';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +16,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import LocaleSwitcher from '../LocaleSwitcher';
 import { useTranslations } from 'next-intl';
-
 export default function Header() {
   const t = useTranslations('header');
   const tc = useTranslations('common');
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
 
@@ -31,7 +28,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur mb-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="mr-6 ml-6 flex items-center space-x-2">
@@ -43,7 +40,6 @@ export default function Header() {
               className="ml-2"
             />
           </Link>
-
           <nav className="hidden md:flex items-center space-x-6 ">
             <Link
               href="/categories"
@@ -57,12 +53,22 @@ export default function Header() {
             >
               {tc('companies')}
             </Link>
-            <Link
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                dashboard
+              </Link>
+            ):(
+ <Link
               href="/about"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               {tc('about')}
             </Link>
+            )}
+           
           </nav>
         </div>
 
@@ -81,15 +87,15 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:flex">
                   <User className="h-4 w-4 ml-2" />
-                  {user?.businessName || t('profile')}
+                  {user?.commercialName || t('profile')}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">{t('profile')}</Link>
+                  <Link href="/dashboard">{t('profile')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/orders">{t('orders')}</Link>
+                  <Link href="/dashboard/orders">{t('orders')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
@@ -186,7 +192,6 @@ export default function Header() {
                 </Link>
               </>
             )}
-
             <div className="flex justify-center pt-2">
               <ThemeToggle />
             </div>
@@ -195,4 +200,4 @@ export default function Header() {
       )}
     </header>
   );
-}
+};

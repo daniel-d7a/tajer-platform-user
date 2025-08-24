@@ -22,11 +22,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = () => {
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      const userData = localStorage.getItem('userData');
+      const data = localStorage.getItem('data');
 
-      if (isLoggedIn && userData) {
+      if (isLoggedIn && data) {
         setIsAuthenticated(true);
-        setUser(JSON.parse(userData));
+        setUser(JSON.parse(data));
       }
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,16 +34,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const login = (userData: any) => {
+  const login = (data: any) => {
     localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userData', JSON.stringify(userData));
+    localStorage.setItem('data', JSON.stringify(data));
     setIsAuthenticated(true);
-    setUser(userData);
+    setUser(data);
   };
 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userData');
+    localStorage.removeItem('data');
     setIsAuthenticated(false);
     setUser(null);
   };
