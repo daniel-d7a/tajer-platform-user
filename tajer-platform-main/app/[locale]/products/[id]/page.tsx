@@ -59,7 +59,6 @@ export default function Page() {
         setLoading(false);
       }
     };
-
     fetchOffer();
   }, [id]);
 

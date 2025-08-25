@@ -30,13 +30,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 const businessTypes = [
-  { value: 'grocery', label: 'بقالة' },
-  { value: 'medium_supermarket', label: 'سوبر ماركت متوسط' },
-  { value: 'large_supermarket', label: 'سوبر ماركت كبير' },
-  { value: 'restaurant', label: 'مطعم' },
-  { value: 'sweets_shop', label: 'محل حلويات' },
-  { value: 'bookstore', label: 'مكتبة' },
-  { value: 'coffee_shop', label: 'كوفيشوب' },
+  { value: 'supermarket', label: 'supermarket' },
+  { value: 'resturant', label: 'resturant' },
+  { value: 'pharmacy', label: 'pharmacy' },
+  { value: 'bakery', label: 'bakery' },
+  { value: 'clothes', label: 'clothes' },
+  { value: 'coffee_shop', label: 'coffee shop' },
 ];
 
 const cities = [
@@ -241,7 +240,7 @@ export default function RegisterForm() {
   passwordHash: values.password,
   city: values.city,
   area: values.city, 
-  locationDetails: null,
+  locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`,
   businessType: values.businessType,
   role: 'MERCHANT',
   referredByRepId: null,
@@ -258,6 +257,7 @@ export default function RegisterForm() {
       setIsLoading(false);
       setIsLoading(false);
       router.push(redirectTo);
+      console.log(location)
     }
   
   }
@@ -302,7 +302,6 @@ export default function RegisterForm() {
                 </FormItem>
               )}
             />
-
             {isVerifying && (
               <FormField
                 control={form.control}

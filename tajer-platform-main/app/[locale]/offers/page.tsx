@@ -33,7 +33,7 @@ export default function SpecialOffers() {
         SetErrorMessage("something went wrong, try again later please.");
       } finally {
         setLoading(false);
-      }
+      };
     };
     fetchOffers();
   }, []);
@@ -83,4 +83,4 @@ export default function SpecialOffers() {
       </div>
     </section>
   );
-}
+};

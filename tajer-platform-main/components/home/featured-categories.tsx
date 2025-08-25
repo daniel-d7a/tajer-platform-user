@@ -1,13 +1,28 @@
+"use client"
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
 export default function FeaturedCategories() {
 
   const t = useTranslations('home');
   const tc = useTranslations('common');
   const tcg = useTranslations('categoriesNames');
+  const [data,SetData] = useState([])
+  useEffect(() => {
+    const fetchData = async () =>{
+      try{
+        const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page=')
+      const res = await data.json()
+      SetData(res.data)
+      }finally{
+        console.log('omar ')
+      }
+    }
+    fetchData()
+  },[])
 const categories = [
   {
     id: 1,
@@ -55,13 +70,13 @@ const categories = [
         </p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mx-auto px-4">
-        {categories.map(category => (
+        {data.map(category => (
           <Link key={category.id} href={`/categories/${category.id}`}>
             <Card className="overflow-hidden transition-all hover:shadow-md">
               <CardContent className="p-4 text-center">
                 <div className="relative mx-auto h-24 w-24 mb-4 flex items-center justify-center overflow-hidden rounded-full bg-muted">
                   <Image
-                    src={category.image || '/placeholder.svg'}
+                    src={category.image || '/coffee.jpg'}
                     alt={category.name}
                     fill
                     className="object-cover scale-105 transition-transform duration-300 hover:scale-110 hover:opacity-80 object-center"

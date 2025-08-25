@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { House } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -62,10 +61,11 @@ export default function LoginForm() {
   })
       });
       if(response.ok){
-        login(values);
         router.push(redirectTo);
  const resData = await response.json(); 
 localStorage.setItem("data", JSON.stringify(resData.user));
+    login(resData.user);
+
 };
     }finally{
       setIsLoading(false);

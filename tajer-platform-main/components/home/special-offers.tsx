@@ -29,7 +29,7 @@ export default function SpecialOffers() {
           "https://tajer-backend.tajerplatform.workers.dev/api/public/offers"
         );
         const json = await res.json();
-        setOffersData(json.data.splice(0,5).filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
+        setOffersData(json.data.splice(0,10).filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
       } catch (err) {
         console.error("something went wrong", err);
         SetErrorMessage("something went wrong, try again later please.");
@@ -38,6 +38,7 @@ export default function SpecialOffers() {
       }
     };
     fetchOffers();
+  
   }, []);
   return (
     <section className="py-12 bg-muted/30 rounded-lg">

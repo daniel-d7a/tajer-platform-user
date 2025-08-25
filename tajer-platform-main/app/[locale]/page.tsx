@@ -29,7 +29,9 @@ export default function Home() {
 
   return (
     <div className="container mx-auto">
-      <Hero />
+      <div className="  flex justify-center items-center p-4">
+          <Hero />
+        </div>
       <FeaturedCategories />
       <SpecialOffers />
       <HowItWorks />
