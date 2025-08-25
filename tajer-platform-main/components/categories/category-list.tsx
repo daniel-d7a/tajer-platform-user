@@ -5,13 +5,30 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 
+interface SubCategory {
+  id: number;
+  name: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  children?: SubCategory[];
+}
+
+interface Meta {
+  page: number;
+  last_page: number;
+  total: number;
+}
+
 export default function CategoryList() {
   const tc = useTranslations("common");
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState<any>(null);
+  const [meta, setMeta] = useState<Meta | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -20,7 +37,7 @@ export default function CategoryList() {
         const res = await fetch(
           `https://tajer-backend.tajerplatform.workers.dev/api/public/categories?page=${page}&limit=6`
         );
-        const json = await res.json();
+        const json: { data: Category[]; meta: Meta } = await res.json();
         setCategories(json.data);
         setMeta(json.meta);
       } catch (err) {
@@ -40,27 +57,27 @@ export default function CategoryList() {
           Array.from({ length: 6 }).map((_, idx) => (
             <Card key={idx} className="overflow-hidden">
               <CardContent className="p-0">
-          <div className="flex">
-            <div className="relative h-40 w-40 bg-muted animate-pulse" />
-            <div className="p-4 flex-1">
-              <div className="h-6 w-32 bg-muted rounded mb-2 animate-pulse" />
-              <div className="h-4 w-20 bg-muted rounded mb-4 animate-pulse" />
-              <div className="flex flex-wrap gap-2 mt-4">
-                {Array.from({ length: 3 }).map((__, subIdx) => (
-            <div
-              key={subIdx}
-              className="h-5 w-16 bg-muted rounded-md animate-pulse"
-            />
-                ))}
-              </div>
-              <div className="h-4 w-24 bg-muted rounded mt-4 animate-pulse" />
-            </div>
-          </div>
+                <div className="flex">
+                  <div className="relative h-40 w-40 bg-muted animate-pulse" />
+                  <div className="p-4 flex-1">
+                    <div className="h-6 w-32 bg-muted rounded mb-2 animate-pulse" />
+                    <div className="h-4 w-20 bg-muted rounded mb-4 animate-pulse" />
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {Array.from({ length: 3 }).map((__, subIdx) => (
+                        <div
+                          key={subIdx}
+                          className="h-5 w-16 bg-muted rounded-md animate-pulse"
+                        />
+                      ))}
+                    </div>
+                    <div className="h-4 w-24 bg-muted rounded mt-4 animate-pulse" />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))
         ) : categories.length > 0 ? (
-          categories.map((category: any) => (
+          categories.map((category) => (
             <Card key={category.id} className="overflow-hidden">
               <CardContent className="p-0">
                 <div className="flex">
@@ -75,11 +92,10 @@ export default function CategoryList() {
                   <div className="p-4 flex-1">
                     <h3 className="text-xl font-semibold">{category.name}</h3>
                     <p className="text-sm text-muted-foreground mb-2">
-                      {/* لو عندك count من الـ API ممكن تحطه هنا */}
                       {tc("products")}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-4">
-                      {category.children?.map((sub: any) => (
+                      {category.children?.map((sub) => (
                         <Link
                           key={sub.id}
                           href={`/categories/${category.id}/${sub.id}`}
@@ -131,8 +147,4 @@ export default function CategoryList() {
       )}
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-};
->>>>>>> 588dfecd0a274883c726fa8a857df6b93ffdc0fa
