@@ -131,4 +131,8 @@ export default function CategoryList() {
       )}
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> 588dfecd0a274883c726fa8a857df6b93ffdc0fa

@@ -4,8 +4,12 @@
 npm install
 npm run dev
 ```
-
 Open [http://localhost:3000](http://localhost:3000)
+
+## building the project
+```bash
+npm run build
+```
 
 ## Tajer Stack
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import Link from "next/link";
 import Image from "next/image";
@@ -97,3 +98,6 @@ export default function SpecialOffers() {
     </section>
   );
 };
+=======
+g
+>>>>>>> 588dfecd0a274883c726fa8a857df6b93ffdc0fa
