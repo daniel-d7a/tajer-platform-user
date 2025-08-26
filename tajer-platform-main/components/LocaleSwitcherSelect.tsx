@@ -54,4 +54,4 @@ export default function LocaleSwitcherSelect({
       <span className="pointer-events-none absolute right-2 top-[8px]">⌄</span>
     </label>
   );
-}
+};

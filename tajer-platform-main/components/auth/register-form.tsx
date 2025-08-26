@@ -58,7 +58,7 @@ const formSchema = z.object({
   businessName: z.string().min(3, {
     message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل',
   }),
-  phone: z.string().min(10, {
+  phone: z.string().min(8, {
     message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل',
   }),
   verificationCode: z
@@ -249,18 +249,21 @@ export default function RegisterForm() {
       });
       if (!response.ok) {
         const err = await response.json();
-        setApiError(err.message || 'حدث خطأ غير متوقع');
+           if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
+        setApiError('الحساب موجود بالفعل من فضلك سجل الدخول');
+        router.push('/login');
+      };
       } else {
         setSuccessMsg(' تم إنشاء الحساب بنجاح! سيتم تحويلك قريبًا الي صفحه الرئيسيه الخاصه بك..');
+        router.push(redirectTo);
+
       };
     } finally{
       setIsLoading(false);
       setIsLoading(false);
-      router.push(redirectTo);
-      console.log(location)
-    }
-  
-  }
+
+    };
+  };
   return (
     <Card className="p-6">
       <Form {...form}>

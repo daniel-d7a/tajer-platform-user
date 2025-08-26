@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -19,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useTranslations } from 'next-intl';
+import { AlertCircle } from 'lucide-react';
 
 const formSchema = z.object({
   phone: z.string().min(7, {
@@ -36,7 +38,8 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/dashboard';
-
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,25 +53,30 @@ export default function LoginForm() {
     try{
       setIsLoading(true);
       const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/login',{
-        method:'POST',
+        method:"POST",
+        credentials:"include",
           headers: { 
-          'Content-Type': 'application/json'
-          ,'Accept' : '*/*'
+          "Content-Type": "application/json"
         },
           body: JSON.stringify({
-          phone:values.phone ,
-          passwordHash: values.password
-  })
+          phone:`${values.phone}`,
+          passwordHash: `${values.password}`
+         })
       });
       if(response.ok){
         router.push(redirectTo);
- const resData = await response.json(); 
+        const resData = await response.json(); 
+         setSuccessMsg('جاري تحويلك لصفحتك الشخصيه ');
 localStorage.setItem("data", JSON.stringify(resData.user));
     login(resData.user);
 
 };
+      if(!response.ok){
+        setApiError( 'رقم الهاتف او كلمه السر غير صحيحه يرجي المحاوله مره اخري');
+      }
     }finally{
       setIsLoading(false);
+     
     };
   };
   return (
@@ -112,6 +120,17 @@ localStorage.setItem("data", JSON.stringify(resData.user));
               {t('forgotPassword')}
             </Link>
           </div>
+            {apiError && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{apiError}</AlertDescription>
+                      </Alert>
+                    )}
+                    {successMsg && (
+                      <Alert >
+                        <AlertDescription>{successMsg}</AlertDescription>
+                      </Alert>
+                    )}
           <Button
             type="submit"
             className="w-full bg-primary hover:bg-primary/90"
