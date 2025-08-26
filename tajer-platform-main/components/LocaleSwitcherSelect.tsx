@@ -5,18 +5,15 @@ import { ChangeEvent, ReactNode, useTransition } from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-
 type Props = {
   children: ReactNode;
   defaultValue: string;
   label: string;
 };
-
 export function getUserLocaleClient(): string | null {
   const match = document.cookie.match(/(?:^|;\s*)user-locale=([^;]+)/);
   return match ? match[1] : null;
 }
-
 export default function LocaleSwitcherSelect({
   children,
   defaultValue,
