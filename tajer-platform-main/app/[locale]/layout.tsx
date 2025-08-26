@@ -17,8 +17,15 @@ const cairo = Cairo({
   variable: "--font-cairo",
 });
 
-export async function generateMetadata({ params }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale: params.locale, namespace: "common" });
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const t = await getTranslations({
+    locale: params.locale,
+    namespace: "common",
+  });
 
   return {
     title: t("title"),
@@ -27,7 +34,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
       icon: "/tajer-logo.svg",
     },
   };
-};
+}
 export default async function RootLayout({
   children,
   params,
@@ -38,12 +45,20 @@ export default async function RootLayout({
   const { locale } = params;
   const direction = getLangDir(locale);
 
-  if (!routing.locales.includes(locale as typeof routing.locales[number])) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
-  };
+  }
   return (
-    <html suppressHydrationWarning lang={locale} dir={direction} className={cairo.variable}>
-      <body className="min-h-screen bg-background font-cairo" suppressHydrationWarning>
+    <html
+      suppressHydrationWarning
+      lang={locale}
+      dir={direction}
+      className={cairo.variable}
+    >
+      <body
+        className="min-h-screen bg-background font-cairo"
+        suppressHydrationWarning
+      >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale}>
@@ -56,4 +71,4 @@ export default async function RootLayout({
       </body>
     </html>
   );
-};
+}

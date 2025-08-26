@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { useAuth } from '@/components/auth/auth-provider';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/components/auth/auth-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import LocaleSwitcher from '../LocaleSwitcher';
-import { useTranslations } from 'next-intl';
+} from "@/components/ui/dropdown-menu";
+import LocaleSwitcher from "../LocaleSwitcher";
+import { useTranslations } from "next-intl";
 export default function Header() {
-  const t = useTranslations('header');
-  const tc = useTranslations('common');
+  const t = useTranslations("header");
+  const tc = useTranslations("common");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/';
+    window.location.href = "/";
   };
-interface User {
-  name: string;
-  email: string;
-  role: "admin" | "trader" | "sales";
-  commercialName?: string; // optional
-}
+  interface User {
+    name: string;
+    email: string;
+    role: "admin" | "trader" | "sales";
+    commercialName?: string; // optional
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -51,13 +51,13 @@ interface User {
               href="/categories"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              {tc('categories')}
+              {tc("categories")}
             </Link>
             <Link
               href="/companies"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              {tc('companies')}
+              {tc("companies")}
             </Link>
             {isAuthenticated ? (
               <Link
@@ -66,15 +66,14 @@ interface User {
               >
                 dashboard
               </Link>
-            ):(
- <Link
-              href="/about"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              {tc('about')}
-            </Link>
+            ) : (
+              <Link
+                href="/about"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                {tc("about")}
+              </Link>
             )}
-           
           </nav>
         </div>
 
@@ -85,7 +84,7 @@ interface User {
           <Link href="/cart" className="hidden md:flex">
             <Button variant="ghost" size="icon">
               <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">{t('cart')}</span>
+              <span className="sr-only">{t("cart")}</span>
             </Button>
           </Link>
           {isAuthenticated ? (
@@ -93,20 +92,20 @@ interface User {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:flex">
                   <User className="h-4 w-4 ml-2" />
-                  {user?.commercialName || t('profile')}
+                  {user?.commercialName || t("profile")}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{t('profile')}</Link>
+                  <Link href="/dashboard">{t("profile")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/orders">{t('orders')}</Link>
+                  <Link href="/dashboard/orders">{t("orders")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="h-4 w-4 ml-2" />
-                  {t('logout')}
+                  {t("logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -114,12 +113,14 @@ interface User {
             <>
               <Link href="/register" className="hidden md:flex">
                 <Button className="bg-secondary hover:bg-secondary/90">
-                  {t('register')}
+                  {t("register")}
                 </Button>
               </Link>
 
               <Link href="/login" className="hidden md:flex">
-                <Button variant="outline">{t('login')}</Button>
+                <Button className="bg-red-500" variant="outline">
+                  {t("login")}
+                </Button>
               </Link>
             </>
           )}
@@ -135,7 +136,7 @@ interface User {
             ) : (
               <Menu className="h-5 w-5" />
             )}
-            <span className="sr-only">{t('menu')}</span>
+            <span className="sr-only">{t("menu")}</span>
           </Button>
         </div>
       </div>
@@ -148,27 +149,27 @@ interface User {
               className="text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
-              {tc('categories')}
+              {tc("categories")}
             </Link>
             <Link
               href="/companies"
               className="text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
-              {tc('companies')}
+              {tc("companies")}
             </Link>
             <Link
               href="/about"
               className="text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
-              {tc('about')}
+              {tc("about")}
             </Link>
 
             <Link href="/cart" className="w-full">
               <Button variant="outline" className="w-full">
                 <ShoppingCart className="h-5 w-5 ml-2" />
-                {t('cart')}
+                {t("cart")}
               </Button>
             </Link>
 
@@ -180,7 +181,7 @@ interface User {
                   onClick={handleLogout}
                 >
                   <LogOut className="h-5 w-5 ml-2" />
-                  {t('logout')}
+                  {t("logout")}
                 </Button>
               </>
             ) : (
@@ -188,12 +189,12 @@ interface User {
                 <Link href="/login" className="w-full">
                   <Button variant="outline" className="w-full">
                     <User className="h-5 w-5 ml-2" />
-                    {t('login')}
+                    {t("login")}
                   </Button>
                 </Link>
                 <Link href="/register" className="w-full">
                   <Button className="w-full bg-secondary hover:bg-secondary/90">
-                    {t('register')}
+                    {t("register")}
                   </Button>
                 </Link>
               </>
@@ -206,4 +207,4 @@ interface User {
       )}
     </header>
   );
-};
+}

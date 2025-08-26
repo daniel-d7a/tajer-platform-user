@@ -27,7 +27,11 @@ export default function SpecialOffers() {
           "https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=&search=&page='"
         );
         const json = await res.json();
-        setOffersData(json.data.filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
+        setOffersData(
+          json.data.filter((offer: Offer) =>
+            offer.imageUrl.includes("https://loremflickr.com") ? false : true
+          )
+        );
       } catch (err) {
         console.error("something went wrong", err);
         SetErrorMessage("something went wrong, try again later please.");
@@ -38,7 +42,7 @@ export default function SpecialOffers() {
     fetchOffers();
   }, []);
   return (
-        <section className="py-12 bg-muted/30 rounded-lg">
+    <section className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
@@ -50,7 +54,11 @@ export default function SpecialOffers() {
           ))
         ) : offersData.length > 0 ? (
           offersData.map((offer) => (
-            <Link className="w-[100%]" key={offer.id} href={`/products/${offer.id}`}>
+            <Link
+              className="w-[100%]"
+              key={offer.id}
+              href={`/products/${offer.id}`}
+            >
               <Card className="overflow-hidden w-[100%] transition-all hover:shadow-md h-[90%] flex flex-col">
                 <div className="relative h-48">
                   <Image
@@ -65,10 +73,12 @@ export default function SpecialOffers() {
                   <h3>{offer.description}</h3>
                 </CardContent>
                 <CardFooter className="text-sm text-muted-foreground border-t pt-4 flex flex-col gap-4">
-                  <button 
-            className="w-full text-white p-2.5 text-center rounded-2xl cursor-pointer hover:bg-secondary hover:text-white border-solid border-1 duration-300 border-light-blue-500">Order Now</button>
+                  <button className="w-full text-white p-2.5 text-center rounded-2xl cursor-pointer hover:bg-secondary hover:text-white border-solid border-1 duration-300 border-light-blue-500">
+                    Order Now
+                  </button>
 
-                  {tc("ExpiresAt")}{"  "}
+                  {tc("ExpiresAt")}
+                  {"  "}
                   {new Date(offer.expiresAt).toLocaleDateString("ar-JO")}
                 </CardFooter>
               </Card>
