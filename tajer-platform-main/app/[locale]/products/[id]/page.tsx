@@ -17,12 +17,13 @@ type Offer = {
   expiresAt: string;
   minOrderQuantity: number;
   maxOrderQuantity: number;
-  unitType?: string;
-  piecePrice?: number;
-  packPrice?: number;
-  piecesPerPack?: number;
+  unitType: string;
+  piecePrice: number;
+  packPrice: number;
+  piecesPerPack: number;
   categories: { id: number; name: string }[];
-  manufacturer?: string;
+  manufacturer: string;
+
 };
 type AddCartParams = {
   id: string | number; // حسب نوع الـ id عندك
@@ -138,7 +139,7 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                     {pieceOrNot ? (   <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
                   <span className="text-3xl font-bold text-primary">
                     {offerData.piecePrice
-                      ? (offerData.piecesPerPack).toFixed(2)
+                      ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
                       : "0.00"}{" "}
                     JD
                   </span>

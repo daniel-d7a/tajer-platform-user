@@ -8,7 +8,7 @@ export default function Footer() {
   const tc = useTranslations('common');
 
   return (
-    <footer className="bg-muted z-999">
+    <div className="bg-muted z-999">
       <div className="container py-10 mx-auto">
         <div className="w-[90%] mx-auto grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
@@ -121,6 +121,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

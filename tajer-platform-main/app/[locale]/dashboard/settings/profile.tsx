@@ -63,7 +63,7 @@ type UserData = {
 export default function Profile() {
   
   const [userData, SetUserData] = useState<UserData>({});
-  let localUserData: UserData = typeof window !== "undefined"
+  const localUserData: UserData = typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("data") || "{}")
     : {};
     const [state,SetState] = useState(false)
