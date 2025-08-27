@@ -40,17 +40,17 @@ export default function FeaturedCategories() {
           {t('featuredCategoriesDesc')}
         </p>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mx-auto px-4">
+      <div className="  grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mx-auto px-4">
         {data.map((category) => (
           <Link key={category.id} href={`/categories/${category.id}`}>
-            <Card className="overflow-hidden transition-all hover:shadow-md">
+            <Card className="overflow-hidden transition-all hover:shadow-md hover:bg-muted hover:scale-105">
               <CardContent className="p-4 text-center">
-                <div className="relative mx-auto h-24 w-24 mb-4 flex items-center justify-center overflow-hidden rounded-full bg-muted">
+                <div className="object-cover relative mx-auto h-24 w-24 mb-4 flex items-center justify-center overflow-hidden rounded-full bg-muted">
                   <Image
                     src={category.image || '/coffee.jpg'}
                     alt={category.name}
                     fill
-                    className="object-cover scale-105 transition-transform duration-300 hover:scale-110 hover:opacity-80 object-center"
+                    className="object-cover h-full w-full scale-105 transition-transform duration-300 hover:scale-110 hover:opacity-80 object-center"
                   />
                 </div>
                 <h3 className="font-semibold">{category.name}</h3>

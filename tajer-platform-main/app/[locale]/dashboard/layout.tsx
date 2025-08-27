@@ -35,11 +35,9 @@ export default function DashboardLayout({children}: {children: React.ReactNode})
   };
   return (
     <div className="flex min-h-screen" dir="rtl">
-      {/* Sidebar Desktop */}
       <div className="hidden md:block">
         <Sidebar pathname={pathname} />
       </div>
-      {/* Main Content */}
       <div className="w-full md:w-4/5 flex-1">
         <div className="p-5 w-full space-y-8 ">
           <h1 className="text-3xl">
@@ -90,7 +88,7 @@ const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ showMore, setShowMore
           </Link>
         ))}
         <button
-          className="flex flex-col items-center flex-1 py-1 px-2 text-xs text-gray-600"
+          className="flex flex-col items-center flex-1 py-1 px-2 text-xs "
           onClick={() => setShowMore(!showMore)}
         >
           <Settings />
@@ -106,7 +104,7 @@ const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ showMore, setShowMore
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 p-2 rounded-md ${pathname === item.href ? "bg-primary text-white" : "hover:bg-gray-100"}`}
+                  className={`flex items-center gap-2 p-2 rounded-md ${pathname === item.href ? "bg-primary text-white" : "hover:bg-gray-800"}`}
                   onClick={() => setShowMore(false)}
                 >
                   {item.icon}
@@ -114,7 +112,7 @@ const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ showMore, setShowMore
                 </Link>
               ))}
             </div>
-            <button className="mt-4 w-full py-2 rounded-md border border-gray-400 hover:bg-gray-200" onClick={() => setShowMore(false)}>
+            <button className="mt-4 w-full py-2 rounded-md border border-gray-400 " onClick={() => setShowMore(false)}>
               إغلاق
             </button>
           </div>

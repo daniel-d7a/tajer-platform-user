@@ -72,8 +72,15 @@ export default function CartPage() {
       //   router.push('/login?redirect=/cart');
       // }
     };
-
+    const fetchData = async () =>{
+      const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/cart?page=&limit='
+        ,{credentials : "include"}
+      )
+      const res = await data.json();
+      console.log(res)
+    }
     checkAuth();
+    fetchData();
   }, [router]);
 
   const updateQuantity = (id: number, newQuantity: number) => {
@@ -138,7 +145,7 @@ export default function CartPage() {
     <div className="w-[90%] mx-auto py-8">
       <div className="mb-6">
         <Link href="/categories">
-          <Button variant="ghost" className="mb-4">
+          <Button variant="ghost" className="mb-4 bg-primary">
             <ArrowRight className="h-4 w-4 ml-2" />
             {t('continueShopping')}
           </Button>

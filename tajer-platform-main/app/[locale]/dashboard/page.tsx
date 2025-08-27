@@ -12,14 +12,7 @@ const DashboardPage: React.FC = () => {
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  useEffect(() =>{
-    const fetchData = async () =>{
-      const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/overview');
-      const resData = await data.json();
-      console.log(resData)
-    }
-    fetchData()
-  },[])
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");

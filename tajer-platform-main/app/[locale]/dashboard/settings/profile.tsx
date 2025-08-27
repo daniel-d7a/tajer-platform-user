@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
+import Toast from "./toast";
 import { Input } from "@/components/ui/input"; 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,33 +43,48 @@ import { Button } from '@/components/ui/button';
     display: "swap",
     variable: "--font-cairo",
   });
-    const businessTypes = [
-    { value: 'grocery', label: 'بقالة' },
-    { value: 'medium_supermarket', label: 'سوبر ماركت متوسط' },
-    { value: 'large_supermarket', label: 'سوبر ماركت كبير' },
-    { value: 'restaurant', label: 'مطعم' },
-    { value: 'sweets_shop', label: 'محل حلويات' },
-    { value: 'bookstore', label: 'مكتبة' },
-    { value: 'coffee_shop', label: 'كوفيشوب' },
-  ];
+const businessTypes = [
+  { value: 'supermarket', label: 'supermarket' },
+  { value: 'resturant', label: 'resturant' },
+  { value: 'pharmacy', label: 'pharmacy' },
+  { value: 'bakery', label: 'bakery' },
+  { value: 'clothes', label: 'clothes' },
+  { value: 'coffee_shop', label: 'coffee shop' },
+];
+type UserData = {
+  id?: number;
+  commercialName?: string;
+  phone?: string;
+  city?: string;
+  businessType?: string;
+};
+
+
 export default function Profile() {
-      const formSchema = z.object({
-        businessName: z.string().min(3, { message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل' }),
-        phone: z.string().min(10, { message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل' }),
-        city: z.string({ required_error: 'يرجى اختيار المدينة أو تحديد الموقع' }),
-        businessType: z.string({ required_error: 'يرجى اختيار نوع العمل' }),
-        verificationCode: z.string().optional(),
-      });
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          businessName: '',
-          phone: '',
-          city: '',
-          businessType:'',
-          verificationCode: '',
-        },
-      });
+  
+  const [userData, SetUserData] = useState<UserData>({});
+  let localUserData: UserData = typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("data") || "{}")
+    : {};
+    const [state,SetState] = useState(false)
+    const [loading,SetLoading] = useState(false)
+  const formSchema = z.object({
+    businessName: z.string().min(3, { message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل' }),
+    phone: z.string().min(10, { message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل' }),
+    city: z.string({ required_error: 'يرجى اختيار المدينة أو تحديد الموقع' }),
+    businessType: z.string({ required_error: 'يرجى اختيار نوع العمل' }),
+    verificationCode: z.string().optional(),
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      businessName: localUserData.commercialName || "",
+      phone: localUserData.phone || "",
+      city: localUserData.city || "",
+      businessType: localUserData.businessType || "",
+      verificationCode: '',
+    },
+  });
       const [isVerifying, setIsVerifying] = useState(false);
       function sendVerificationCode() {
         const phone = form.getValues('phone');
@@ -85,6 +100,41 @@ export default function Profile() {
           setIsVerifying(false);
         }, 500);
       };
+        useEffect( () =>{
+    const fetchData = async () =>{
+      console.log(userData.id)
+    const fetchData = await fetch(`https://tajer-backend.tajerplatform.workers.dev/api/public/users/${localUserData.id}`);
+      const res = await fetchData.json();
+      console.log(res);
+      SetUserData(res);
+    }
+    fetchData();
+  },[])
+  const handleEdite = async() =>{
+    SetLoading(true)
+    const EditeData = fetch('https://tajer-backend.tajerplatform.workers.dev/api/public/users', {
+  method: 'PUT',
+  credentials:'include',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    commercialName: form.getValues('businessName'),
+    email: null,
+    city: form.getValues('city'),
+    area:form.getValues('city') ,
+    locationDetails: null,
+    businessType: form.getValues('businessType'),
+    referralCode: null
+  })
+})
+const res = await (await EditeData).json();
+  console.log(res);
+   SetUserData(res);
+localStorage.setItem("data", JSON.stringify(res));
+  SetState(!state);
+  SetLoading(false);
+  }
   return (
    <Form {...form} >
             <form className={`flex flex-col gap-8 ${cairo.variable}`} >
@@ -132,10 +182,7 @@ export default function Profile() {
               )}
             />
           </div>
-
-              
                 </div>
-
                 <FormField
                   control={form.control}
                   name="city"
@@ -160,7 +207,6 @@ export default function Profile() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="businessType"
@@ -187,7 +233,11 @@ export default function Profile() {
                 />         
               </div>
             </form>
-         
+            {state && <Toast message="Profile updated successfully!" />}
+                  <div className="p-6 flex gap-2 ">
+                <Button onClick={() => handleEdite()} className={loading ? "bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-not-allowed" : " p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-pointer"} disabled={loading}>Save Changes</Button>
+                <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium  hover:bg-gray-800 cursor-pointer">cancel</button>
+            </div>       
           </Form> 
          );
-}
+};

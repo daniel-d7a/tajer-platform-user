@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-
+import { useAuth } from "@/components/auth/auth-provider";
 type Offer = {
   id: number;
   name: string;
@@ -16,6 +16,7 @@ type Offer = {
 export default function SpecialOffers() {
   const t = useTranslations("home");
   const tc = useTranslations("common");
+  const { isAuthenticated } = useAuth();
 
   const [offersData, setOffersData] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export default function SpecialOffers() {
           ))
         ) : offersData.length > 0 ? (
           offersData.map((offer) => (
-            <Link className="w-[100%]" key={offer.id} href={`/offers/${offer.id}`}>
+            <Link className="w-[100%]" key={offer.id} href={isAuthenticated?`/offers/${offer.id}`: '/login'}>
               <Card className="overflow-hidden w-[100%] transition-all hover:shadow-md h-[90%] flex flex-col">
                 <div className="relative h-48">
                   <Image

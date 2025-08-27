@@ -118,7 +118,7 @@ export default function Header() {
               </Link>
 
               <Link href="/login" className="hidden md:flex">
-                <Button className="bg-red-500" variant="outline">
+                <Button  variant="outline">
                   {t("login")}
                 </Button>
               </Link>
@@ -140,7 +140,6 @@ export default function Header() {
           </Button>
         </div>
       </div>
-
       {isMenuOpen && (
         <div className="container md:hidden mx-auto w-[80%]  ">
           <nav className="flex flex-col space-y-4 py-4 items-center">

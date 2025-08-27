@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/components/auth/auth-provider";
 
 type Offer = {
   id: number;
@@ -21,6 +22,7 @@ export default function SpecialOffers() {
   const [offersData, setOffersData] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, SetErrorMessage] = useState("");
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -53,7 +55,7 @@ export default function SpecialOffers() {
           ))
         ) : offersData.length > 0 ? (
           offersData.map((offer) => (
-            <Link className="w-[100%]" key={offer.id} href={`/offers/${offer.id}`}>
+            <Link className="w-[100%]" key={offer.id} href={isAuthenticated ? `/offers/${offer.id}` : '/login'}>
               <Card className="overflow-hidden w-[100%] transition-all hover:shadow-md h-[90%] flex flex-col">
                 <div className="relative h-48">
                   <Image

@@ -54,7 +54,6 @@ export default function LoginForm() {
       setIsLoading(true);
       const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/login',{
         method:"POST",
-        credentials:"include",
           headers: { 
           "Content-Type": "application/json"
         },
