@@ -33,7 +33,7 @@ export default function LocaleSwitcherSelect({
       const newPath = segments.join('/');
       router.replace(newPath);
     });
-  }
+  };
 
   return (
     <label

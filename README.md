@@ -8,7 +8,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000)
 
 ## Tajer Stack
-
+ 
 - The platform: the main website / Next.js (frontend only)
 - The Dashboard: for the admin dashboard / React (frontend only)
 - The Sales Representitive Dashboard: similar to the admin dashboard / React (frontend only)
