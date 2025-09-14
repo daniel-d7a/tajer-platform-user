@@ -7,7 +7,9 @@ import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Truck, Shield, RefreshCw } from "lucide-react";
+import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Toast from "../../dashboard/settings/toast";
 
 type Offer = {
   id: number;
@@ -23,10 +25,9 @@ type Offer = {
   piecesPerPack: number;
   categories: { id: number; name: string }[];
   manufacturer: string;
-
 };
 type AddCartParams = {
-  id: string | number; // حسب نوع الـ id عندك
+id: string | number;
 };
 export default function Page() {
   const params = useParams<{ id: string }>();
@@ -36,27 +37,27 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [pieceOrNot, setPieceOrNot] = useState(true);
-
+  const [quantity, setQuantity] = useState(1);
+  const [message,setMessage] = useState('');
+  const [loadingCart, setLoadingCart] = useState(false);
   useEffect(() => {
     if (!id) return;
-
     const fetchOffer = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
           `https://tajer-backend.tajerplatform.workers.dev/api/public/products/${id}`
         );
         if (!res.ok) throw new Error("Failed to fetch");
-
         const data: Offer = await res.json();
         setOfferData(data);
-
         if (data.unitType === "piece_only") {
           setPieceOrNot(false);
         } else {
           setPieceOrNot(true);
         }
-      } catch (err) {
-        console.error("Something went wrong", err);
+      } catch  {
+        setOfferData(null);
         setErrorMessage("Something went wrong. Please try again later.");
       } finally {
         setLoading(false);
@@ -64,37 +65,45 @@ export default function Page() {
     };
     fetchOffer();
   }, [id]);
+  useEffect(() =>{
+            setQuantity(offerData?.minOrderQuantity)
 
-const handleAddCart = async ({ id }: AddCartParams) => {
-  try {
-    const res = await fetch(
-      'https://tajer-backend.tajerplatform.workers.dev/api/cart/items',
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          productId: id,
-          quantity: 1,
-        }),
+  },[offerData])
+  const handleAddCart = async ({ id }: AddCartParams) => {
+    try {
+      setLoadingCart(true);
+      const res = await fetch(
+        "https://tajer-backend.tajerplatform.workers.dev/api/cart/items",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId: id,
+            quantity: quantity,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }else{
+        setMessage('Added to cart');
+        setLoadingCart(false)
       }
-    );
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      console.log("Added to cart", data);
+      return data;
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      setMessage('Something went wrong. Please try again later.');
     }
-
-    const data = await res.json();
-    console.log(data);
-    return data;
-  } catch (err) {
-    console.error('Error adding to cart:', err);
-  }
-};
+  };
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <Head>
         <title>{offerData?.name || "Product Details"}</title>
         <meta
@@ -136,27 +145,28 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                     {offerData.manufacturer || "Unknown Manufacturer"}
                   </p>
                 </div>
-                    {pieceOrNot ? (   <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
-                  <span className="text-3xl font-bold text-primary">
-                    {offerData.piecePrice
-                      ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
-                      : "0.00"}{" "}
-                    JD
-                  </span>
-                  <span className="text-2xl text-muted-foreground line-through">
-                    {offerData.piecePrice?.toFixed(2) || "0.00"} JD
-                  </span>
-                </div>) : (   <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
-                  <span className="text-3xl font-bold text-primary">
-                    {offerData.piecePrice
-                      ? (offerData.piecePrice ).toFixed(2)
-                      : "0.00"}{" "}
-                    JD
-                  </span>
-               
-                </div>)}
-
-             
+                {pieceOrNot ? (
+                  <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
+                    <span className="text-3xl font-bold text-primary">
+                      {offerData.packPrice && offerData.piecesPerPack
+                        ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
+                        : "0.00"}{" "}
+                      JD
+                    </span>
+                    <span className="text-2xl text-muted-foreground line-through">
+                      {offerData.piecePrice?.toFixed(2) || "0.00"} JD
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
+                    <span className="text-3xl font-bold text-primary">
+                      {offerData.piecePrice
+                        ? offerData.piecePrice.toFixed(2)
+                        : "0.00"}{" "}
+                      JD
+                    </span>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <p className="text-sm">
@@ -168,9 +178,7 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                       <strong>In Stock : </strong>
                       <span className="text-secondary">
                         {offerData.packPrice && offerData.piecesPerPack
-                          ? (
-                              offerData.packPrice / offerData.piecesPerPack
-                            ).toFixed(2)
+                          ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
                           : "0.00"}{" "}
                         Piece
                       </span>
@@ -204,7 +212,42 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                     )}
                   </ul>
                 </div>
-
+                <div className=" flex gap-2 items-center">
+                    <p>Quantity</p>
+                  <div className="flex items-center space-x-2 space-x-reverse gap-1">
+                      <Button
+                          variant="outline"
+                          size="icon"
+                          disabled={quantity <= offerData?.minOrderQuantity}
+                          onClick={() => {
+                            if (quantity > offerData?.minOrderQuantity) {
+                              setQuantity(quantity - 1);
+                            }
+                          }}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <Input
+                          type="number"
+                          value={quantity}
+                          min={false ? offerData?.minOrderQuantity : 1}
+                          className="w-16 text-center"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            setQuantity(quantity + 1);
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                  </div>
+                  
+                      </div>
+                  {message && (
+                      <Toast message={message} />
+                  )}
                 <Separator />
                 <div className="space-y-4">
                   <Button
@@ -214,8 +257,16 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                       handleAddCart({ id: offerData.id });
                     }}
                   >
-                    <ShoppingCart className="h-5 w-5 ml-2" />
-                    Add to Cart
+                    {loadingCart ? (
+                      <Loader2 className="h-5 w-5 ml-2 animate-spin" />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <ShoppingCart className="h-5 w-5 ml-2" />
+                        Add to Cart
+                      </div>
+                    
+                    )}
+                    
                   </Button>
 
                   <div className="grid grid-cols-3 gap-4 text-center">
@@ -239,6 +290,8 @@ const handleAddCart = async ({ id }: AddCartParams) => {
                     </div>
                   </div>
                 </div>
+                <Separator />
+              
               </div>
             </div>
           ) : (
@@ -248,6 +301,7 @@ const handleAddCart = async ({ id }: AddCartParams) => {
           )}
         </div>
       </section>
-    </>
+    
+    </div>
   );
-};
+}

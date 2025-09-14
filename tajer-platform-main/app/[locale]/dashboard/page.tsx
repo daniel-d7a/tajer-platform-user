@@ -1,17 +1,47 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Truck, Wallet, Percent, PiggyBank } from "lucide-react";
-
 import CountUp from "react-countup";
 
+type StatsType = {
+  totalOrders: number;
+  totalSpent: number;
+  pendingOrders: number;
+  totalCashback: number;
+};
+
+type OrderType = {
+  id: number;
+  merchantId: number;
+  status: string;
+  totalValue: number;
+  createdAt: string | null;
+  merchant: {
+    commercialName: string;
+  };
+};
+
+type OrdersResponse = {
+  stats: StatsType;
+  data: OrderType[];
+  meta: any;
+};
 
 const DashboardPage: React.FC = () => {
-
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+
+  const [ordersData, setOrdersData] = useState<OrderType[]>([]);
+  const [stats, setStats] = useState<StatsType>({
+    totalOrders: 0,
+    totalSpent: 0,
+    pendingOrders: 0,
+    totalCashback: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -19,36 +49,73 @@ const DashboardPage: React.FC = () => {
     }
   }, [isAuthenticated, router]);
 
+  const fetchOrders = async () => {
+    try {
+      const data = await fetch(
+        "https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=&page=&status=PENDING&from=&to=",
+        { credentials: "include" }
+      );
+      const res: OrdersResponse = await data.json();
+      setOrdersData(res.data || []);
+      setStats(res.stats || {
+        totalOrders: 0,
+        totalSpent: 0,
+        pendingOrders: 0,
+        totalCashback: 0,
+      });
+    } catch (error) {
+      console.error(error);
+      setOrdersData([]);
+      setStats({
+        totalOrders: 0,
+        totalSpent: 0,
+        pendingOrders: 0,
+        totalCashback: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-lg font-medium">جاري تحويلك لصفحة تسجيل الدخول...</p>
       </div>
     );
-  };
+  }
+
   return (
     <div className="space-y-8 p-2 md:p-8">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
         <StatCard
           title="Total Orders"
-          value={70}
+          value={stats.totalOrders}
           icon={<Truck className="w-[24px] h-[24px]" />}
+          loading={loading}
         />
         <StatCard
           title="Cashback"
-          value={30}
+          value={stats.totalCashback}
           icon={<Wallet className="w-[24px] h-[24px]" />}
+          loading={loading}
         />
         <StatCard
-          title="Savings Ratio"
-          value={15}
+          title="Total Spent"
+          value={stats.totalSpent}
           icon={<Percent className="w-[24px] h-[24px]" />}
+          loading={loading}
         />
         <StatCard
-          title="Saving Value"
-          value={120}
+          title="Pending Orders"
+          value={stats.pendingOrders}
           icon={<PiggyBank className="w-[28px] h-[28px]" />}
+          loading={loading}
         />
       </div>
       {/* Recent Orders */}
@@ -59,20 +126,30 @@ const DashboardPage: React.FC = () => {
             <thead className=" border-b">
               <tr className="text-lg">
                 <th className="p-3">رقم الطلب</th>
-                <th className="p-3">المنتج</th>
-                <th className="p-3">السعر</th>
-                <th className="p-3">الكمية</th>
-                <th className="p-3">الإجمالي</th>
+                <th className="p-3">المتجر</th>
+                <th className="p-3">السعر الإجمالي</th>
                 <th className="p-3">الحالة</th>
-                <th className="p-3">التاريخ</th>
+                <th className="p-3">تاريخ الإنشاء</th>
               </tr>
             </thead>
             <tbody className="text-base">
-              <OrderRow id="1001" product="منتج 1" price={10} qty={2} total={20} status="مكتمل" date="2025/08/15" />
-              <OrderRow id="1002" product="منتج 2" price={20} qty={1} total={20} status="قيد التنفيذ" date="2025/08/16" />
-              <OrderRow id="1003" product="منتج 3" price={30} qty={3} total={90} status="ملغي" date="2025/08/17" />
-              <OrderRow id="1004" product="منتج 4" price={25} qty={4} total={100} status="مكتمل" date="2025/08/17" />
-              <OrderRow id="1005" product="منتج 5" price={15} qty={5} total={75} status="قيد التنفيذ" date="2025/08/17" />
+              {!loading && ordersData.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                    لا يوجد طلبات حتى الآن
+                  </td>
+                </tr>
+              )}
+              {ordersData.map((order) => (
+                <OrderRow
+                  key={order.id}
+                  id={order.id}
+                  merchant={order.merchant.commercialName}
+                  totalValue={order.totalValue}
+                  status={order.status}
+                  createdAt={order.createdAt}
+                />
+              ))}
             </tbody>
           </table>
         </div>
@@ -83,25 +160,26 @@ const DashboardPage: React.FC = () => {
 
 export default DashboardPage;
 
-
-
+// ------------------ Stat Card ------------------
 type StatCardProps = {
   title: string;
   value: number;
   icon: React.ReactNode;
+  loading?: boolean;
 };
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, loading }) => {
   return (
-    <div className="flex items-center border-1 hover:border-[var(--primary)] duration-300 rounded-2xl h-[100px] p-5 w-[100%]">
+    <div className="flex items-center border-1 hover:border-[var(--primary)] duration-300 rounded-2xl h-[100px] p-5 w-[100%] shadow">
       <div className="text-[var(--primary)]">{icon}</div>
       <div className="flex flex-col mr-4">
-        <CountUp
-          className="text-3xl font-bold w-full"
-          start={0}
-          end={value}
-          duration={5}
-        />
+        <span className="text-3xl font-bold w-full">
+          {loading ? (
+            <span className="animate-pulse bg-gray-100 rounded w-20 h-8 block"></span>
+          ) : (
+            <CountUp end={value} duration={2.5} />
+          )}
+        </span>
         <h2>{title}</h2>
       </div>
     </div>
@@ -110,46 +188,47 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => {
 
 // ------------------ Order Row ------------------
 type OrderRowProps = {
-  id: string;
-  product: string;
-  price: number;
-  qty: number;
-  total: number;
+  id: number;
+  merchant: string;
+  totalValue: number;
   status: string;
-  date: string;
+  createdAt: string | null;
+};
+
+const statusMapping: Record<string, string> = {
+  DELIVERED: "تم التسليم",
+  PROCESSING: "قيد التنفيذ",
+  OUT_FOR_DELIVERY: "خارج للتوصيل",
+  PENDING: "جاري التنفيذ",
+};
+
+const statusColor: Record<string, string> = {
+  DELIVERED: "text-green-600 font-semibold",
+  PROCESSING: "text-yellow-600 font-semibold",
+  OUT_FOR_DELIVERY: "text-blue-600 font-semibold",
+  PENDING: "text-yellow-600 font-semibold",
 };
 
 const OrderRow: React.FC<OrderRowProps> = ({
   id,
-  product,
-  price,
-  qty,
-  total,
+  merchant,
+  totalValue,
   status,
-  date,
+  createdAt,
 }) => {
-  const getStatusClass = (status: string): string => {
-    switch (status) {
-      case "مكتمل":
-        return "text-green-600 font-semibold";
-      case "قيد التنفيذ":
-        return "text-yellow-600 font-semibold";
-      case "ملغي":
-        return "text-red-600 font-semibold";
-      default:
-        return "";
-    }
-  };
+  const formattedDate = createdAt
+    ? new Date(createdAt).toLocaleDateString("ar-EG")
+    : "غير محدد";
 
   return (
     <tr className="border-b hover:bg-muted/40 duration-200">
       <td className="p-3">{id}</td>
-      <td className="p-3">{product}</td>
-      <td className="p-3">JD{price}</td>
-      <td className="p-3">{qty}</td>
-      <td className="p-3">JD{total}</td>
-      <td className={`p-3 ${getStatusClass(status)}`}>{status}</td>
-      <td className="p-3">{date}</td>
+      <td className="p-3">{merchant}</td>
+      <td className="p-3">JD {totalValue.toFixed(2)}</td>
+      <td className={`p-3 ${statusColor[status] || ""}`}>
+        {statusMapping[status] || status}
+      </td>
+      <td className="p-3">{formattedDate}</td>
     </tr>
   );
 };

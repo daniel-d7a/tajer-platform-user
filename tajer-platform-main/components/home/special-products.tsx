@@ -117,23 +117,28 @@ export default function SpecialProducts() {
                           <div className="flex items-center">
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-bold">
-                                {(
-                                  product.product.piecePrice /
-                                  product.product.piecesPerPack
-                                ).toFixed(2)}{" "}
+                                {
+                                  product.product.piecePrice.toFixed(2) 
+                                }
                                 JD
                               </span>
-                              <span className="text-sm text-muted-foreground line-through mr-2">
-                                {product.product.piecePrice.toFixed(2)} JD
-                              </span>
+                          /
                             </div>
-                            <span className="text-xs text-muted-foreground mr-1 truncate w-25">
+                            <span className="text-xs text-muted-foreground mr-1 truncate w-full">
                               {product.product.name}
                             </span>
                           </div>
+                          <div>
                           <span className="text-md w-[100%] mr-2">
                             Pack Price : {product.product.packPrice} JD
                           </span>
+                          </div>
+                        
+                            <div className="flex flex-col gap-2">
+  <span className="text-xs text-muted-foreground">
+                       عدد القطع  : {product.product.piecesPerPack}
+                   </span>
+                      </div>
                         </div>
                       ) : (
                         <>
@@ -146,10 +151,12 @@ export default function SpecialProducts() {
                         </>
                       )}
                     </div>
-
-                    <span className="text-xs text-muted-foreground">
+                      <div className="flex flex-col gap-2">
+  <span className="text-xs text-muted-foreground">
                       Unit Type : {product.product.unitType}
-                    </span>
+                   </span>
+                      </div>
+                  
                     <p className="text-xs text-muted-foreground mt-1">
                       minOrder : {product.product.minOrderQuantity} {product.name}
                     </p>

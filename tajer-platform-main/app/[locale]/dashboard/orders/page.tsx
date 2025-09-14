@@ -43,7 +43,6 @@ export default function Page() {
     fetchData();
   }, [status]);
 
-  // ألوان الحالات
   const statusColor = (status: string) => {
     switch (status) {
       case "PENDING":
@@ -144,7 +143,7 @@ export default function Page() {
                       className="p-3 cursor-pointer"
                       onClick={() => setOpenOrder(order)}
                     >
-                      {order.createdAt.split("T")[0]}
+                      {order.createdAt}
                     </td>
                     <td
                       className="p-3 cursor-pointer flex justify-center items-center gap-1"
@@ -184,7 +183,7 @@ export default function Page() {
                 <strong>اسم التاجر:</strong> {openOrder.merchant?.commercialName || "-"}
               </p>
               <p>
-                <strong>التاريخ:</strong> {openOrder.createdAt.split("T")[0]}
+                <strong>التاريخ:</strong> {openOrder.createdAt}
               </p>
               <p>
                 <strong>المبلغ الكلي:</strong> JD{openOrder.totalValue.toFixed(2)}
