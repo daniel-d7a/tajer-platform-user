@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Boxes, Download } from "lucide-react";
 import Link from "next/link";
 
@@ -16,6 +16,8 @@ interface Invoice {
 
 export default function Page() {
   const [openInvoice, setOpenInvoice] = useState<Invoice | null>(null);
+  const [InvoiceData,setinvoiceData] = useState(null);
+  const [loading,setLoading] = useState(true)
   const invoices: Invoice[] = [
     {
       id: "#001",
@@ -104,7 +106,20 @@ export default function Page() {
     },
 
   ];
-
+  const fetchInvoice = async () =>{
+    try{
+      const data = await fetch("https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=&page=&status=OUT_FOR_DELIVERY&from=&to=",
+        { credentials: "include" })
+        const res = await data.json();
+        setinvoiceData(res.data)
+    }finally{
+      setLoading(false)
+      console.log('success')
+    }
+  } 
+  useEffect(() =>{
+    fetchInvoice()
+  },[])
   return (
     <div className="font-cairo space-y-8 w-full mb-10">
       {/* الهيدر */}
@@ -137,11 +152,11 @@ export default function Page() {
             </tr>
           </thead>
           <tbody>
-            {invoices.map((invoice) => (
+            {InvoiceData?.map((invoice) => (
               <tr key={invoice.id} className="hover:bg-gray-800">
                 <td className="p-3 border-b">{invoice.id}</td>
-                <td className="p-3 border-b">{invoice.date}</td>
-                <td className="p-3 border-b">${invoice.total}</td>
+                <td className="p-3 border-b">{invoice.createdAt == null ? "غير محدد" : new Date(invoice.createdAt).toLocaleDateString("ar-EG")}</td>
+                <td className="p-3 border-b">JD {invoice.totalValue.toFixed(2)}</td>
                 <td className={`p-3 border-b ${invoice.statusColor}`}>
                   {invoice.status}
                 </td>
@@ -159,7 +174,6 @@ export default function Page() {
         </table>
       </div>
 
-      {/* Dialog التفاصيل */}
       {openInvoice && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className=" rounded-xl shadow-lg bg-background w-[500px] max-w-full p-6 space-y-4">
@@ -169,10 +183,10 @@ export default function Page() {
 
             <div className="space-y-2">
               <p>
-                <strong>التاريخ:</strong> {openInvoice.date}
+                <strong>التاريخ:</strong> {openInvoice.createdAt == null ? "غير محدد" : new Date(invoice.createdAt).toLocaleDateString("ar-EG")}
               </p>
               <p>
-                <strong>المبلغ الكلي:</strong> ${openInvoice.total}
+                <strong>المبلغ الكلي:</strong> ${openInvoice.totalValue.toFixed(2)}
               </p>
               <p>
                 <strong>الحالة:</strong>{" "}
@@ -181,10 +195,7 @@ export default function Page() {
                 </span>
               </p>
               <p>
-                <strong>طريقة الدفع:</strong> {openInvoice.payment}
-              </p>
-              <p>
-                <strong>عنوان الشحن:</strong> {openInvoice.shipping}
+                <strong>طريقة الدفع:</strong> عند الإستلام
               </p>
             </div>
 
@@ -207,7 +218,6 @@ export default function Page() {
                 ))}
               </tbody>
             </table>
-
             <div className="flex justify-end gap-3 mt-4">
               <button
                 className="px-4 py-2 rounded-md border border-gray-400 hover:bg-gray-500"

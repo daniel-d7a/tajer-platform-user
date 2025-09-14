@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-provider";
-import { Truck, Wallet, Percent, PiggyBank } from "lucide-react";
+import { Truck, Wallet, Percent, PiggyBank, DollarSign } from "lucide-react";
 import CountUp from "react-countup";
 
 type StatsType = {
@@ -108,13 +108,13 @@ const DashboardPage: React.FC = () => {
         <StatCard
           title="Total Spent"
           value={stats.totalSpent}
-          icon={<Percent className="w-[24px] h-[24px]" />}
+          icon={<DollarSign className="w-[24px] h-[24px]" />}
           loading={loading}
         />
         <StatCard
           title="Pending Orders"
           value={stats.pendingOrders}
-          icon={<PiggyBank className="w-[28px] h-[28px]" />}
+          icon={<Truck className="w-[28px] h-[28px]" />}
           loading={loading}
         />
       </div>
@@ -175,7 +175,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, loading }) => {
       <div className="flex flex-col mr-4">
         <span className="text-3xl font-bold w-full">
           {loading ? (
-            <span className="animate-pulse bg-gray-100 rounded w-20 h-8 block"></span>
+            <span className="animate-pulse  rounded w-20 h-8 block"></span>
           ) : (
             <CountUp end={value} duration={2.5} />
           )}
