@@ -13,6 +13,7 @@ interface SubCategory {
 interface Category {
   id: number;
   name: string;
+  imageUrl:string;
   children?: SubCategory[];
 }
 
@@ -35,7 +36,7 @@ export default function CategoryList() {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://tajer-backend.tajerplatform.workers.dev/api/public/categories?page=${page}&limit=6`
+          `https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page=${page}&search=`
         );
         const json: { data: Category[]; meta: Meta } = await res.json();
         setCategories(json.data);
@@ -83,7 +84,7 @@ export default function CategoryList() {
                 <div className="flex">
                   <div className="relative h-40 w-40">
                     <Image
-                      src={"/library.jpg"}
+                      src={category.imageUrl || "/library.jpg"}
                       alt={category.name}
                       fill
                       className="object-cover"

@@ -17,7 +17,7 @@ type Offer = {
   description: string;
   imageUrl: string;
   expiresAt: string;
-  minOrderQuantity: number;
+  minOrderQuantity: number ;
   maxOrderQuantity: number;
   unitType: string;
   piecePrice: number;
@@ -66,9 +66,8 @@ export default function Page() {
     fetchOffer();
   }, [id]);
   useEffect(() =>{
-            setQuantity(offerData?.minOrderQuantity)
-
-  },[offerData])
+      setQuantity(offerData?.minOrderQuantity ?? 1);
+  },[offerData]);
   const handleAddCart = async ({ id }: AddCartParams) => {
     try {
       setLoadingCart(true);
@@ -107,7 +106,7 @@ export default function Page() {
       <Head>
         <title>{offerData?.name || "Product Details"}</title>
         <meta
-          name="description"
+          name="description" 
           content={offerData?.description || "Check out this amazing product."}
         />
       </Head>

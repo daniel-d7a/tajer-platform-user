@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingBag, ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState,useEffect } from 'react';
 import { Skeleton } from '../ui/skeleton';
@@ -24,9 +24,12 @@ interface Product {
   unitType:string;
   piecesPerPack: number;
   packPrice: number;
+  factory : {
+    name:string
+  }
 }
 
-export default function ProductGrid() {
+export default function ProductGrid({categoryId} : {categoryId: number}) {
   const t = useTranslations('product');
   const searchParams = useSearchParams();
   const [productData, SetProductData] = useState<Product[]>([]);
@@ -40,7 +43,7 @@ export default function ProductGrid() {
     const fetchData = async () =>{
       try{
         SetLoading(true);
-        const fetchData = await fetch(`https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=&search=${search}&page=${page}&limit=`);
+        const fetchData = await fetch(`https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=${categoryId}&search=${search}&page=${page}&limit=`);
         const res = await fetchData.json();
         SetProductData(res.data);
         SetMeta(res.meta);
@@ -49,10 +52,12 @@ export default function ProductGrid() {
       };
     };
     fetchData();
+    // eslint-disable-next-line
   },[page, search]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full px-2 flex flex-col">
+    <div className="  gap-6 w-full px-2 flex flex-col">
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
 
       {loading &&
        Array.from({ length: 16 }).map((_, idx) => (
@@ -69,9 +74,9 @@ export default function ProductGrid() {
               </CardFooter>
             </Card>
       ))}
-
-      {!loading && productData.map(product => (
-        <Card key={product.id} className="overflow-hidden flex flex-col h-full">
+      {productData.length > 0 ? (
+        !loading  && productData.map((product) => (
+          <Card key={product.id} className="overflow-hidden flex flex-col h-full">
           <div className="relative pt-[100%]">
             {product.isOnSale && (
               <Badge className="absolute top-2 right-2 bg-primary z-10">
@@ -91,23 +96,20 @@ export default function ProductGrid() {
             </div>
             <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">{product.name}</h3>
             <p className="text-sm text-muted-foreground mb-2">
-              {product.manufacturer}
+              {product.factory.name}
             </p>
-
-          
-  <div className="flex items-baseline mt-2 ">
+            <div className="flex items-baseline mt-2 ">
                 {product.unitType === 'pack_only' || product.unitType === 'piece_or_pack' ? (
                  <div className='flex gap-2  flex-col w-full '>
                   <div className='flex  items-center '>
                     <div className='flex items-center gap-2'>
-    <span className="text-lg font-bold">
-                    {(product.piecePrice / product.piecesPerPack).toFixed(2)} JD
+                  <span className="text-lg font-bold">
+                    {(product.packPrice / product.piecesPerPack).toFixed(2)} JD
                   </span>
                    <span className="text-sm text-muted-foreground line-through mr-2">
                     {product.piecePrice.toFixed(2)} JD
                   </span>
                     </div>
-        
                      <span className="text-xs text-muted-foreground mr-1  truncate w-25">
                 / {product.name}
               </span>
@@ -142,9 +144,26 @@ export default function ProductGrid() {
             </Link>
           </CardFooter>
         </Card>
-      ))}
+      ))
+      ) : (
+        <div className="col-span-full text-center py-16">
+          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">No products found</h2>
+          <p className="text-muted-foreground mb-6">
+            try searching for something else
+          </p>
+          <Link href="/categories">
+            <Button className="bg-primary hover:bg-primary/90">
+              browseProducts
+            </Button>
+          </Link>
+        </div>
+      )}
+     
+      
+  </div>
 
-      <div className="flex justify-center items-center w-full gap-2 mt-6">
+      <div className="flex justify-start items-center w-full gap-2 mt-6">
         {Array.from({ length: meta.last_page || 1 }, (_, i) => i + 1).map((p) => (
           <Link key={p} href={`?search=${encodeURIComponent(search)}&page=${p}`} scroll={true}>
             <Button 
@@ -156,6 +175,8 @@ export default function ProductGrid() {
           </Link>
         ))}
       </div>
+           
+
     </div>
   );
 };

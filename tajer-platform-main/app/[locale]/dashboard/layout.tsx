@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -12,14 +12,45 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-export default function DashboardLayout({children}: {children: React.ReactNode}) {
+// تأكد أن رابط الإعدادات والروابط كلها تبدأ بـ / وليس localhost
+const sidebarLinks = [
+  { label: "الرئيسية", icon: <House />, href: "/dashboard" },
+  { label: "الفواتير", icon: <TicketSlash />, href: "/dashboard/invoice" },
+  { label: "السلة", icon: <ShoppingCart />, href: "/cart" },
+  { label: "الطلبات", icon: <Truck />, href: "/dashboard/orders" },
+  { label: "الإعدادات", icon: <Settings />, href: "/dashboard/settings" },
+];
+
+// دالة تنظف مسار الرابط من لغة الواجهة (locale) مثل /en أو /ar
+function getNormalizedPath(pathname: string) {
+  const parts = pathname.split('/');
+  // parts[0] is '', parts[1] could be 'en' or 'ar'
+  if (["en", "ar"].includes(parts[1])) {
+    return '/' + parts.slice(2).join('/');
+  }
+  return pathname;
+}
+
+// دالة تحدد الزر النشط (تدعم الروابط الفرعية)
+function isActiveRoute(currentPath: string, linkHref: string) {
+  const normalizedPath = getNormalizedPath(currentPath);
+  if (linkHref === "/dashboard") {
+    return normalizedPath === "/dashboard";
+  }
+  return (
+    normalizedPath === linkHref ||
+    normalizedPath.startsWith(linkHref + "/")
+  );
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [showMore, setShowMore] = useState(false);
   const userData = typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("data") || "{}")
     : null;
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
@@ -32,115 +63,44 @@ export default function DashboardLayout({children}: {children: React.ReactNode})
         <p className="text-lg font-medium">جاري تحويلك لصفحة تسجيل الدخول...</p>
       </div>
     );
-  };
+  }
+
   return (
-    <div className="flex min-h-screen" dir="rtl">
-      <div className="hidden md:block">
-        <Sidebar pathname={pathname} />
+    <div className="flex min-h-screen w-full bg-background" dir="rtl">
+      {/* Sidebar */}
+      <div className="hidden md:block w-1/5 border-l bg-background">
+        <aside className="fixed h-screen w-1/5 p-4 font-cairo flex flex-col items-center">
+          <h2 className="text-2xl font-bold mb-6">Tajer Dashboard</h2>
+          <nav className="w-full flex flex-col gap-2">
+            {sidebarLinks.map((item) => (
+              <SidebarButton
+                key={item.href}
+                label={item.label}
+                icon={item.icon}
+                href={item.href}
+                active={isActiveRoute(pathname, item.href)}
+              />
+            ))}
+          </nav>
+        </aside>
       </div>
-      <div className="w-full md:w-4/5 flex-1">
-        <div className="p-5 w-full space-y-8 ">
+
+      {/* Main Content */}
+      <div className="flex-1 md:w-4/5 p-4 space-y-6">
+        <div className="bg-card rounded-2xl shadow-sm">
           <h1 className="text-3xl">
             مرحبا <strong>{userData?.commercialName ?? "مستخدم"} !</strong>
           </h1>
-          <h3 className="text-ring">إحصائيات مفصلة عن أداء متجرك !</h3>
         </div>
-        <div className="p-5 w-full">
+        <div className="bg-card rounded-2xl shadow-sm">
           {children}
         </div>
       </div>
-      <BottomNavMobile showMore={showMore} setShowMore={setShowMore} pathname={pathname} />
+
+      <BottomNavMobile pathname={pathname} />
     </div>
   );
-};
-
-type SidebarProps = {
-  pathname: string | null;
-};
-
-const sidebarLinks = [
-  { label: "الرئيسية", icon: <House />, href: "/dashboard" },
-  { label: "الفواتير", icon: <TicketSlash />, href: "/dashboard/invoice" },
-  { label: "السلة", icon: <ShoppingCart />, href: "/cart" },
-  { label: "الطلبات", icon: <Truck />, href: "/dashboard/orders" },
-  { label: "الإعدادات", icon: <Settings />, href: "/dashboard/settings" },
-];
-type BottomNavMobileProps = {
-  showMore: boolean;
-  setShowMore: (v: boolean) => void;
-  pathname: string | null;
-};
-
-const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ showMore, setShowMore, pathname }) => {
-  const mainLinks = sidebarLinks.slice(0, 4);
-  const moreLinks = sidebarLinks.slice(4);
-  return (
-    <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t flex md:hidden justify-between px-2 py-1 shadow-lg">
-        {mainLinks.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex flex-col items-center flex-1 py-1 px-2 text-xs ${pathname === item.href ? "text-primary" : ""}`}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </Link>
-        ))}
-        <button
-          className="flex flex-col items-center flex-1 py-1 px-2 text-xs "
-          onClick={() => setShowMore(!showMore)}
-        >
-          <Settings />
-          <span>المزيد</span>
-        </button>
-      </nav>
-      {showMore && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-end md:hidden" onClick={() => setShowMore(false)}>
-          <div className="w-full bg-background rounded-t-xl p-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold mb-2">المزيد من الصفحات</h3>
-            <div className="flex flex-col gap-2">
-              {moreLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-2 p-2 rounded-md ${pathname === item.href ? "bg-primary text-white" : "hover:bg-gray-800"}`}
-                  onClick={() => setShowMore(false)}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-            <button className="mt-4 w-full py-2 rounded-md border border-gray-400 " onClick={() => setShowMore(false)}>
-              إغلاق
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-};
-const Sidebar: React.FC<SidebarProps> = ({ pathname }) => {
-  return (
-    <div className="min-w-[10vw] w-1/5 h-full lg:min-w-[270px]">
-      <aside className="w-1/5  fixed h-screen border-l p-4 bg-background font-cairo flex flex-col items-center">
-      <h2 className="text-2xl font-bold h-[15%] mb-6">Tajer Dashboard</h2>
-      <nav className="w-full flex flex-col gap-2 justify-center items-center ">
-        {sidebarLinks.map((item) => (
-          <SidebarButton 
-            key={item.href}
-            label={item.label}
-            icon={item.icon}
-            href={item.href}
-            active={pathname === item.href}
-          />
-        ))}
-      </nav>
-    </aside>
-    </div>
-  );
-};
+}
 
 type SidebarButtonProps = {
   label: string;
@@ -158,12 +118,33 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
   return (
     <Link
       href={href}
-      className={`w-full shadow-sm rounded-lg text-xl flex p-2 items-center gap-3 duration-300  text-center justify-center 
-        ${active ? "text-primary " : "hover:text-secondary"}`}
-      style={{ justifyContent: 'center' }}
+      className={`flex items-center gap-3 p-3 rounded-xl transition-all text-lg hover:bg-muted hover:text-secondary
+        ${active ? "text-primary  shadow-md hover:bg-muted" : ""}`}
     >
-      <span className="w-7 h-7 flex items-center justify-center ">{icon}</span>
-      <span className="w-[30%]">{label}</span>
+      <span className="w-6 h-6 flex items-center justify-center">{icon}</span>
+      <span>{label}</span>
     </Link>
+  );
+};
+
+type BottomNavMobileProps = {
+  pathname: string | null;
+};
+
+const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ pathname }) => {
+  return (
+    <nav className="fixed bg-background border-t flex md:hidden justify-between px-2 py-2 shadow-lg w-full bottom-0 left-0">
+      {sidebarLinks.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`flex flex-col items-center flex-1 py-1 px-2 text-xs transition-all 
+            ${isActiveRoute(pathname || "", item.href) ? "text-primary font-bold" : "text-muted-foreground"}`}
+        >
+          {item.icon}
+          <span>{item.label}</span>
+        </Link>
+      ))}
+    </nav>
   );
 };

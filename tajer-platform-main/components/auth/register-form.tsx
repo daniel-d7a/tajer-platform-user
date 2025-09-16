@@ -240,7 +240,7 @@ export default function RegisterForm() {
   passwordHash: values.password,
   city: values.city,
   area: values.city, 
-  locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`,
+  locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`, // be careful when you edite this line
   businessType: values.businessType,
   role: 'MERCHANT',
   referredByRepId: null,

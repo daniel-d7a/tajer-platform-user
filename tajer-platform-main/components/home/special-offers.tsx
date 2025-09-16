@@ -18,12 +18,10 @@ type Offer = {
 export default function SpecialOffers() {
   const t = useTranslations("home");
   const tc = useTranslations("common");
-
   const [offersData, setOffersData] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, SetErrorMessage] = useState("");
   const { isAuthenticated } = useAuth();
-
   useEffect(() => {
     const fetchOffers = async () => {
       try {
@@ -34,21 +32,20 @@ export default function SpecialOffers() {
         setOffersData(json.data.splice(0,10).filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
       } catch (err) {
         console.error("something went wrong", err);
-        SetErrorMessage("something went wrong, try again later please.");
+        SetErrorMessage(t('errorMessage'));
       } finally {
         setLoading(false);
-      }
+      };
     };
     fetchOffers();
-  
-  }, []);
+  }, [t]);
   return (
     <section className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="w-[90%] mx-auto flex grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
           Array.from({ length: 4 }).map((_, idx) => (
             <Card key={idx} className="animate-pulse h-64" />
@@ -81,7 +78,7 @@ export default function SpecialOffers() {
           ))
         ) : (
           <div className="col-span-full text-center text-muted-foreground">
-            no offers yet
+            {t('noOffers')}
             {errorMessage && <p>{errorMessage}</p>}
           </div>
         )}

@@ -51,7 +51,15 @@ export default function Settings() {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-5">
+         <div className="bg-card  rounded-2xl shadow-sm">
+          <h1 className="text-2xl font-bold">
+            إعدادات حسابك 
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            قم باداره حسابك من هنا 
+          </p>
+        </div>
       {/* Header Tabs */}
       <div className="w-full relative border-b border-gray-500 flex gap-6">
         {tabs.map((tab) => (
@@ -74,7 +82,7 @@ export default function Settings() {
       {/* Content */}
       <div className="w-full mt-6 font-cairo p-6 border rounded-xl shadow">
         {activeTab === "profile" && (
-        <Profile></Profile>
+        <Profile/>
         )}
         {activeTab === "security" && (
           <div>
@@ -124,6 +132,7 @@ export default function Settings() {
                   )}
                 />
                 </Form>
+                <div></div>
                       <div className="p-6 flex gap-2 ">
                 <Button className="bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium ">Save Changes</Button>
                 <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium  hover:bg-gray-800 cursor-pointer">cancel</button>

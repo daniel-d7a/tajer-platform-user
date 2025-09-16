@@ -87,7 +87,7 @@ export default function ProductGrid() {
                   <Badge className="absolute top-2 right-2 bg-primary z-10">
                     {t("offer")}
                   </Badge>
-                )}
+                )} 
                 <Image
                   src={product.imageUrl || "/placeholder.svg"}
                   alt={product.name}

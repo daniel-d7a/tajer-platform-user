@@ -37,9 +37,7 @@ export default function Companies() {
           >
             <Avatar className="w-full h-full mb-4">
               <AvatarImage className="w-full h-full object-cover rounded-lg" src={company.logo} alt={company.name} />
-
             </Avatar>
-
             <h3 className="text-xl font-semibold text-center mb-2">{company.name}</h3>
 
             <p className="text-gray-600 text-center mb-4">{company.description}</p>

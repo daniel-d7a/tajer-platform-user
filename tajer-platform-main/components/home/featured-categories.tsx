@@ -16,7 +16,7 @@ export default function FeaturedCategories() {
   const t = useTranslations('home');
   const tc = useTranslations('common');
   const [data, setData] = useState<Category[]>([]);
-
+  const [loading,setLoading] = useState(true)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,11 +27,11 @@ export default function FeaturedCategories() {
         setData(res.data);
       } finally {
         console.log('success ');
+        setLoading(false)
       }
     };
     fetchData();
   }, []);
-
   return (
     <section className="py-12">
       <div className="text-center mb-10">
@@ -41,7 +41,12 @@ export default function FeaturedCategories() {
         </p>
       </div>
       <div className="  grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mx-auto px-4">
-        {data.slice(0,5).map((category) => (
+        {loading ? (
+          <div className="col-span-5 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        ):(
+    data.slice(0,5).map((category) => (
           <Link key={category.id} href={`/categories/${category.id}`}>
             <Card className="overflow-hidden transition-all hover:shadow-md hover:bg-muted hover:scale-105">
               <CardContent className="p-4 text-center">
@@ -60,7 +65,9 @@ export default function FeaturedCategories() {
               </CardContent>
             </Card>
           </Link>
-        ))}
+        ))
+        )}
+    
       </div>
 
       <div>

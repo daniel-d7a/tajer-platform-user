@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-provider";
-import { Truck, Wallet, Percent, PiggyBank, DollarSign } from "lucide-react";
-import CountUp from "react-countup";
-
+import { Truck, Wallet, DollarSign } from "lucide-react";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { OrderRow } from "@/components/dashboard/OrderRow";
 type StatsType = {
   totalOrders: number;
   totalSpent: number;
@@ -27,13 +27,10 @@ type OrderType = {
 type OrdersResponse = {
   stats: StatsType;
   data: OrderType[];
-  meta: any;
 };
-
 const DashboardPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-
   const [ordersData, setOrdersData] = useState<OrderType[]>([]);
   const [stats, setStats] = useState<StatsType>({
     totalOrders: 0,
@@ -42,11 +39,10 @@ const DashboardPage: React.FC = () => {
     totalCashback: 0,
   });
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
-    }
+    };
   }, [isAuthenticated, router]);
 
   const fetchOrders = async () => {
@@ -90,9 +86,17 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 p-2 md:p-8">
+    <div className="space-y-8 md:p-8">
+          <div className="bg-card  rounded-2xl shadow-sm">
+          <h1 className="text-2xl font-bold">
+          إلقاء نظره سريعه علي أداء متجرك
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            إحصائيات مفصلة عن أداء متجرك !
+          </p>
+        </div>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+      <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-3  lg:grid-cols-4 gap-4 ">
         <StatCard
           title="Total Orders"
           value={stats.totalOrders}
@@ -130,6 +134,7 @@ const DashboardPage: React.FC = () => {
                 <th className="p-3">السعر الإجمالي</th>
                 <th className="p-3">الحالة</th>
                 <th className="p-3">تاريخ الإنشاء</th>
+                <th className="p-3">الإجرائات</th>
               </tr>
             </thead>
             <tbody className="text-base">
@@ -157,78 +162,4 @@ const DashboardPage: React.FC = () => {
     </div>
   );
 };
-
 export default DashboardPage;
-
-// ------------------ Stat Card ------------------
-type StatCardProps = {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  loading?: boolean;
-};
-
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, loading }) => {
-  return (
-    <div className="flex items-center border-1 hover:border-[var(--primary)] duration-300 rounded-2xl h-[100px] p-5 w-[100%] shadow">
-      <div className="text-[var(--primary)]">{icon}</div>
-      <div className="flex flex-col mr-4">
-        <span className="text-3xl font-bold w-full">
-          {loading ? (
-            <span className="animate-pulse  rounded w-20 h-8 block"></span>
-          ) : (
-            <CountUp end={value} duration={2.5} />
-          )}
-        </span>
-        <h2>{title}</h2>
-      </div>
-    </div>
-  );
-};
-
-// ------------------ Order Row ------------------
-type OrderRowProps = {
-  id: number;
-  merchant: string;
-  totalValue: number;
-  status: string;
-  createdAt: string | null;
-};
-
-const statusMapping: Record<string, string> = {
-  DELIVERED: "تم التسليم",
-  PROCESSING: "قيد التنفيذ",
-  OUT_FOR_DELIVERY: "خارج للتوصيل",
-  PENDING: "جاري التنفيذ",
-};
-
-const statusColor: Record<string, string> = {
-  DELIVERED: "text-green-600 font-semibold",
-  PROCESSING: "text-yellow-600 font-semibold",
-  OUT_FOR_DELIVERY: "text-blue-600 font-semibold",
-  PENDING: "text-yellow-600 font-semibold",
-};
-
-const OrderRow: React.FC<OrderRowProps> = ({
-  id,
-  merchant,
-  totalValue,
-  status,
-  createdAt,
-}) => {
-  const formattedDate = createdAt
-    ? new Date(createdAt).toLocaleDateString("ar-EG")
-    : "غير محدد";
-
-  return (
-    <tr className="border-b hover:bg-muted/40 duration-200">
-      <td className="p-3">{id}</td>
-      <td className="p-3">{merchant}</td>
-      <td className="p-3">JD {totalValue.toFixed(2)}</td>
-      <td className={`p-3 ${statusColor[status] || ""}`}>
-        {statusMapping[status] || status}
-      </td>
-      <td className="p-3">{formattedDate}</td>
-    </tr>
-  );
-};

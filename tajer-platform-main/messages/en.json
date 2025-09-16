@@ -3,6 +3,7 @@
     "home": "Home",
     "categories": "Categories",
     "companies": "Companies",
+    "dashboard" : "dashboard",
     "about": "About Tajer",
     "contact": "Contact Us",
     "faq": "FAQ",
@@ -14,7 +15,7 @@
     "viewAllProducts": "View All Products",
     "product": "Product",
     "products": "Products",
-    "offers": "Offers",
+    "offers": "Offers", 
     "offer": "Offer",
     "specialOffer": "Special Offer",
     "discount": "Discount",
@@ -91,7 +92,9 @@
     "joinTajer": "Join the Tajer platform today",
     "joinTajerDesc": "Register now and take advantage of the Tajer platform's benefits to get the best deals and products for your store",
     "getToKnowUs": "Learn more about us",
-    "joinAsTajer": "Register as a Merchant"
+    "joinAsTajer": "Register as a Merchant",
+    "noOffers" :"No offers Yet!",
+    "errorMessage" : "some thing went wrong please try again later!"
   },
   "categories": {
     "browseProducts": "Browse Products",
@@ -123,6 +126,11 @@
     "price": "Price",
     "salePrice": "Sale Price",
     "viewProduct": "View Product"
+  },
+   "specialProducts" : {
+      "title" : "Special Products" ,
+      "subTitle" : "View  Our featured Products",
+      "NotFoundProducts" : "No Products Yet !"
   },
     "categoriesNames":{
     "grocery": "grocery",
@@ -234,7 +242,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "back": "Back",
-    "showAll": "Show All"
+    "showAll": "Show All",
+    "featuredProducts" : "View Special Products"
   },
   "terms": {
     "title": "Terms and Conditions – Tajer Platform",

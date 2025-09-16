@@ -64,7 +64,7 @@ export default function Header() {
                 href="/dashboard"
                 className="text-sm font-medium transition-colors hover:text-primary"
               >
-                dashboard
+                {tc('dashboard')}
               </Link>
             ) : (
               <Link

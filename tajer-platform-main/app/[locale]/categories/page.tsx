@@ -23,7 +23,7 @@ export default function CategoriesPage() {
   return (
     <div className="w-[90%] py-8 mx-auto">
       <h1 className="text-3xl font-bold mb-6">{t('browseProducts')}</h1>
-
+ 
       <form onSubmit={handleSearch} className="relative mb-6">
         <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -42,11 +42,10 @@ export default function CategoriesPage() {
         <TabsContent value="categories">
           <CategoryList />
         </TabsContent>
-
         <TabsContent value="products">
           <Card>
             <CardContent className="p-6">
-              <ProductGrid />
+              <ProductGrid  categoryId={0}/>
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function Footer() {
@@ -30,24 +30,24 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex space-x-4">
               <Link
-                href="#"
+                href="https://www.facebook.com/share/1CJ9RgtSax/?mibextid=wwXIfr"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Facebook className="h-5 w-5" />
                 <span className="sr-only">فيسبوك</span>
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/tajer_jo?igsh=cGVncDA5cDVvMndk"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">انستغرام</span>
               </Link>
               <Link
-                href="#"
+                href="https://www.linkedin.com/company/tajer-%D8%AA%D8%A7%D8%AC%D8%B1/"
                 className="text-muted-foreground hover:text-primary"
               >
-                <Twitter className="h-5 w-5" />
+                <Linkedin className="h-5 w-5" />
                 <span className="sr-only">تويتر</span>
               </Link>
             </div>
