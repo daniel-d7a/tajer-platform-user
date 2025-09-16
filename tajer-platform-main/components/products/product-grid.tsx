@@ -9,10 +9,12 @@ import { useTranslations } from 'next-intl';
 import { useState,useEffect } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { useSearchParams } from 'next/navigation';
+import { usePathname } from "next/navigation";
 
 interface Product {
   id: number;
   name: string;
+  name_ar:string;
   imageUrl: string;
   piecePrice: number;
   salePrice?: number;
@@ -22,28 +24,37 @@ interface Product {
   manufacturer: string;
   minOrderQuantity: number;
   unitType:string;
-  piecesPerPack: number;
+  piecesPerPack: number; 
   packPrice: number;
   factory : {
     name:string
+    name_ar:string;
   }
 }
-
-export default function ProductGrid({categoryId} : {categoryId: number}) {
+export default function ProductGrid({categoryId ,factoryId} : {categoryId: number ; factoryId : number}) {
   const t = useTranslations('product');
+  const tS = useTranslations("specialProducts");
+  const tc = useTranslations("common");
+  const tn = useTranslations('noProducts');
   const searchParams = useSearchParams();
   const [productData, SetProductData] = useState<Product[]>([]);
   const [loading,SetLoading] = useState(true);
   const [meta,SetMeta] = useState<{ last_page: number }>({ last_page: 1 });
-
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
   const page = Number(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
-
+  
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
   useEffect(() =>{
     const fetchData = async () =>{
       try{
         SetLoading(true);
-        const fetchData = await fetch(`https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=${categoryId}&search=${search}&page=${page}&limit=`);
+        const fetchData = await fetch(`https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=${categoryId}&factoryId=${factoryId}&search=${search}&page=${page}&limit=`);
         const res = await fetchData.json();
         SetProductData(res.data);
         SetMeta(res.meta);
@@ -56,7 +67,7 @@ export default function ProductGrid({categoryId} : {categoryId: number}) {
   },[page, search]);
 
   return (
-    <div className="  gap-6 w-full px-2 flex flex-col">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="gap-6 w-full px-2 flex flex-col">
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
 
       {loading &&
@@ -85,7 +96,7 @@ export default function ProductGrid({categoryId} : {categoryId: number}) {
             )}
             <Image
               src={product.imageUrl || '/placeholder.svg'}
-              alt={product.name}
+              alt={language === 'en' ? product.name : product.name_ar}
               fill
               className="object-cover absolute top-0 left-0"
             />
@@ -94,45 +105,49 @@ export default function ProductGrid({categoryId} : {categoryId: number}) {
             <div className="text-sm text-muted-foreground mb-1">
               {product.category}
             </div>
-            <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">{product.name}</h3>
+            <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full"> {language === 'en' ? product.name : product.name_ar}</h3>
             <p className="text-sm text-muted-foreground mb-2">
-              {product.factory.name}
+              {language === 'en' ? product.factory.name : product.factory.name_ar}
             </p>
-            <div className="flex items-baseline mt-2 ">
-                {product.unitType === 'pack_only' || product.unitType === 'piece_or_pack' ? (
-                 <div className='flex gap-2  flex-col w-full '>
-                  <div className='flex  items-center '>
-                    <div className='flex items-center gap-2'>
-                  <span className="text-lg font-bold">
-                    {(product.packPrice / product.piecesPerPack).toFixed(2)} JD
-                  </span>
-                   <span className="text-sm text-muted-foreground line-through mr-2">
-                    {product.piecePrice.toFixed(2)} JD
-                  </span>
-                    </div>
-                     <span className="text-xs text-muted-foreground mr-1  truncate w-25">
-                / {product.name}
-              </span>
-                  </div>
-                    <span className="text-md w-[100%]  mr-2">
-                    Pack Price : {product.packPrice.toFixed(2)} JD
-                  </span>
-                 </div>
-                ) : (  
-                <>
-                 <span className="text-lg font-bold">
-                  {product.piecePrice.toFixed(2)} JD
-                </span>
-                 <span className="text-xs text-muted-foreground mr-1  truncate w-25">
-                / {product.name}
-              </span>
-                </>
-               )}    
-            </div>
+            <div className="flex items-baseline mt-2">
+              {product.unitType === 'pack_only' || product.unitType === 'piece_or_pack' ? (
+  <div className="flex flex-col gap-2 w-full">
+    <div className="flex items-center justify-between  gap-2">
+      <div className="flex items-center gap-2">
+        <span className="text-lg font-bold">
+          {(product.packPrice / product.piecesPerPack).toFixed(2)} {tc('coins')}
+        </span>
+        <span className="text-sm text-muted-foreground line-through">
+          {product.piecePrice.toFixed(2)} {tc('coins')}
+        </span>
+          <span className="text-xs text-muted-foreground truncate w-25">
+        / {language === 'en' ? product.name : product.name_ar}
+      </span>
+      </div>
+    
+    </div>
 
-            <span className='text-xs text-muted-foreground'>Unit Type : {product.unitType}</span>
+    <span className="text-md">
+      {tS('PackPrice')} : {product.packPrice.toFixed(2)} {tc('coins')}
+    </span>
+  </div>
+) : (
+  <div className="flex items-center justify-between flex-wrap gap-2">
+    <span className="text-lg font-bold">
+      {product.piecePrice.toFixed(2)} {tc('coins')}
+    </span>
+    <span className="text-xs text-muted-foreground truncate">
+      / {language === 'en' ? product.name : product.name_ar}
+    </span>
+  </div>
+)}
+
+            </div>
+            <span className='text-xs text-muted-foreground'>
+              {tS('UnitType')} : {product.unitType === "piece_only" ? tS('pieceOnly') : product.unitType === "pack_only" ? tS('packOnly') : tS('pieceOrPack')}
+               </span>
             <p className="text-xs text-muted-foreground mt-1">
-              {t('minOrder')} : {product.minOrderQuantity} {product.name}
+              {t('minOrder')} : {product.minOrderQuantity}/  {language === 'en' ? product.name : product.name_ar}
             </p>
           </CardContent>
           <CardFooter className="p-4 pt-0">
@@ -147,17 +162,17 @@ export default function ProductGrid({categoryId} : {categoryId: number}) {
       ))
       ) : (
         <div className="col-span-full text-center py-16">
-          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">No products found</h2>
-          <p className="text-muted-foreground mb-6">
-            try searching for something else
-          </p>
-          <Link href="/categories">
-            <Button className="bg-primary hover:bg-primary/90">
-              browseProducts
-            </Button>
-          </Link>
-        </div>
+                <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-2xl font-semibold mb-2">{tn('title')}</h2>
+                <p className="text-muted-foreground mb-6">
+                    {tn('subTitle')}
+                </p>
+                <Link href="/categories">
+                  <Button className="bg-primary hover:bg-primary/90">
+                    {tn('browseProducts')}
+                  </Button>
+                </Link>
+          </div>
       )}
      
       

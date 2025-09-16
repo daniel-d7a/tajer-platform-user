@@ -24,7 +24,7 @@ export default function Page() {
           className="pr-10"
         />
       </form>
-      <ProductGrid categoryId={Number(id)}/>
+      <ProductGrid factoryId={0} categoryId={Number(id)}/>
     </div>
   )
 }

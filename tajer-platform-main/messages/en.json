@@ -1,12 +1,17 @@
 {
   "common": {
     "home": "Home",
+    "noSignIn" : "You are being redirected to the login page...",
     "categories": "Categories",
     "companies": "Companies",
-    "dashboard" : "dashboard",
+    "welcome" : "welcome",
+    "dashboard" : "Dashboard",
     "about": "About Tajer",
+    "loading" : "loading...",
     "contact": "Contact Us",
     "faq": "FAQ",
+    "coins" : "JD",
+    "noData" : "No Data",
     "terms": "Terms and Conditions",
     "privacy": "Privacy Policy", 
     "search": "Search for products...",
@@ -56,8 +61,8 @@
     "terms": "Terms and Conditions",
     "privacy": "Privacy Policy",
     "faq": "FAQ",
-    "email": "Email: info@tajer.com",
-    "phone": "Phone: +999-999-9999",
+    "email": "Email: ",
+    "phone": "Phone: ",
     "address": "Address: Amman, Jordan",
     "copyright": "All rights reserved",
     "followUs": "Follow Us",
@@ -104,6 +109,120 @@
     "productsCount": "{{count}} products",
     "subcategories": "Subcategories"
   },
+    "orders" : {
+    "OrdersTitle" : "Your Orders",
+      "Invoices" : "Your Invoices",
+      "InvoiceId" : "Invoice Id",
+      "showDetails" : "show Details",
+      "noOrders" : "No orders yet! Place an order now!",
+    "label" : {
+      "orderid" : "Order Id",
+      "merchnat" : "Merchant",
+      "total" : "Value",
+      "createdAt" : "Created At",
+      "status" : "staties",
+      "actions" : "actions"
+    },
+    "status" : {
+      "Delivered" : "Delivered",
+      "PROCESSING" : "In Progress",
+      "OUT_FOR_DELIVERY" : "Out for Delivery ",
+      "PENDING" : "Pending"
+    }
+  },
+  "orderDetails" : {
+    "loading" : "loading Order Details ...",
+    "orderdetails" : "Order Details",
+    "commercialName" : "Merchant Name",
+    "status" : "Order Status",
+    "value" : "Order Value",
+    "orderDate" : "Order date",
+    "orderProducts" : "Number of products",
+    "Demandproducts" : "Demand products",
+    "errorMessage": "some thing went wrong please try again later!",
+    "noProducts" : "No Products in this order"
+  },
+  "dashboard" : {
+    "recentOrders" :"Recent Orders" ,
+    "labels" : {
+      "main" : "Home",
+      "invoices" : "Invoices",
+      "cart" : "Cart",
+      "orders" : "Orders",
+      "settings" : "settings"
+    },
+    
+    "cardreview" : {
+      "totalOrder" : "Total Orders",
+      "totalCashback" : "total Cashback",
+      "totalSpent" : "total Spent",
+      "pendingOrders" : "pending Orders"
+    }
+  },
+  "security": {
+  "title": "Account Settings",
+  "acitvepassword": "Current Password",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "saveChanges": "Save Changes"
+},
+  "settings" : {
+    "label" : {
+      "profile" : "Profile",
+      "security" : "Security"
+    },
+    "security" : {
+      "title" : "إعدادات الحساب",
+      "acitvepassword" : "كلمه السر الحاليه",
+      "password" : "كلمة السر",
+      "confirmPassword" : "تأكيد كلمه السر",
+      "saveChanges" : "حفظ التغييرات"
+    }
+  },
+"settingsProfile" : {
+  "title": "Edit your profile info",
+  "fields": {
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "Enter your business name",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "phone": "Phone",
+    "phonePlaceholder": "+962...",
+    "verifying": "Verifying...",
+    "sendVerification": "Send Verification",
+    "city": "City",
+    "cityPlaceholder": "Select your city",
+    "businessType": "Business Type",
+    "businessTypePlaceholder": "Select your business type",
+    "referralCode": "Referral Code",
+    "referralCodePlaceholder": "Enter your referral code",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel"
+  },
+  "location": {
+    "locateMe": "Locate Me",
+    "locating": "Locating...",
+    "locatedCity": "Located City",
+    "outsideJordan": "Outside Jordan",
+    "outsideJordanAlert": "Please note the app may not work properly since you are outside Jordan, please select your city manually.",
+    "browserNotSupported": "Your browser does not support location detection.",
+    "permissionDenied": "Location permission denied. Please allow location access in browser settings.",
+    "positionUnavailable": "Location information is not available.",
+    "timeout": "Location request timed out.",
+    "unknownError": "An unknown error occurred while detecting location."
+  },
+  "schema": {
+    "businessNameMin": "Business name must be at least 3 characters.",
+    "phoneMin": "Phone number must be at least 10 digits.",
+    "cityRequired": "Please choose a city or detect your location.",
+    "businessTypeRequired": "Please select a business type.",
+    "phoneInvalid": "Please enter a valid phone number."
+  },
+  "messages": {
+    "editSuccess": "Profile updated successfully.",
+    "editError": "An error occurred, please try again."
+  }
+},
   "product": {
     "backToProducts": "Back to Products",
     "category": "Category",
@@ -127,10 +246,35 @@
     "salePrice": "Sale Price",
     "viewProduct": "View Product"
   },
+  "productId":{
+     "coins" : "JD",
+     "MinimumOrderQuantity" : "Minimum Order Quantity",
+     "Quantity" : "Quantity",
+     "Piece" : "Piece" ,
+     "description" : "Description",
+     "Specifications" : "Specifications"
+   },
    "specialProducts" : {
       "title" : "Special Products" ,
       "subTitle" : "View  Our featured Products",
-      "NotFoundProducts" : "No Products Yet !"
+      "NotFoundProducts" : "No Products Yet !",
+      "PackPrice" : "Pack Price",
+      "piecesPerPack" : "pieces Per Pack",
+      "UnitType" : "Unit Type",
+      "minOrder" :"min order",
+      "pieceOnly" : "piece Only",
+      "packOnly" : "pack Only",
+      "pieceOrPack" : "piece Or Pack"
+  },
+    "noProducts" : {
+    "title" : "No Products Yet!",
+    "subTitle" :"There are no products for this search. Try searching for any other product.",
+    "browseProducts" : "Browse Products"
+  },
+   "noCategories" : {
+    "title" : "No categories",
+    "subTitle" :"There are no categories for this search. Try searching for any other category.",
+    "browseProducts" : "Browse Categories"
   },
     "categoriesNames":{
     "grocery": "grocery",
@@ -140,7 +284,7 @@
     "bookstore": "bookstore",
     "coffeeShop": "coffeeShop"
   },
-     "offers": {
+    "offers": {
     "groceryOffer": "  Special offer on grocery products",
     "beverageOffer": "Special offer on beverages",
     "IceCreamOffer": "Summer offers on ice creams",
@@ -243,6 +387,7 @@
     "confirm": "Confirm",
     "back": "Back",
     "showAll": "Show All",
+    "viewProducts" : "View Products",
     "featuredProducts" : "View Special Products"
   },
   "terms": {

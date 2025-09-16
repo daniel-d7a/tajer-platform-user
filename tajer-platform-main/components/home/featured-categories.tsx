@@ -4,19 +4,30 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { usePathname } from "next/navigation";
 
 interface Category {
   id: number;
   name: string;
   imageUrl?: string;
   count: number;
+  name_ar: string ;
 }
 
 export default function FeaturedCategories() {
+
   const t = useTranslations('home');
   const tc = useTranslations('common');
   const [data, setData] = useState<Category[]>([]);
   const [loading,setLoading] = useState(true)
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,7 +69,7 @@ export default function FeaturedCategories() {
                     className="object-cover h-full w-full scale-105 transition-transform duration-300 hover:scale-110 hover:opacity-80 object-center"
                   />
                 </div>
-                <h3 className="font-semibold">{category.name}</h3>
+                <h3 className="font-semibold">{language === 'en' ? category.name : category.name_ar}</h3>
                 <p className="text-sm text-muted-foreground">
                   {category.count} {tc('products')}
                 </p>

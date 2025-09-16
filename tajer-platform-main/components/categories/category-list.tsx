@@ -4,15 +4,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { ShoppingBag } from "lucide-react";
+import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
 
 interface SubCategory {
   id: number;
   name: string;
+  name_ar:string;
 }
 
 interface Category {
   id: number;
   name: string;
+  name_ar:string;
   imageUrl:string;
   children?: SubCategory[];
 }
@@ -23,20 +28,26 @@ interface Meta {
   total: number;
 }
 
-export default function CategoryList() {
+export default function CategoryList({search} : {search:string}) {
   const tc = useTranslations("common");
-
+  const tn = useTranslations('noCategories')
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<Meta | null>(null);
-
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page=${page}&search=`
+          `https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page=${page}&search=${search}`
         );
         const json: { data: Category[]; meta: Meta } = await res.json();
         setCategories(json.data);
@@ -48,11 +59,9 @@ export default function CategoryList() {
       }
     };
     fetchCategories();
-  }, [page]);
-
+  }, [page,search]);
   return (
-    <div className="flex flex-col gap-8">
-      {/* الكروت */}
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
           Array.from({ length: 6 }).map((_, idx) => (
@@ -85,13 +94,13 @@ export default function CategoryList() {
                   <div className="relative h-40 w-40">
                     <Image
                       src={category.imageUrl || "/library.jpg"}
-                      alt={category.name}
+                      alt={language === "en" ? category.name : category.name_ar}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="p-4 flex-1">
-                    <h3 className="text-xl font-semibold">{category.name}</h3>
+                    <h3 className="text-xl font-semibold">{language === "en" ? category.name : category.name_ar}</h3>
                     <p className="text-sm text-muted-foreground mb-2">
                       {tc("products")}
                     </p>
@@ -102,7 +111,7 @@ export default function CategoryList() {
                           href={`/categories/${category.id}/${sub.id}`}
                           className="text-xs bg-muted px-2 py-1 rounded-md hover:bg-primary/10"
                         >
-                          {sub.name}
+                         {language === "en" ? sub.name : sub.name_ar}
                         </Link>
                       ))}
                     </div>
@@ -118,15 +127,23 @@ export default function CategoryList() {
             </Card>
           ))
         ) : (
-          <div className="col-span-full text-center text-muted-foreground">
-            {tc("noData")}
-          </div>
+           <div className="col-span-full text-center py-16">
+          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">{tn('title')}</h2>
+          <p className="text-muted-foreground mb-6">
+              {tn('subTitle')}
+          </p>
+          <Link href="/categories">
+            <Button className="bg-primary hover:bg-primary/90">
+              {tn('browseProducts')}
+            </Button>
+          </Link>
+        </div>
         )}
       </div>
-
       {/* Pagination */}
       {meta && meta.last_page > 1 && (
-        <div className="flex justify-center gap-4 items-center">
+        <div className="flex justify-start w-full bg-red-500 gap-4 items-center">
           <button
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
@@ -148,4 +165,4 @@ export default function CategoryList() {
       )}
     </div>
   );
-}
+};

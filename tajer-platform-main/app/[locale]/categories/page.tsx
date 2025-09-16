@@ -14,7 +14,7 @@ export default function CategoriesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentSearch = searchParams.get("search") || "";
-  const [searchValue, setSearchValue] = useState(currentSearch);
+  const [searchValue, setSearchValue] = useState<string>(currentSearch);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +40,12 @@ export default function CategoriesPage() {
         </TabsList>
 
         <TabsContent value="categories">
-          <CategoryList />
+          <CategoryList  search={String(searchValue)}/>
         </TabsContent>
         <TabsContent value="products">
           <Card>
             <CardContent className="p-6">
-              <ProductGrid  categoryId={0}/>
+              <ProductGrid factoryId={0} categoryId={0}/>
             </CardContent>
           </Card>
         </TabsContent>

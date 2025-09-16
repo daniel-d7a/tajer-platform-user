@@ -10,10 +10,12 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Toast from "../../dashboard/settings/toast";
-
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 type Offer = {
   id: number;
   name: string;
+  name_ar:string;
   description: string;
   imageUrl: string;
   expiresAt: string;
@@ -23,8 +25,16 @@ type Offer = {
   piecePrice: number;
   packPrice: number;
   piecesPerPack: number;
-  categories: { id: number; name: string }[];
+  categories: { 
+    id: number; 
+    name: string ;
+    name_ar:string 
+  }[];
   manufacturer: string;
+  factory:{
+    name:string;
+    name_ar:string;
+  }
 };
 type AddCartParams = {
 id: string | number;
@@ -32,7 +42,11 @@ id: string | number;
 export default function Page() {
   const params = useParams<{ id: string }>();
   const id = params.id;
-
+  const tS = useTranslations("specialProducts");
+  const tP = useTranslations('product')
+  const tid = useTranslations('productId')
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
   const [offerData, setOfferData] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,6 +54,12 @@ export default function Page() {
   const [quantity, setQuantity] = useState(1);
   const [message,setMessage] = useState('');
   const [loadingCart, setLoadingCart] = useState(false);
+
+    useEffect(() => {
+      const segments = pathname.split("/").filter(Boolean);
+      const lang = segments[0]; 
+      setLanguage(lang)
+    }, [pathname]);
   useEffect(() => {
     if (!id) return;
     const fetchOffer = async () => {
@@ -102,7 +122,7 @@ export default function Page() {
     }
   };
   return (
-    <div className="flex flex-col gap-3">
+    <div dir={language==='ar' ? "rtl" : "ltr"} className="flex flex-col gap-3">
       <Head>
         <title>{offerData?.name || "Product Details"}</title>
         <meta
@@ -127,7 +147,7 @@ export default function Page() {
               <div className="relative aspect-square overflow-hidden rounded-lg border">
                 <Image
                   src={offerData.imageUrl || "/placeholder.jpg"}
-                  alt={offerData.name || "Product image"}
+                  alt={language==='ar' ? offerData.name_ar : offerData.name_ar || "Product image"}
                   fill
                   className="object-cover rounded-lg"
                 />
@@ -135,13 +155,15 @@ export default function Page() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-muted-foreground">
-                    {offerData?.categories?.[0]?.name || "Uncategorized"}
+                    { offerData?.categories.map((e) => <p key={e.id}>
+                      {language === 'en' ? e.name: e.name_ar}</p>
+                    )}
                   </h3>
                   <h1 className="text-4xl font-bold mb-2">
-                    {offerData?.name || "Unnamed Product"}
+                    {language === 'ar' ? offerData?.name_ar : offerData?.name}
                   </h1>
                   <p className="text-muted-foreground">
-                    {offerData.manufacturer || "Unknown Manufacturer"}
+                    {language === 'ar' ? offerData.factory.name_ar : offerData.factory.name || "Unknown Manufacturer"}
                   </p>
                 </div>
                 {pieceOrNot ? (
@@ -150,10 +172,10 @@ export default function Page() {
                       {offerData.packPrice && offerData.piecesPerPack
                         ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
                         : "0.00"}{" "}
-                      JD
+                      {tid('coins')}
                     </span>
                     <span className="text-2xl text-muted-foreground line-through">
-                      {offerData.piecePrice?.toFixed(2) || "0.00"} JD
+                      {offerData.piecePrice?.toFixed(2) || "0.00"} {tid('coins')}
                     </span>
                   </div>
                 ) : (
@@ -162,14 +184,14 @@ export default function Page() {
                       {offerData.piecePrice
                         ? offerData.piecePrice.toFixed(2)
                         : "0.00"}{" "}
-                      JD
+                      {tid('coins')}
                     </span>
                   </div>
                 )}
 
                 <div className="space-y-2">
                   <p className="text-sm">
-                    <strong>Minimum Order Quantity:</strong>{" "}
+                    <strong>{tid('MinimumOrderQuantity')}</strong>{" "}
                     {offerData.minOrderQuantity || 1}
                   </p>
                   {pieceOrNot && (
@@ -179,7 +201,7 @@ export default function Page() {
                         {offerData.packPrice && offerData.piecesPerPack
                           ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
                           : "0.00"}{" "}
-                        Piece
+                        {tid('Piece')}
                       </span>
                     </p>
                   )}
@@ -187,32 +209,31 @@ export default function Page() {
 
                 <Separator />
                 <div>
-                  <h3>Description</h3>
+                  <h3>{tid('description')}</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     {offerData.description || "No description available."}
                   </p>
                 </div>
-
                 <div className="font-semibold mb-2">
-                  <h3 className="font-semibold mb-2">Specifications</h3>
+                  <h3 className="font-semibold mb-2">{tid('Specifications')}</h3>
                   <ul className="space-y-1">
                     <li className="text-sm text-muted-foreground">
-                      Unit Type: {offerData.unitType || "N/A"}
+                       {tS('UnitType')} : {offerData.unitType === "piece_only" ? tS('pieceOnly') : offerData.unitType === "pack_only" ? tS('packOnly') : tS('pieceOrPack')}
                     </li>
                     {pieceOrNot && (
                       <>
                         <li className="text-sm text-muted-foreground">
-                          Pack Price: {offerData.packPrice || "N/A"}
+                          {tS('packOnly')}: {offerData.packPrice || "N/A"}
                         </li>
                         <li className="text-sm text-muted-foreground">
-                          Pieces Per Pack: {offerData.piecesPerPack || "N/A"}
+                         {tS('pieceOrPack')}: {offerData.piecesPerPack || "N/A"}
                         </li>
                       </>
                     )}
                   </ul>
                 </div>
                 <div className=" flex gap-2 items-center">
-                    <p>Quantity</p>
+                    <p>{tid('Quantity')}</p>
                   <div className="flex items-center space-x-2 space-x-reverse gap-1">
                       <Button
                           variant="outline"
@@ -261,30 +282,28 @@ export default function Page() {
                     ) : (
                       <div className="flex items-center gap-2">
                         <ShoppingCart className="h-5 w-5 ml-2" />
-                        Add to Cart
+                        {tP('addToCart')}
                       </div>
-                    
                     )}
-                    
                   </Button>
 
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="flex flex-col items-center space-y-2">
                       <Truck className="h-6 w-6 text-secondary" />
                       <span className="text-xs text-muted-foreground">
-                        Fast Delivery
+                        {tP('fastDelivery')}
                       </span>
                     </div>
                     <div className="flex flex-col items-center space-y-2">
                       <Shield className="h-6 w-6 text-secondary" />
                       <span className="text-xs text-muted-foreground">
-                        Quality Guarantee
+                        {tP('qualityGuarantee')}
                       </span>
                     </div>
                     <div className="flex flex-col items-center space-y-2">
                       <RefreshCw className="h-6 w-6 text-secondary" />
                       <span className="text-xs text-muted-foreground">
-                        Returnable
+                        {tP('returnable')}
                       </span>
                     </div>
                   </div>

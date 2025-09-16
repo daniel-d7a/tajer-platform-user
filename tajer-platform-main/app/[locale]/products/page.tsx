@@ -38,7 +38,7 @@ export default function SpecialOffers() {
         SetErrorMessage("something went wrong, try again later please.");
       } finally {
         setLoading(false);
-      }
+      };
     };
     fetchOffers();
   }, []);

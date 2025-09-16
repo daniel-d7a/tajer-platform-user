@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Truck, Wallet, DollarSign } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -30,6 +31,9 @@ type OrdersResponse = {
 };
 const DashboardPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const tc = useTranslations('common');
+  const td = useTranslations('dashboard')
+  const to = useTranslations('orders')
   const router = useRouter();
   const [ordersData, setOrdersData] = useState<OrderType[]>([]);
   const [stats, setStats] = useState<StatsType>({
@@ -43,7 +47,7 @@ const DashboardPage: React.FC = () => {
     if (!isAuthenticated) {
       router.push("/login");
     };
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated]);
 
   const fetchOrders = async () => {
     try {
@@ -80,11 +84,10 @@ const DashboardPage: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-lg font-medium">جاري تحويلك لصفحة تسجيل الدخول...</p>
+        <p className="text-lg font-medium">{tc('noSignIn')}</p>
       </div>
     );
   }
-
   return (
     <div className="space-y-8 md:p-8">
           <div className="bg-card  rounded-2xl shadow-sm">
@@ -98,25 +101,25 @@ const DashboardPage: React.FC = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-3  lg:grid-cols-4 gap-4 ">
         <StatCard
-          title="Total Orders"
+          title={td('cardreview.totalOrder')}
           value={stats.totalOrders}
           icon={<Truck className="w-[24px] h-[24px]" />}
           loading={loading}
         />
         <StatCard
-          title="Cashback"
+          title={td('cardreview.totalCashback')}
           value={stats.totalCashback}
           icon={<Wallet className="w-[24px] h-[24px]" />}
           loading={loading}
         />
         <StatCard
-          title="Total Spent"
+          title={td('cardreview.totalSpent')}
           value={stats.totalSpent}
           icon={<DollarSign className="w-[24px] h-[24px]" />}
           loading={loading}
         />
         <StatCard
-          title="Pending Orders"
+          title={td('cardreview.pendingOrders')}
           value={stats.pendingOrders}
           icon={<Truck className="w-[28px] h-[28px]" />}
           loading={loading}
@@ -124,24 +127,24 @@ const DashboardPage: React.FC = () => {
       </div>
       {/* Recent Orders */}
       <div className="rounded-xl ">
-        <h2 className="text-2xl font-bold mb-4">أحدث الطلبات</h2>
+        <h2 className="text-2xl font-bold mb-4">{td('recentOrders')}</h2>
         <div className="overflow-x-auto rounded-xl border shadow-sm mb-5">
           <table className="w-full min-w-[600px] text-center border-collapse">
             <thead className=" border-b">
               <tr className="text-lg">
-                <th className="p-3">رقم الطلب</th>
-                <th className="p-3">المتجر</th>
-                <th className="p-3">السعر الإجمالي</th>
-                <th className="p-3">الحالة</th>
-                <th className="p-3">تاريخ الإنشاء</th>
-                <th className="p-3">الإجرائات</th>
+                <th className="p-3">{to('label.orderid')} </th>
+                <th className="p-3">{to('label.merchnat')} </th>
+                <th className="p-3">{to('label.total')} </th>
+                <th className="p-3">{to('label.status')}</th>
+                <th className="p-3">{to('label.createdAt')} </th>
+                <th className="p-3">{to('label.actions')}</th>
               </tr>
             </thead>
             <tbody className="text-base">
               {!loading && ordersData.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-6 text-center text-muted-foreground">
-                    لا يوجد طلبات حتى الآن
+                      {to('noOrders')}
                   </td>
                 </tr>
               )}

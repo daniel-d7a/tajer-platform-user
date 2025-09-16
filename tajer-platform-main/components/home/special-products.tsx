@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 interface ProductType {
   id: string;
@@ -20,6 +21,7 @@ interface ProductType {
   unitType: string;
   product: {
     name: string;
+    name_ar:string;
     imageUrl: string;
     category: string;
     manufacturer: string;
@@ -35,10 +37,17 @@ interface ProductType {
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons")
+  const tc = useTranslations("common")
   const router = useRouter();
   const [Products, setProducts] = useState<ProductType[] | null>(null);
   const [loading, SetLoading] = useState(true);
-  
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
+    useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
   const fetchSpecialProducts = async () => {
     try {
       const data = await fetch(
@@ -66,7 +75,6 @@ export default function SpecialProducts() {
             {t('subTitle')}
           </p>
         </div>
-
         {loading ? (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {Array.from({ length: 4 }).map((_, idx) => (
@@ -88,7 +96,7 @@ export default function SpecialProducts() {
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {Products.slice(0, 4).map((product) => (
       <Link key={product.id} className="w-[100%] h-full" href={`/products/${product.product.id}`}>
-        <Card className="overflow-hidden flex flex-col h-full">
+        <Card className="overflow-hidden flex flex-col h-full  rounded-2xl hover:scale-105 duration-300">
           <div className="relative pt-[100%]">
             {product.isOnSale && (
               <Badge className="absolute top-2 right-2 bg-primary z-10">
@@ -105,7 +113,7 @@ export default function SpecialProducts() {
           <CardContent className="p-4 flex-grow">
             <div className="text-sm text-muted-foreground mb-1"></div>
             <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">
-              {product.product.name}
+              {language === 'en' ? product.product.name : product.product.name_ar}
             </h3>
             <p className="text-sm text-muted-foreground mb-2">
               {product.product.manufacturer}
@@ -116,34 +124,34 @@ export default function SpecialProducts() {
               product.product.unitType === "piece_or_pack" ? (
                 <div className="flex gap-2 flex-col w-full">
                   <div className="flex items-center">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full">
                       <span className="text-lg font-bold">
-                        {product.product.piecePrice.toFixed(2)} JD
+                        {product.product.piecePrice.toFixed(2)} {tc('coins')}
                       </span>
                       /
-                    </div>
-                    <span className="text-xs text-muted-foreground mr-1 truncate w-full">
-                      {product.product.name}
+                       <span className="text-xs text-muted-foreground  ">
+                        {language === 'en' ? product.product.name : product.product.name_ar}
                     </span>
+                    </div>
                   </div>
                   <div>
-                    <span className="text-md w-[100%] mr-2">
-                      Pack Price : {product.product.packPrice} JD
+                    <span className="text-md w-[100%] mr-2 ">
+                      {t('PackPrice')}  : {product.product.packPrice} {tc('coins')}
                     </span>
                   </div>
                   <div className="flex flex-col gap-2">
                     <span className="text-xs text-muted-foreground">
-                      عدد القطع  : {product.product.piecesPerPack}
+                       {t('piecesPerPack')}  : {product.product.piecesPerPack}
                     </span>
                   </div>
                 </div>
               ) : (
                 <>
                   <span className="text-lg font-bold">
-                    {product.product.piecePrice} JD
+                    {product.product.piecePrice} {tc('coins')}
                   </span>
                   <span className="text-xs text-muted-foreground mr-1 truncate w-25">
-                    / {product.product.name}
+                    / {language === 'en' ? product.product.name : product.product.name_ar}
                   </span>
                 </>
               )}
@@ -151,12 +159,12 @@ export default function SpecialProducts() {
 
             <div className="flex flex-col gap-2">
               <span className="text-xs text-muted-foreground">
-                Unit Type : {product.product.unitType}
+               {t('UnitType')} : {product.product.unitType === "piece_only" ? t('pieceOnly') : product.product.unitType === "pack_only" ? t('packOnly') : t('pieceOrPack')}
               </span>
             </div>
 
             <p className="text-xs text-muted-foreground mt-1">
-              minOrder : {product.product.minOrderQuantity} {product.name}
+              {t('minOrder')} : {product.product.minOrderQuantity} {product.name}
             </p>
           </CardContent>
           <CardFooter className="p-4 pt-0">
@@ -166,7 +174,7 @@ export default function SpecialProducts() {
               onClick={() => router.push(`/products/${product.id}`)}
             >
               <ShoppingCart className="h-4 w-4 ml-2" />
-              viewProduct
+              {tb('viewProducts')}
             </Button>
           </CardFooter>
         </Card>

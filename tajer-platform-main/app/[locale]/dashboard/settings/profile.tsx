@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from "next-intl";
 
 const cities = [
   { value: 'amman', label: 'عمان' },
@@ -62,6 +63,7 @@ type UserData = {
 };
 
 export default function Profile() {
+  const t = useTranslations("settingsProfile");
   const localUserData: UserData = typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("data") || "{}")
     : {};
@@ -75,13 +77,13 @@ export default function Profile() {
   const [locationError, setLocationError] = useState<string | null>(null);
 
   const formSchema = z.object({
-    businessName: z.string().min(3, { message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل' }),
-    phone: z.string().min(10, { message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل' }),
-    city: z.string({ required_error: 'يرجى اختيار المدينة أو تحديد الموقع' }),
-    businessType: z.string({ required_error: 'يرجى اختيار نوع العمل' }),
+    businessName: z.string().min(3, { message: t('schema.businessNameMin') }),
+    phone: z.string().min(10, { message: t('schema.phoneMin') }),
+    city: z.string({ required_error: t('schema.cityRequired') }),
+    businessType: z.string({ required_error: t('schema.businessTypeRequired') }),
     verificationCode: z.string().optional(),
     email: z.string().optional(),
-    referralCode: z.string().optional() // لا تستخدم .nullable()
+    referralCode: z.string().optional() 
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,7 +95,7 @@ export default function Profile() {
       businessType: localUserData.businessType || "",
       verificationCode: '',
       email: localUserData.email || "",
-      referralCode: localUserData.referralCode ?? "", // خليها string دايمًا
+      referralCode: localUserData.referralCode ?? "", 
     },
   });
 
@@ -127,7 +129,7 @@ export default function Profile() {
     });
 
     if (minDistance > 2) {
-      return 'خارج الأردن';
+      return t('location.outsideJordan');
     }
 
     return closestCity.name;
@@ -139,7 +141,7 @@ export default function Profile() {
     setDetectedCity(null);
 
     if (!navigator.geolocation) {
-      setLocationError('متصفحك لا يدعم تحديد الموقع');
+      setLocationError(t('location.browserNotSupported'));
       setIsDetectingLocation(false);
       return;
     }
@@ -153,7 +155,7 @@ export default function Profile() {
         const cityName = getCityFromCoordinates(lat, lng);
         setDetectedCity(cityName);
 
-        if (cityName !== 'خارج الأردن') {
+        if (cityName !== t('location.outsideJordan')) {
           const matchingCity = cities.find(city => city.label === cityName);
           if (matchingCity) {
             form.setValue('city', matchingCity.value);
@@ -165,20 +167,19 @@ export default function Profile() {
       error => {
         setIsDetectingLocation(false);
 
-        let errorMessage = 'حدث خطأ في تحديد الموقع';
+        let errorMessage = t('location.unknownError');
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage =
-              'تم رفض الإذن لتحديد الموقع. يرجى السماح بالوصول للموقع في إعدادات المتصفح';
+            errorMessage = t('location.permissionDenied');
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'معلومات الموقع غير متاحة';
+            errorMessage = t('location.positionUnavailable');
             break;
           case error.TIMEOUT:
-            errorMessage = 'انتهت مهلة تحديد الموقع';
+            errorMessage = t('location.timeout');
             break;
           default:
-            errorMessage = 'حدث خطأ غير معروف في تحديد الموقع';
+            errorMessage = t('location.unknownError');
             break;
         }
         setLocationError(errorMessage);
@@ -190,13 +191,14 @@ export default function Profile() {
       }
     );
   };
+
   const [isVerifying, setIsVerifying] = useState(false);
   function sendVerificationCode() {
     const phone = form.getValues('phone');
     if (phone.length < 10) {
       form.setError('phone', {
         type: 'manual',
-        message: 'يرجى إدخال رقم هاتف صحيح',
+        message: t('schema.phoneInvalid'),
       });
       return;
     }
@@ -218,16 +220,16 @@ export default function Profile() {
         email: form.getValues('email'),
         city: form.getValues('city'),
         area: form.getValues('city'),
-        locationDetails: location ? `Latitude : ${location.lat} ,Longitude :${location.lng}` : null, // be careful when you edite this line 
+        locationDetails: location ? `Latitude : ${location.lat} ,Longitude :${location.lng}` : null,
         businessType: form.getValues('businessType'),
         referralCode: form.getValues('referralCode') || ""
       })
     });
     const res = await (await EditeData).json();
     if(!(await EditeData).ok){
-      setMessage('حدث خطا يرجي المحاوله مره اخري ');
+      setMessage(t('messages.editError'));
     }else{
-      setMessage('تم التعديل بنجاح');
+      setMessage(t('messages.editSuccess'));
     }
     localStorage.setItem("data", JSON.stringify(res));
     SetState(!state);
@@ -237,16 +239,16 @@ export default function Profile() {
   return (
     <Form {...form} >
       <form className={`flex flex-col gap-8 ${cairo.variable}`}>
-        <h2 className="text-lg font-medium">Edit your profile info</h2>
+        <h2 className="text-lg font-medium">{t('title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="businessName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Your Business Name</FormLabel>
+                <FormLabel>{t('fields.businessName')}</FormLabel>
                 <FormControl>
-                  <Input className="mt-3" placeholder="Enter your business name" {...field} />
+                  <Input className="mt-3" placeholder={t('fields.businessNamePlaceholder')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -257,9 +259,9 @@ export default function Profile() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Your Email</FormLabel>
+                <FormLabel>{t('fields.email')}</FormLabel>
                 <FormControl>
-                  <Input className="mt-3" type="email" placeholder="Enter your email" {...field} />
+                  <Input className="mt-3" type="email" placeholder={t('fields.emailPlaceholder')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -272,10 +274,10 @@ export default function Profile() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>phone</FormLabel>
+                    <FormLabel>{t('fields.phone')}</FormLabel>
                     <div className="flex gap-2">
                       <FormControl>
-                        <Input className="mt-3" {...field} placeholder="+962..." />
+                        <Input className="mt-3" {...field} placeholder={t('fields.phonePlaceholder')} />
                       </FormControl>
                       <Button
                         className="mt-3"
@@ -284,7 +286,7 @@ export default function Profile() {
                         onClick={sendVerificationCode}
                         disabled={isVerifying}
                       >
-                        {isVerifying ? 'verifiying' : 'sendVerification'}
+                        {isVerifying ? t('fields.verifying') : t('fields.sendVerification')}
                       </Button>
                     </div>
                     <FormMessage />
@@ -298,11 +300,11 @@ export default function Profile() {
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>City</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} disabled={!!detectedCity && detectedCity !== 'خارج الأردن'}>
+                <FormLabel>{t('fields.city')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value} disabled={!!detectedCity && detectedCity !== t('location.outsideJordan')}>
                   <FormControl className="mt-3">
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر المدينة" />
+                      <SelectValue placeholder={t('fields.cityPlaceholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -322,11 +324,11 @@ export default function Profile() {
             name="businessType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Business Type</FormLabel>
+                <FormLabel>{t('fields.businessType')}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl className="mt-3">
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر نوع عملك" />
+                      <SelectValue placeholder={t('fields.businessTypePlaceholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -346,14 +348,14 @@ export default function Profile() {
             name="referralCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Your Referral Code</FormLabel>
+                <FormLabel>{t('fields.referralCode')}</FormLabel>
                 <FormControl>
                   <Input
                     className="mt-3"
                     type="text"
-                    placeholder="Enter your referral code"
+                    placeholder={t('fields.referralCodePlaceholder')}
                     {...field}
-                    value={field.value ?? ""} // دايما هتبقي string
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -370,7 +372,7 @@ export default function Profile() {
               disabled={isDetectingLocation}
               className="flex items-center gap-2"
             >
-              {isDetectingLocation ? 'Locating...' : 'Locate Me'}
+              {isDetectingLocation ? t('location.locating') : t('location.locateMe')}
             </Button>
           </div>
           {locationError && (
@@ -380,12 +382,12 @@ export default function Profile() {
             <div className="bg-secondary/10 p-4 rounded-lg border border-secondary/20 mt-2">
               <div>
                 <p className="font-semibold text-secondary">
-                  Located City
+                  {t('location.locatedCity')}
                 </p>
                 <p className="text-lg">{detectedCity}</p>
-                {detectedCity === 'خارج الأردن' && (
+                {detectedCity === t('location.outsideJordan') && (
                   <p className="text-sm text-muted-foreground">
-                    يرجي العلم انه لن يعمل التطبيق بشكل مناسب لانك من خارج الأردن يرجى اختيار المدينة يدوياً من القائمة أدناه
+                    {t('location.outsideJordanAlert')}
                   </p>
                 )}
               </div>
@@ -402,14 +404,14 @@ export default function Profile() {
           className={
             loading
               ? "bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-not-allowed"
-              : " p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-pointer"
+              : "p-2 rounded-md px-4 py-2 rounded-md shadow-sm text-sm font-medium cursor-pointer"
           }
           disabled={loading}
         >
-          Save Changes
+          {t('fields.saveChanges')}
         </Button>
-        <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium  hover:bg-gray-800 cursor-pointer">
-          cancel
+        <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium hover:bg-gray-800 cursor-pointer">
+          {t('fields.cancel')}
         </button>
       </div>
     </Form>

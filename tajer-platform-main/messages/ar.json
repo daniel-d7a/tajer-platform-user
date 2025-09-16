@@ -3,7 +3,12 @@
     "home": "الرئيسية",
     "categories": "التصنيفات",
     "companies": "الشركات",
+    "noSignIn" : "جاري تحويلك لصفحة تسجيل الدخول..",
+    "coins" : " د.أ",
+    "noData" : "غير محدد",
+    "welcome" : "مرحبا",
     "about": "عن تاجر",
+    "loading" : "جاري التحميل ...",
     "dashboard" : "لوحه التحكم",
     "contact": "اتصل بنا",
     "faq": "الأسئلة الشائعة",
@@ -28,7 +33,6 @@
     "more": "المزيد",
     "ExpiresAt": "ينتهي في",
     "title" :"تاجر | سوق الجملة لكل تاجر"
-
   },
   "LocaleSwitcher": {
     "label": "تغيير اللغة",
@@ -49,6 +53,7 @@
     "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "backToHome": "العودة إلى الصفحة الرئيسية"
   },
+
   "footer": {
     "footerLine": "تاجر هو سوق الجملة لكل تاجر, نوفر منصة متكاملة للتجار والشركات للتواصل وتنفيذ الصفقات بكل سهولة.",
     "quickLinks": "روابط سريعة",
@@ -57,8 +62,8 @@
     "terms": "الشروط والأحكام",
     "privacy": "سياسة الخصوصية",
     "faq": "الأسئلة الشائعة",
-    "email": "البريد الإلكتروني: info@tajer.com",
-    "phone": "الهاتف: 999-999-9999+",
+    "email": "البريد الإلكتروني: ",
+    "phone": "الهاتف:",
     "address": "العنوان: الأردن, عمان",
     "copyright": "جميع الحقوق محفوظة",
     "followUs": "تابعنا",
@@ -121,7 +126,24 @@
     "noOffers" :"لا توجد عروض حاليا !",
     "errorMessage" : "حدث خطأ اثناء تحميل البيانات يرجي المحاوله مره اخري !"
   },
-
+  "productId":{
+     "coins" : "د.أ",
+     "MinimumOrderQuantity" : "أقل عدد للطلب",
+     "Quantity" : "عدد الطلب",
+     "Piece" : "قطعه" ,
+     "description" : "الوصف",
+     "Specifications" : "التفاصيل"
+   },
+  "noProducts" : {
+    "title" : "لا توجد اي منتجات حاليا",
+    "subTitle" :"لا توجد اي منتجات لهذا البحث جرب البحث عن اي منتج آخر",
+    "browseProducts" : "تصفح المنتجات"
+  },
+   "noCategories" : {
+    "title" : "لا توجد اي تصنيفات حاليا",
+    "subTitle" :"لا توجد اي تصنيفات لهذا البحث جرب البحث عن اي تصنيف آخر",
+    "browseProducts" : "تصفح المنتجات"
+  },
   "categories": {
     "browseProducts": "تصفح المنتجات",
     "searchPlaceholder": "ابحث عن منتجات...",
@@ -130,6 +152,112 @@
     "productsCount": "{{count}} منتج",
     "subcategories": "تصنيفات فرعية"
   },
+"orderDetails": {
+  "loading": "جاري تحميل تفاصيل الطلب...",
+  "orderdetails": "تفاصيل الطلب",
+  "commercialName": "اسم التاجر",
+  "status": "حالة الطلب",
+  "value" : "إجمالي الطلب",
+  "orderDate": "تاريخ الطلب",
+  "orderProducts": "عدد المنتجات",
+  "Demandproducts": "المنتجات المطلوبة",
+  "errorMessage": "حدث خطأ ما، يرجى المحاولة لاحقًا!",
+  "noProducts": "لا توجد منتجات في هذا الطلب"
+},
+  "orders" : {
+    "Orders" : "طلباتك",
+    "Invoices" : "فواتيرك ",
+    "InvoiceId" : "رقم الفاتوره ",
+    "showDetails" : "عرض التفاصيل",
+    "noOrders" : "لا يوجد طلبات حتي الآن قم بطلب منتج الآن !",
+    "label" : {
+      "orderid" : "رقم الطلب",
+      "merchnat" : "المتجر",
+      "total" : "المبلغ",
+      "createdAt" : "تاريخ الإنشاء",
+      "status" : "الحاله",
+      "actions" : "الإجرائات"
+    },
+    "status" : {
+      "Delivered" : "تم التوصيل",
+      "PROCESSING" : "يتم المعالجه",
+      "OUT_FOR_DELIVERY" : "خارج للتوصيل",
+      "PENDING" : "قيد الإنتظار"
+    }
+  },
+  "dashboard" : {
+    "recentOrders" :"الطلبات  الأخيره", 
+    "labels" : {
+      "main" : "الرئيسية",
+      "invoices" : "الفواتير",
+      "cart" : "سله المشتريات",
+      "orders" : "الطلبات",
+      "settings" : "الإعدادات"
+    },
+      "cardreview" : {
+      "totalOrder" : "اجمالي الطلبات",
+      "totalCashback" : "إجمالي الكاشباك",
+      "totalSpent" : "اجمالي المشتريات",
+      "pendingOrders" : "الطلبات المنتظره"
+    }
+  },
+  "settings" : {
+    "label" : {
+      "profile" : "حسابي",
+      "security" : "الأمان"
+    },
+    "security" : {
+      "title" : "إعدادات الحساب",
+      "acitvepassword" : "كلمه السر الحاليه",
+      "password" : "كلمة السر",
+      "confirmPassword" : "تأكيد كلمه السر",
+      "saveChanges" : "حفظ التغييرات"
+    }
+  },
+  "settingsProfile" : {
+  "title": "تعديل بيانات حسابك",
+  "fields": {
+    "businessName": "الاسم التجاري",
+    "businessNamePlaceholder": "ادخل اسم نشاطك التجاري",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "ادخل بريدك الإلكتروني",
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "+962...",
+    "verifying": "جاري التحقق...",
+    "sendVerification": "إرسال رمز التحقق",
+    "city": "المدينة",
+    "cityPlaceholder": "اختر المدينة",
+    "businessType": "نوع النشاط",
+    "businessTypePlaceholder": "اختر نوع النشاط",
+    "referralCode": "كود الإحالة",
+    "referralCodePlaceholder": "ادخل كود الإحالة",
+    "saveChanges": "حفظ التغييرات",
+    "cancel": "إلغاء"
+  },
+  "location": {
+    "locateMe": "تحديد موقعي",
+    "locating": "جاري تحديد الموقع...",
+    "locatedCity": "المدينة المحددة",
+    "outsideJordan": "خارج الأردن",
+    "outsideJordanAlert": "يرجى العلم أنه قد لا يعمل التطبيق بشكل مناسب لأنك خارج الأردن، يرجى اختيار المدينة يدوياً.",
+    "browserNotSupported": "متصفحك لا يدعم تحديد الموقع.",
+    "permissionDenied": "تم رفض إذن تحديد الموقع. يرجى السماح بالوصول للموقع في إعدادات المتصفح.",
+    "positionUnavailable": "معلومات الموقع غير متاحة.",
+    "timeout": "انتهت مهلة تحديد الموقع.",
+    "unknownError": "حدث خطأ غير معروف أثناء تحديد الموقع."
+  },
+  "schema": {
+    "businessNameMin": "يجب أن يكون الاسم التجاري 3 أحرف على الأقل.",
+    "phoneMin": "يجب أن يكون رقم الهاتف 10 أرقام على الأقل.",
+    "cityRequired": "يرجى اختيار المدينة أو تحديد الموقع.",
+    "businessTypeRequired": "يرجى اختيار نوع النشاط.",
+    "phoneInvalid": "يرجى إدخال رقم هاتف صحيح."
+  },
+  "messages": {
+    "editSuccess": "تم تحديث البيانات بنجاح.",
+    "editError": "حدث خطأ، يرجى المحاولة مرة أخرى."
+  }
+},
   "product": {
     "backToProducts": "العودة للمنتجات",
     "category": "التصنيف",
@@ -227,7 +355,14 @@
   "specialProducts" : {
       "title" : "المنتجات المميزة" ,
       "subTitle" : "تعرف على أحدث المنتجات المميزة الخاصة بنا",
-      "NotFoundProducts" : "لا توجد منتجات حاليا"
+      "NotFoundProducts" : "لا توجد منتجات حاليا",
+      "PackPrice" : "سعر الحزمه",
+      "piecesPerPack" : "عدد القطع",
+      "UnitType" : "نوع الوحده",
+      "minOrder" :"أقل عدد للطلب",
+      "pieceOnly" : "قطعة فقط",
+      "packOnly" : "قطعة",
+      "pieceOrPack" : "قطعه او حزمه"
   },
   "categoriesNames":{
     "grocery": "بقالة",
@@ -246,6 +381,7 @@
     "confirm": "تأكيد",
     "back": "عودة",
     "showAll": "عرض الكل",
+    "viewProducts" : " تصفح المنتجات",
     "featuredProducts" : "تصفح المنتجات المميزه"
   },
   "terms": {

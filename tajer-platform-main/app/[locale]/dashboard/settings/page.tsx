@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
+import { useTranslations } from "next-intl";
 import {
   Form,
   FormControl,
@@ -18,10 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-  const tabs = [
-    { id: "profile", label: "Profile", icon: <User size={18}/> },
-    { id: "security", label: "Security", icon: <Shield size={18}/> },
-  ];
+
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -35,7 +32,11 @@ export default function Settings() {
     ConfirmPasswrod: z.string().optional(),
     ActiveBassword: z.string().optional(),
   });
-
+  const ts = useTranslations('settings')
+  const tabs = [
+    { id: "profile", label: ts('label.profile'), icon: <User size={18}/> },
+    { id: "security", label: ts('label.security'), icon: <Shield size={18}/> },
+  ];
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,7 +87,7 @@ export default function Settings() {
         )}
         {activeTab === "security" && (
           <div>
-            <h2 className="text-xl font-bold mb-2"> Security Settings</h2>
+            <h2 className="text-xl font-bold mb-2">{ts('security.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Form {...form}>
                  <FormField
@@ -94,7 +95,7 @@ export default function Settings() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel >Your Active Password</FormLabel>
+                      <FormLabel >{ts('security.acitvepassword')}</FormLabel>
                       <FormControl>
                         <Input className="mt-3" placeholder="Enter your  Password Now" {...field} />
                       </FormControl>
@@ -108,7 +109,7 @@ export default function Settings() {
                   name="ActiveBassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel >Your Password</FormLabel>
+                      <FormLabel >{ts('security.password')}</FormLabel>
                       <FormControl>
                         <Input className="mt-3" placeholder="Enter Your New Password" {...field} />
                       </FormControl>
@@ -122,7 +123,7 @@ export default function Settings() {
                   name="ConfirmPasswrod"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel >Confirm Password</FormLabel>
+                      <FormLabel >{ts('security.confirmPassword')}</FormLabel>
                       <FormControl>
                         <Input className="mt-3" placeholder="Enter your Password Again" {...field} />
                       </FormControl>
@@ -134,8 +135,7 @@ export default function Settings() {
                 </Form>
                 <div></div>
                       <div className="p-6 flex gap-2 ">
-                <Button className="bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium ">Save Changes</Button>
-                <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium  hover:bg-gray-800 cursor-pointer">cancel</button>
+                <Button className="bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium ">{ts('security.saveChanges')}</Button>
             </div>       
             </div>
 

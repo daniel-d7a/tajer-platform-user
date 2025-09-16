@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import OpenOrder from "@/components/invoices/openOrder";
-
+import { useTranslations } from "next-intl";
 type OrderRowProps = {
   id: number;
   merchant: string;
@@ -10,12 +10,6 @@ type OrderRowProps = {
   createdAt: string | null;
 };
 
-const statusMapping: Record<string, string> = {
-  DELIVERED: "تم التسليم",
-  PROCESSING: "قيد التنفيذ",
-  OUT_FOR_DELIVERY: "خارج للتوصيل",
-  PENDING: "جاري التنفيذ",
-};
 
 const statusColor: Record<string, string> = {
   DELIVERED: "text-green-600 font-semibold",
@@ -31,24 +25,33 @@ export const OrderRow: React.FC<OrderRowProps> = ({
   status,
   createdAt,
 }) => {
-  const formattedDate = createdAt
-    ? new Date(createdAt).toLocaleDateString("ar-EG")
-    : "غير محدد";
-  const [openOrderDetails,setOpenOrderDetails] = useState(false)
+    const to = useTranslations('orders');
+    const tc = useTranslations('common')
+  const statusMapping: Record<string, string> = {
+  DELIVERED: to('status.Delivered'),
+  PROCESSING: to('status.PROCESSING'),
+  OUT_FOR_DELIVERY: to('status.OUT_FOR_DELIVERY'),
+  PENDING: to('status.PENDING'),
+};
 
+  const formattedDate = createdAt
+    ? new Date(createdAt).toLocaleDateString("en-US")
+    : tc('noData');
+  const [openOrderDetails,setOpenOrderDetails] = useState(false)
   return (
     <tr className="border-b hover:bg-muted/40 duration-200">
       <td className="p-3">{id}</td>
       <td className="p-3">{merchant}</td>
-      <td className="p-3">JD {totalValue.toFixed(2)}</td>
+      <td className="p-3">{tc('coins')} {totalValue.toFixed(2)}</td>
       <td className={`p-3 ${statusColor[status] || ""}`}>
         {statusMapping[status] || status}
       </td>
       <td className="p-3">{formattedDate}</td>
       <td className="p-3"><button
                     className="px-3 py-1 text-sm bg-primary text-white rounded-md hover:bg-primary/90"
-      onClick={() => setOpenOrderDetails(true)}
-      >show data</button></td>
+      onClick={() => setOpenOrderDetails(true)}>
+        {to('showDetails')}
+        </button></td>
       {openOrderDetails && <OpenOrder Id={id} onClose={() => setOpenOrderDetails(false)}/>}
     </tr>
   );

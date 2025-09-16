@@ -104,15 +104,32 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="text-lg font-semibold">{t('contactUs')}</h3>
-            <ul className="mt-4 space-y-2">
-              <li className="md:text-sm text-muted-foreground">
-                {t('email')} info@tajer.com
-              </li>
-              <li className="md:text-sm text-muted-foreground">{t('phone')}</li>
-              <li className="md:text-sm text-muted-foreground">
-                {t('address')}
-              </li>
-            </ul>
+        <ul className="mt-4 space-y-2">
+  <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
+    <Link
+      href="mailto:info@tajer-jo.com"
+      className="hover:text-primary "
+    >
+      {t('email')} info@tajer-jo.com
+    </Link>
+  </li>
+
+  <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
+    <Link
+      href="https://wa.me/962797560047"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:text-primary"
+    >
+      {t('phone')} 0797560047
+    </Link>
+  </li>
+
+  <li className="md:text-sm text-muted-foreground">
+    {t('address')}
+  </li>
+</ul>
+
           </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center">
@@ -123,4 +140,4 @@ export default function Footer() {
       </div>
     </div>
   );
-}
+};
