@@ -59,7 +59,6 @@ export default function Page() {
     DELIVERED: to("status.Delivered"),
   };
 
-  // Pagination
   const page = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
@@ -93,13 +92,13 @@ export default function Page() {
         </p>
       </div>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-2xl font-semibold">طلباتك</h2>
+        <h2 className="text-2xl font-semibold">{to('OrdersTitle')}</h2>
         <div className="flex flex-row gap-2 md:flex-row md:gap-4 ">
           <Link
             href="/products"
             className="inline-flex items-center px-4 py-2 gap-2 bg-primary text-white rounded-md hover:bg-primary/90"
           >
-            تصفح المنتجات
+              {to('BrowseProducts')}
             <Boxes />
           </Link>
         </div>
@@ -114,6 +113,7 @@ export default function Page() {
               setActiveBtn(s);
             }}
             className={
+              
               activeBtn === s
                 ? `bg-primary hover:bg-secondary text-white`
                 : `bg-background hover:bg-secondary border`
@@ -128,12 +128,12 @@ export default function Page() {
           <table className="w-full text-center border-collapse min-w-[1000px]">
             <thead>
               <tr>
-                <th className="p-3 border-b">رقم الطلب</th>
-                <th className="p-3 border-b">اسم التاجر</th>
-                <th className="p-3 border-b">المبلغ</th>
-                <th className="p-3 border-b">الحالة</th>
-                <th className="p-3 border-b">التاريخ</th>
-                <th className="p-3 border-b">إجراءات</th>
+                <th className="p-3 border-b">{to('label.orderid')}</th>
+                <th className="p-3 border-b">{to('label.merchnat')}</th>
+                <th className="p-3 border-b">{to('label.total')}</th>
+                <th className="p-3 border-b">{to('label.status')}</th>
+                <th className="p-3 border-b">{to('label.createdAt')}</th>
+                <th className="p-3 border-b">{to('label.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -178,12 +178,12 @@ export default function Page() {
           <table className="w-full text-center border-collapse min-w-[1000px]">
             <thead>
               <tr>
-                <th className="p-3 border-b">رقم الطلب</th>
-                <th className="p-3 border-b">اسم التاجر</th>
-                <th className="p-3 border-b">المبلغ</th>
-                <th className="p-3 border-b">الحالة</th>
-                <th className="p-3 border-b">التاريخ</th>
-                <th className="p-3 border-b">إجراءات</th>
+                <th className="p-3 border-b">{to('label.orderid')}</th>
+                <th className="p-3 border-b">{to('label.merchnat')}</th>
+                <th className="p-3 border-b">{to('label.total')}</th>
+                <th className="p-3 border-b">{to('label.status')}</th>
+                <th className="p-3 border-b">{to('label.createdAt')}</th>
+                <th className="p-3 border-b">{to('label.actions')}</th>
               </tr>
             </thead>
             <tbody>

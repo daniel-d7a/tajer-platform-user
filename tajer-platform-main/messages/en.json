@@ -109,8 +109,9 @@
     "productsCount": "{{count}} products",
     "subcategories": "Subcategories"
   },
-    "orders" : {
-    "OrdersTitle" : "Your Orders",
+    "orders" : { 
+      "BrowseProducts" : "Browse Products",
+      "OrdersTitle" : "Your Orders",
       "Invoices" : "Your Invoices",
       "InvoiceId" : "Invoice Id",
       "showDetails" : "show Details",

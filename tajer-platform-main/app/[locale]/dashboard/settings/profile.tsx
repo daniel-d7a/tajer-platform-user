@@ -403,16 +403,14 @@ export default function Profile() {
           onClick={handleEdite}
           className={
             loading
-              ? "bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-not-allowed"
-              : "p-2 rounded-md px-4 py-2 rounded-md shadow-sm text-sm font-medium cursor-pointer"
+              ? "bg-primary p-2 rounded-md text-white px-4 py-2  rounded-md shadow-sm text-sm font-medium cursor-not-allowed"
+              : "p-2 rounded-md text-white px-4 py-2 rounded-md shadow-sm text-sm font-medium cursor-pointer"
           }
           disabled={loading}
         >
           {t('fields.saveChanges')}
         </Button>
-        <button className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium hover:bg-gray-800 cursor-pointer">
-          {t('fields.cancel')}
-        </button>
+
       </div>
     </Form>
   );

@@ -165,6 +165,7 @@
   "noProducts": "لا توجد منتجات في هذا الطلب"
 },
   "orders" : {
+    "BrowseProducts" : "تصفح المنتجات",
     "Orders" : "طلباتك",
     "Invoices" : "فواتيرك ",
     "InvoiceId" : "رقم الفاتوره ",

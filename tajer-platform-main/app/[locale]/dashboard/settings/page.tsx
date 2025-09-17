@@ -135,7 +135,7 @@ export default function Settings() {
                 </Form>
                 <div></div>
                       <div className="p-6 flex gap-2 ">
-                <Button className="bg-primary p-2 rounded-md px-4 py-2  rounded-md shadow-sm text-sm font-medium ">{ts('security.saveChanges')}</Button>
+                <Button className="bg-primary p-2 rounded-md px-4 py-2  text-white rounded-md shadow-sm text-sm font-medium ">{ts('security.saveChanges')}</Button>
             </div>       
             </div>
 
