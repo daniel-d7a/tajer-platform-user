@@ -164,6 +164,11 @@
   "errorMessage": "حدث خطأ ما، يرجى المحاولة لاحقًا!",
   "noProducts": "لا توجد منتجات في هذا الطلب"
 },
+  "factories" : {
+    "Registeredcompanies" : "الشركات المسجله",
+      "name" : "شركه",
+      "Details" : "عرض التفاصيل"
+  },
   "orders" : {
     "BrowseProducts" : "تصفح المنتجات",
     "Orders" : "طلباتك",

@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 interface Company {
   id: number;
@@ -44,16 +46,22 @@ export default function Companies() {
     per_page: 20,
   });
   const [loading, setLoading] = useState(true);
-
+  const t = useTranslations('factories');
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
+      useEffect(() => {
+      const segments = pathname.split("/").filter(Boolean);
+      const lang = segments[0]; 
+      setLanguage(lang)
+    }, [pathname]);
   useEffect(() => {
     const fetchFactory = async () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://tajer-backend.tajerplatform.workers.dev/api/public/factories`,{credentials:'include'}
+         'https://tajer-backend.tajerplatform.workers.dev/api/admin/factories?page=1&limit=20&search=',{credentials:'include'}
         );
 
         const json: ApiResponse = await res.json();
@@ -72,7 +80,7 @@ export default function Companies() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-8 text-center">الشركات المسجلة</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center">{t('Registeredcompanies')}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
@@ -95,29 +103,23 @@ export default function Companies() {
                 <Avatar className="w-full h-32 mb-4">
                   <AvatarImage
                     className="w-full h-full object-cover rounded-lg"
-                    src={company.imageUrl || "/company-placeholder.svg"}
-                    alt={company.name_ar || company.name || "شركة"}
+                    src={company.imageUrl || "/supermarket1.jpg"}
+                    alt={language === 'ar' ? company.name : company.name_ar || t('name')}
                   />
                 </Avatar>
                 <h3 className="text-xl font-semibold text-center mb-2">
-                  {company.name_ar || company.name || "شركة"}
+                  {language === 'ar' ? company.name : company.name_ar || t('name')}
                 </h3>
-                <p className="text-gray-600 text-center mb-4">
-
-                </p>
                 <Link
                   href={`/companies/${company.id}`}
                   className="bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors"
                 >
-                  عرض التفاصيل
+                  {t('Details')}
                 </Link>
               </div>
             ))}
       </div>
       {/* Pagination */}
-      <Link href = '/ar/companies/4'>
-      <Button>انظر الي المنتجات من المصانع </Button>
-      </Link>
       <div className="flex justify-center items-center gap-2 mt-8">
         {Array.from({ length: meta.last_page || 1 }, (_, i) => i + 1).map((p) => (
           <Link key={p} href={`?page=${p}`} scroll={true}>
@@ -129,4 +131,4 @@ export default function Companies() {
       </div>
     </div>
   );
-}
+};

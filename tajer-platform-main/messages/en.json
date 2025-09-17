@@ -8,7 +8,7 @@
     "dashboard" : "Dashboard",
     "about": "About Tajer",
     "loading" : "loading...",
-    "contact": "Contact Us",
+    "contact": "Contact Us", 
     "faq": "FAQ",
     "coins" : "JD",
     "noData" : "No Data",
@@ -108,6 +108,11 @@
     "tabsProducts": "Products",
     "productsCount": "{{count}} products",
     "subcategories": "Subcategories"
+  },
+  "factories" : {
+      "Registeredcompanies" : "Registered companies",
+      "name" : "company",
+      "Details" : "Show Details"
   },
     "orders" : { 
       "BrowseProducts" : "Browse Products",

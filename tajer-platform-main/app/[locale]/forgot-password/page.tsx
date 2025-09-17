@@ -64,15 +64,14 @@ export default function ForgotPasswordForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setApiError(null);
     setSuccessMsg(null);
-
     try {
       console.log('Form Values:', values);
       setSuccessMsg('تم التحقق من الرمز، يمكنك الآن تغيير كلمة المرور ');
     } catch (error) {
       setApiError('حدث خطأ أثناء التحقق. حاول مرة أخرى.');
-      console.log(error)
-    }
-  }
+      console.log(error);
+    };
+  };
 
   return (
     <div className='w-full flex justify-center items-center  h-screen'>

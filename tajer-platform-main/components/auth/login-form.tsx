@@ -49,7 +49,6 @@ export default function LoginForm() {
     },
   });
   async function  onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     try{
       setIsLoading(true);
       const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/login',{
@@ -65,17 +64,15 @@ export default function LoginForm() {
       if(response.ok){
         router.push(redirectTo);
         const resData = await response.json(); 
-         setSuccessMsg('جاري تحويلك لصفحتك الشخصيه ');
-localStorage.setItem("data", JSON.stringify(resData.user));
-    login(resData.user);
-
-};
+        setSuccessMsg('جاري تحويلك لصفحتك الشخصيه ');
+        localStorage.setItem("data", JSON.stringify(resData.user));
+        login(resData.user);
+      };
       if(!response.ok){
         setApiError( 'رقم الهاتف او كلمه السر غير صحيحه يرجي المحاوله مره اخري');
       }
     }finally{
       setIsLoading(false);
-     
     };
   };
   return (

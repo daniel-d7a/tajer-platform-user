@@ -60,7 +60,7 @@ export default function ProductGrid() {
         <h2 className="text-4xl font-bold">Special Products</h2>
         <p className="mt-2 text-muted-foreground">Special Products for you merchant</p>
       </div>
-<div className="  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  px-2">
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2">
       {loading &&
         Array.from({ length: 8 }).map((_, idx) => (
           <Card key={idx} className="animate-pulse h-full p-5">

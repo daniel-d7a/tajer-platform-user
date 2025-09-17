@@ -4,44 +4,52 @@ import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from 'next/image'
+import {useEffect, useState} from 'react'
+import { usePathname } from "next/navigation";
 
+interface FAQ {
+  answer_ar:string;
+  id:number;
+  answer_en:string;
+  question_ar:string;
+  question_en:string;
+}
 export default function FAQ() {
-  const faqs = [
-    {
-      question: "ما هي منصة تاجر؟",
-      answer:
-        "منصة تاجر هي منصة إلكترونية تساعد التجار وأصحاب المشاريع على عرض منتجاتهم وخدماتهم وإدارتها بسهولة.",
-    },
-    {
-      question: "كيف أبدأ في استخدام المنصة؟",
-      answer:
-        "قم بإنشاء حساب جديد، أضف منتجاتك أو خدماتك، وابدأ البيع مباشرة من لوحة التحكم.",
-    },
-    {
-      question: "هل التسجيل في المنصة مجاني؟",
-      answer:
-        "نعم، التسجيل مجاني، مع وجود خطط مدفوعة توفر مزايا إضافية.",
-    },
-    {
-      question: "كيف أتواصل مع فريق الدعم؟",
-      answer:
-        "يمكنك التواصل عبر البريد الإلكتروني أو صفحة اتصل بنا، وسيتم الرد خلال 24 ساعة.",
-    },
-  ];
-
+  const [data,setData] = useState<FAQ[]>([])
+    const [language,setLanguage] = useState('en')
+    const pathname = usePathname();
+        useEffect(() => {
+        const segments = pathname.split("/").filter(Boolean);
+        const lang = segments[0]; 
+        setLanguage(lang)
+      }, [pathname]);
+    const fetchFaq  = async () =>{
+      try{
+        const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/faqs')
+        const data = await response.json()
+        if(data){
+          setData(data);
+        };
+      }catch(err){
+        console.log(err);
+      };
+    };
+  useEffect(() =>{
+    fetchFaq()
+  },[]);
   return (
     <div className="max-w-full mx-auto p-6 flex flex-col ">
             <Image src="/tajer-logo.svg" alt="placeholder" className="mx-auto" width={300} height={300}></Image>
       
       <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">
-        الأسئلة الشائعة
+        {language === 'ar' ? 'الاسئلة الشائعة' : 'FAQ'}
       </h2>
       <Accordion.Root type="single" collapsible className="space-y-5">
-        {faqs.map((faq, i) => (
+        {data.map((faq, i) => (
           <Accordion.Item
             key={i}
             value={`item-${i}`}
-            className="border border-gray-200 w-full rounded-xl bg-background shadow-sm transition-all duration-300"
+            className="border border-muted w-full rounded-xl bg-background shadow-sm transition-all duration-300"
           >
             <Accordion.Trigger
               className={cn(
@@ -49,7 +57,7 @@ export default function FAQ() {
                 "focus:outline-none "
               )}
             >
-              <span className="transition-colors  group-hover:text-primary">{faq.question}</span>
+              <span className="transition-colors  group-hover:text-primary">{language === 'ar' ? faq.question_ar : faq.question_en}</span>
               <ChevronDown
                 className="transition-transform duration-300 group-data-[state=open]:rotate-180 text-white-500"
                 aria-hidden
@@ -61,7 +69,7 @@ export default function FAQ() {
                 "data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out"
               )}
             >
-              <span className="block leading-relaxed">{faq.answer}</span>
+              <span className="block leading-relaxed">{language === 'ar' ? faq.answer_ar : faq.answer_en}</span>
             </Accordion.Content>
           </Accordion.Item>
         ))}

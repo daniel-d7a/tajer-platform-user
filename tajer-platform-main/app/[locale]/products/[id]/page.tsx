@@ -114,7 +114,6 @@ export default function Page() {
       }
 
       const data = await res.json();
-      console.log("Added to cart", data);
       return data;
     } catch (err) {
       console.error("Error adding to cart:", err);

@@ -68,8 +68,7 @@ export default function CartPage() {
         const res: ApiResponse = await response.json();
         const items = res?.data?.items ?? [];
         setCartItems(items);
-      } catch (err) {
-        console.error('Error fetching cart:', err);
+      } catch  {
         setCartItems([]);
       } finally {
         setLoading(false);
@@ -89,15 +88,15 @@ export default function CartPage() {
   };
   const removeAllCart = async() =>{
     if(window.confirm('هل حقا ترغب في حذف سله المشتريات كامله')){
-try{
+    try{
       await fetch('https://tajer-backend.tajerplatform.workers.dev/api/cart', {
         credentials: "include",
         method: "DELETE"
       });
     setCartItems([]);
 
-    }catch(err){
-      console.error('Error removing item:', err);
+    }finally{
+      console.log('delete succes')
     }
     }
     
