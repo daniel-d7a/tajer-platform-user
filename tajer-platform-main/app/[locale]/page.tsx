@@ -4,7 +4,7 @@ import SpecialOffers from "@/components/home/special-offers";
 import HowItWorks from "@/components/home/how-it-works";
 import CallToAction from "@/components/home/call-to-action";
 import SpecialProducts from "@/components/home/special-products";
-import GoogleMap from "@/components/home/GoogleMap.tsx";
+import GoogleMap from "@/components/home/GoogleMap";
 export default function Home() {
   return (
     <div className="container mx-auto">

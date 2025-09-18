@@ -39,7 +39,7 @@ export default function About() {
               {t('mission')} <strong className='text-primary'>{t('strongs.B2B')}</strong> {t('byconnect')}
             </p>
           </div>
-          <div className='space-y-4 text-left'>
+          <div className={`space-y-4 ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               {t('focus')} <strong className='text-primary'>{t('strongs.innovation')}</strong>, <strong className='text-primary'>{t('strongs.tajer')} </strong> {t('provides')}
               </p>
