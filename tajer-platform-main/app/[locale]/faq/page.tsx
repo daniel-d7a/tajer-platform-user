@@ -31,7 +31,7 @@ export default function FAQ() {
           setData(data);
         };
       }catch(err){
-        console.log(err);
+        console.log(err); 
       };
     };
   useEffect(() =>{
@@ -40,7 +40,7 @@ export default function FAQ() {
   return (
     <div className="max-w-full mx-auto p-6 flex flex-col ">
             <Image src="/tajer-logo.svg" alt="placeholder" className="mx-auto" width={300} height={300}></Image>
-      
+    
       <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">
         {language === 'ar' ? 'الاسئلة الشائعة' : 'FAQ'}
       </h2>

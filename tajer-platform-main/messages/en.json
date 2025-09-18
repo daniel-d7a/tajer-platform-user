@@ -98,8 +98,30 @@
     "joinTajerDesc": "Register now and take advantage of the Tajer platform's benefits to get the best deals and products for your store",
     "getToKnowUs": "Learn more about us",
     "joinAsTajer": "Register as a Merchant",
+    "GoogleMapTitle" : "Get to know us",
+    "GoogleSupTitle" : "Official Tajer website for ordering",
     "noOffers" :"No offers Yet!",
     "errorMessage" : "some thing went wrong please try again later!"
+  },
+  "about" : {
+    "title" : "What is the Tajer platform?",
+    "subtitle" : "is a next–generation wholesale marketplace designed to empower retailers and suppliers across diverse industries.",
+    "mission" : " Our mission is to",
+    "byconnect" : "by connecting stores, supermarkets, restaurants, coffee shops, and specialized retailers directly with manufacturers and distributors — all in one smart platform.",
+    "focus" : "With a focus on",
+    "provides" : "provides : ",
+    "li1" : "Seamless browsing and ordering experience.",
+    "li2" : "Smart dashboards for insights, sales tracking, and credit management.",
+    "li3" : "Automated invoicing and commission systems.",
+    "li4" : "Integrated logistics with trusted delivery partners.",
+    "found" : "Founded with the vision of becoming the ",
+    "stand" : "stands for reliability, growth, and long-term partnerships.Every feature we build is tailored to support businesses of all sizes — from small groceries to large enterprises — ensuring they gain access to competitive prices, organized workflows, and sustainable success.",
+    "strongs" : {
+      "tajer" : "Tajer",
+      "B2B" : "simplify B2B trade",
+      "innovation" : "innovation, transparency, and efficiency",
+      "leading" :"leading wholesale hub in the Middle East and beyond, Tajer"
+    }
   },
   "categories": {
     "browseProducts": "Browse Products",
@@ -110,6 +132,7 @@
     "subcategories": "Subcategories"
   },
   "factories" : {
+        "searchPlaceholder" : "Find our brands...",
       "Registeredcompanies" : "Registered companies",
       "name" : "company",
       "Details" : "Show Details"

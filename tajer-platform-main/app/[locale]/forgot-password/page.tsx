@@ -72,10 +72,8 @@ export default function ForgotPasswordForm() {
       console.log(error);
     };
   };
-
   return (
     <div className='w-full flex justify-center items-center  h-screen'>
-        
     <Card className="p-6 w-[30%] ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

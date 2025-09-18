@@ -55,11 +55,14 @@ export default function SpecialProducts() {
       );
       const res = await data.json();
       setProducts(res);
+      if(!data.ok){
+        SetLoading(true)
+      }else{
+        SetLoading(false)
+      }
     } catch {
       setProducts(null);
-    } finally {
-      SetLoading(false);
-    }
+    };
   };
 
   useEffect(() => {

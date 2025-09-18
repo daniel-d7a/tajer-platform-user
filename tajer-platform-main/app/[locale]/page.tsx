@@ -2,9 +2,9 @@ import Hero from "@/components/home/hero";
 import FeaturedCategories from "@/components/home/featured-categories";
 import SpecialOffers from "@/components/home/special-offers";
 import HowItWorks from "@/components/home/how-it-works";
-import Testimonials from "@/components/home/testimonials";
 import CallToAction from "@/components/home/call-to-action";
 import SpecialProducts from "@/components/home/special-products";
+import GoogleMap from "@/components/home/GoogleMap.tsx";
 export default function Home() {
   return (
     <div className="container mx-auto">
@@ -15,7 +15,7 @@ export default function Home() {
       <SpecialOffers />
       <SpecialProducts/>
       <HowItWorks />
-      <Testimonials />
+      <GoogleMap/>
       <CallToAction />
     </div>
   );

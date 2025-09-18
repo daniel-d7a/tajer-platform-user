@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { Skeleton } from "../ui/skeleton";
 
 type Offer = {
   id: number;
@@ -30,12 +31,15 @@ export default function SpecialOffers() {
         );
         const json = await res.json();
         setOffersData(json.data.splice(0,10).filter((offer: Offer) => offer.imageUrl.includes('https://loremflickr.com') ? false : true)); 
+        if(!res.ok){
+          setLoading(true)
+        }else{
+          setLoading(false)
+        }
       } catch (err) {
         console.error("something went wrong", err);
         SetErrorMessage(t('errorMessage'));
-      } finally {
-        setLoading(false);
-      };
+      }
     };
     fetchOffers();
   }, [t]);
@@ -45,10 +49,21 @@ export default function SpecialOffers() {
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
-      <div className="w-[90%] mx-auto flex grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="w-[100%] mx-auto flex grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
           Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="animate-pulse h-64" />
+             <Card key={idx} className="animate-pulse h-full p-5">
+        <Skeleton className="h-48 w-full" />
+        <CardContent className="p-4 flex-grow">
+          <Skeleton className="h-4 w-1/4 mb-2" />
+          <Skeleton className="h-4 w-3/4 mb-2" />
+          <Skeleton className="h-4 w-1/2 mb-2" />
+          <Skeleton className="h-6 w-1/4" />
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <Skeleton className="h-8 w-full" />
+        </CardFooter>
+      </Card>
           ))
         ) : offersData.length > 0 ? (
           offersData.map((offer) => (

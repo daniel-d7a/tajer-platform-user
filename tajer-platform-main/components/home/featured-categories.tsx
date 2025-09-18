@@ -36,10 +36,14 @@ export default function FeaturedCategories() {
         );
         const res: { data: Category[] } = await response.json();
         setData(res.data);
-      } finally {
-        console.log('success');
-        setLoading(false);
-      };
+        if(!response.ok){
+          setLoading(true)
+        }else{
+          setLoading(false)
+        }
+      }catch {
+        setLoading(true)
+      } 
     };
     fetchData();
   }, []);

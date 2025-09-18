@@ -34,6 +34,7 @@
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
+  --color-mutedcard : var(--mutedcard);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
@@ -45,7 +46,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
 :root {
   --background: oklch(100% 0 0);
   --foreground: oklch(15% 0 0);
@@ -53,6 +53,7 @@
   --card-foreground: oklch(15% 0 0);
   --popover: oklch(100% 0 0);
   --popover-foreground: oklch(15% 0 0);
+  --mutedcard:rgb(146, 146, 146);
   --muted: oklch(96% 0 0);
   --muted-foreground: oklch(45% 0 0);
   --accent: oklch(96% 0 0);
@@ -63,7 +64,6 @@
   --input: oklch(89.8% 0 0);
   --ring: oklch(15% 0 0);
   --radius: 0.5rem;
-
   /* Correct Tajer colors in OKLCH */
   --primary: oklch(65% 0.15 148); /* Green #3bb371 */
   --primary-foreground: oklch(100% 0 0);
@@ -71,7 +71,6 @@
   --secondary-foreground: oklch(100% 0 0);
   --sideBar :rgb(28, 28, 32);
 }
-
 .dark {
   --background: oklch(15% 0 0);
   --foreground: oklch(98% 0 0);
@@ -83,6 +82,7 @@
   --muted-foreground: oklch(64% 0 0);
   --accent: oklch(25% 0 0);
   --accent-foreground: oklch(98% 0 0);
+  --mutedcard:hsla(0, 0%, 95%, 0.377);
   --destructive: oklch(45% 0.257 29.2);
   --destructive-foreground: oklch(98% 0 0);
   --border: oklch(25% 0 0);

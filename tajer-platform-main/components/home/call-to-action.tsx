@@ -11,7 +11,7 @@ export default function CallToAction() {
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
           {t('joinTajerDesc')}
         </p>
-        <div className="mt-8 flex justify-center gap-4">
+        <div className="mt-8 flex flex-col lg:flex-row justify-center gap-4">
           <Link href="/register">
             <Button size="lg" className="bg-primary hover:bg-primary/90">
               {t('joinAsTajer')}
