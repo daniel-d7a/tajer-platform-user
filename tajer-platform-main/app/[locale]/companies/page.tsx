@@ -98,7 +98,6 @@ export default function Companies() {
     return company.discountAmount > 0 && company.discountType;
   };
 
-  // دالة لعرض نص الخصم
   const getDiscountText = (company: Company) => {
     if (!hasDiscount(company)) return null;
     
@@ -142,7 +141,6 @@ export default function Companies() {
                 className="bg-background border rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center animate-fadeIn relative"
                 style={{ animationDelay: `${i * 0.1}s`, animationFillMode: "both" }}
               >
-                {/* بادجة الخصم */}
                 {hasDiscount(company) && (
                   <Badge className="absolute top-2 right-2 bg-primary z-10">
                     {getDiscountText(company)}
