@@ -17,7 +17,6 @@ interface Category {
 export default function FeaturedCategories() {
 
   const t = useTranslations('home');
-  const tc = useTranslations('common');
   const [data, setData] = useState<Category[]>([]);
   const [loading,setLoading] = useState(true)
   const [language,setLanguage] = useState('en')
@@ -74,9 +73,6 @@ export default function FeaturedCategories() {
                   />
                 </div>
                 <h3 className="font-semibold">{language === 'en' ? category.name : category.name_ar}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {category.count} {tc('products')}
-                </p>
               </CardContent>
             </Card>
           </Link>

@@ -33,7 +33,6 @@ export const OrderRow: React.FC<OrderRowProps> = ({
   OUT_FOR_DELIVERY: to('status.OUT_FOR_DELIVERY'),
   PENDING: to('status.PENDING'),
 };
-
   const formattedDate = createdAt
     ? new Date(createdAt).toLocaleDateString("en-US")
     : tc('noData');
@@ -46,12 +45,15 @@ export const OrderRow: React.FC<OrderRowProps> = ({
       <td className={`p-3 ${statusColor[status] || ""}`}>
         {statusMapping[status] || status}
       </td>
-      <td className="p-3">{formattedDate}</td>
-      <td className="p-3"><button
-                    className="px-3 py-1 text-sm bg-primary text-white rounded-md hover:bg-primary/90"
+      <td className="p-3">{formattedDate}
+      </td>
+      <td className="p-3">
+      <button
+      className="px-3 py-1 text-sm bg-primary text-white rounded-md hover:bg-primary/90"
       onClick={() => setOpenOrderDetails(true)}>
         {to('showDetails')}
-        </button></td>
+      </button>
+      </td>
       {openOrderDetails && <OpenOrder Id={id} onClose={() => setOpenOrderDetails(false)}/>}
     </tr>
   );

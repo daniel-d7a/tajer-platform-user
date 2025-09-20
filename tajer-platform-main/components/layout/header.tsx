@@ -54,7 +54,7 @@ export default function Header() {
               {tc("categories")}
             </Link>
             <Link
-              href="/companies"
+              href="/companies?search=&page=1"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               {tc("companies")}

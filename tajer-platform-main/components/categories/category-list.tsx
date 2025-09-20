@@ -106,7 +106,7 @@ export default function CategoryList({search} : {search:string}) {
                     </p>
                     <div className="flex flex-wrap gap-2 mt-4">
                       {category.children?.map((sub) => (
-                        <Link
+                        <Link 
                           key={sub.id}
                           href={`/categories/${category.id}/${sub.id}`}
                           className="text-xs bg-muted px-2 py-1 rounded-md hover:bg-primary/10"

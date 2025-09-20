@@ -1,68 +1,96 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Toast from "../../dashboard/settings/toast";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-type Offer = {
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import ProductGrid from "@/components/products/product-grid";
+
+type Offer = { 
   id: number;
   name: string;
-  name_ar:string;
+  name_ar: string;
   description: string;
+  description_ar: string;
   imageUrl: string;
   expiresAt: string;
-  minOrderQuantity: number ;
+  minOrderQuantity: number;
   maxOrderQuantity: number;
   unitType: string;
   piecePrice: number;
   packPrice: number;
   piecesPerPack: number;
+  
   categories: { 
     id: number; 
-    name: string ;
-    name_ar:string 
+    name: string;
+    name_ar: string; 
   }[];
   manufacturer: string;
-  factory:{
-    name:string;
-    name_ar:string;
-  }
+  factory: {
+    name: string;
+    name_ar: string;
+  };
+  discountType?: string;
+  discountAmount?: number;
 };
 type AddCartParams = {
-id: string | number;
+  id: string | number;
 };
+
+
 export default function Page() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const tS = useTranslations("specialProducts");
-  const tP = useTranslations('product')
-  const tid = useTranslations('productId')
-  const [language,setLanguage] = useState('en')
+  const tP = useTranslations('product');
+  const tid = useTranslations('productId');
+  const [language, setLanguage] = useState('en');
   const pathname = usePathname();
   const [offerData, setOfferData] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [pieceOrNot, setPieceOrNot] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [message,setMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [loadingCart, setLoadingCart] = useState(false);
-
-    useEffect(() => {
-      const segments = pathname.split("/").filter(Boolean);
-      const lang = segments[0]; 
-      setLanguage(lang)
-    }, [pathname]);
+  const [categoryIds, setCategoryIDS] = useState<number[]>([]);
+  const [productData,setProductData] = useState([])
+  const [loadingProduct,setLoadingProduct] = useState(true)
   useEffect(() => {
-    if (!id) return;
-    const fetchOffer = async () => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0] || 'en';
+    setLanguage(lang);
+  }, [pathname]);
+const fetchProductById = async () => {
+  try {
+    const res = await fetch(
+      `https://tajer-backend.tajerplatform.workers.dev/api/public/products?categoryId=${categoryIds}&factoryId=&search=&page=&limit=`
+    );
+    if (!res.ok) throw new Error("Failed to fetch");
+    const response = await res.json();
+        if (response && response.data) {
+      setProductData(response.data);
+    } else {
+      setProductData([]);
+    };
+  } catch {
+    setProductData([]);
+    setErrorMessage("Something went wrong. Please try again later.");
+  } finally {
+    setLoadingProduct(false);
+  }
+};
+ const fetchOffer = async () => {
       setLoading(true);
       try {
         const res = await fetch(
@@ -71,23 +99,26 @@ export default function Page() {
         if (!res.ok) throw new Error("Failed to fetch");
         const data: Offer = await res.json();
         setOfferData(data);
-        if (data.unitType === "piece_only") {
-          setPieceOrNot(false);
-        } else {
-          setPieceOrNot(true);
-        }
-      } catch  {
+        setCategoryIDS(data?.categories?.map((category) => category.id));
+      } catch {
         setOfferData(null);
         setErrorMessage("Something went wrong. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
+  useEffect(() => {
+    if (!id) return;
     fetchOffer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-  useEffect(() =>{
-      setQuantity(offerData?.minOrderQuantity ?? 1);
-  },[offerData]);
+
+  useEffect(() => {
+    setQuantity(offerData?.minOrderQuantity ?? 1);
+          fetchProductById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offerData]);
+
   const handleAddCart = async ({ id }: AddCartParams) => {
     try {
       setLoadingCart(true);
@@ -105,23 +136,37 @@ export default function Page() {
           }),
         }
       );
-
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
-      }else{
+      } else {
         setMessage('Added to cart');
-        setLoadingCart(false)
-      }
-
+        setLoadingCart(false);
+      };
       const data = await res.json();
       return data;
     } catch (err) {
       console.error("Error adding to cart:", err);
       setMessage('Something went wrong. Please try again later.');
+      setLoadingCart(false);
     }
   };
+  const calculateDiscountedPrice = (offer: Offer, isPack: boolean = false) => {
+    const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
+    
+    if (!offer.discountAmount || offer.discountAmount <= 0) return originalPrice;
+    
+    if (offer.discountType === 'percentage') {
+      return originalPrice * (1 - offer.discountAmount / 100);
+    } else {
+      return Math.max(0, originalPrice - offer.discountAmount);
+    }
+  };
+
+  const isProductOnSale = (offer: Offer) => {
+    return offer.discountAmount && offer.discountAmount > 0;
+  };
   return (
-    <div dir={language==='ar' ? "rtl" : "ltr"} className="flex flex-col gap-3">
+    <div dir={language === 'ar' ? "rtl" : "ltr"} className="flex flex-col gap-3">
       <Head>
         <title>{offerData?.name || "Product Details"}</title>
         <meta
@@ -129,7 +174,6 @@ export default function Page() {
           content={offerData?.description || "Check out this amazing product."}
         />
       </Head>
-
       <section className="py-12 bg-muted/30 rounded-lg">
         <div className="w-full mx-auto gap-6">
           {loading ? (
@@ -143,130 +187,147 @@ export default function Page() {
             </div>
           ) : offerData ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4 w-full">
-              <div className="relative aspect-square overflow-hidden rounded-lg border">
+              <div className="relative pt-[100%]">
+                {isProductOnSale(offerData) && (
+                  <Badge className="absolute top-2 right-2 bg-primary z-10">
+                    {offerData.discountType === 'percentage' 
+                      ? `${offerData.discountAmount}% ${tP('offer')}` 
+                      : `${offerData.discountAmount} ${tid('coins')} ${tP('offer')}`}
+                  </Badge>
+                )}
+              
                 <Image
                   src={offerData.imageUrl || "/placeholder.jpg"}
-                  alt={language==='ar' ? offerData.name_ar : offerData.name_ar || "Product image"}
+                  alt={language === 'ar' ? offerData.name_ar : offerData.name || "Product image"}
                   fill
                   className="object-cover rounded-lg"
                 />
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-muted-foreground">
-                    { offerData?.categories.map((e) => <p key={e.id}>
-                      {language === 'en' ? e.name: e.name_ar}</p>
-                    )}
-                  </h3>
                   <h1 className="text-4xl font-bold mb-2">
-                    {language === 'ar' ? offerData?.name_ar : offerData?.name}
+                    {language === 'ar' ? offerData.name_ar : offerData.name}
                   </h1>
                   <p className="text-muted-foreground">
                     {language === 'ar' ? offerData.factory.name_ar : offerData.factory.name || "Unknown Manufacturer"}
                   </p>
                 </div>
-                {pieceOrNot ? (
-                  <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
+                <div className="flex items-center space-x-4 gap-1">
+                  {isProductOnSale(offerData) ? (
+                    <div className="flex gap-2 items-center">
+                      <span className="text-3xl font-bold text-primary">
+                        {calculateDiscountedPrice(offerData).toFixed(2)} {tid('coins')}
+                      </span>
+                      <span className="text-2xl text-muted-foreground line-through">
+                        {(offerData.piecePrice).toFixed(2)} {tid('coins')}
+                      </span>
+                    </div>
+                  ) : (
                     <span className="text-3xl font-bold text-primary">
-                      {offerData.packPrice && offerData.piecesPerPack
-                        ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
-                        : "0.00"}{" "}
-                      {tid('coins')}
+                      {calculateDiscountedPrice(offerData).toFixed(2)} {tid('coins')}
                     </span>
-                    <span className="text-2xl text-muted-foreground line-through">
-                      {offerData.piecePrice?.toFixed(2) || "0.00"} {tid('coins')}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-baseline space-x-4 space-x-reverse gap-4">
-                    <span className="text-3xl font-bold text-primary">
-                      {offerData.piecePrice
-                        ? offerData.piecePrice.toFixed(2)
-                        : "0.00"}{" "}
-                      {tid('coins')}
-                    </span>
-                  </div>
-                )}
-
+                  )}
+                </div>
                 <div className="space-y-2">
                   <p className="text-sm">
                     <strong>{tid('MinimumOrderQuantity')}</strong>{" "}
                     {offerData.minOrderQuantity || 1}
                   </p>
-                  {pieceOrNot && (
+                  {(offerData.unitType === "pack_only" || offerData.unitType === "piece_or_pack") && (
                     <p className="text-sm">
-                      <strong>In Stock : </strong>
+                      <strong>{tS('piecesPerPack')}: </strong>
                       <span className="text-secondary">
-                        {offerData.packPrice && offerData.piecesPerPack
-                          ? (offerData.packPrice / offerData.piecesPerPack).toFixed(2)
-                          : "0.00"}{" "}
-                        {tid('Piece')}
+                        {offerData.piecesPerPack || "N/A"}
                       </span>
                     </p>
                   )}
                 </div>
-
+                    <h2 className="font-semibold mb-2">{tid('category')}</h2>
+                    <h3 className="">
+                    {offerData?.categories?.map((e) => (
+                      <Link
+                       href={`/categories/${e.id}`}
+                       key={e.id}
+                       className="text-sm  bg-primary/50 w-fit px-2  py-1 rounded-md hover:bg-primary/10"
+                       >
+                        {language === 'en' ? e.name : e.name_ar}
+                        </Link>
+                    ))}
+                  </h3>
                 <Separator />
                 <div>
-                  <h3>{tid('description')}</h3>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">{tid('description')}</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    {offerData.description || "No description available."}
+                    {language === 'en' ? offerData.description : offerData.description_ar || "No description available."}
                   </p>
                 </div>
                 <div className="font-semibold mb-2">
                   <h3 className="font-semibold mb-2">{tid('Specifications')}</h3>
                   <ul className="space-y-1">
                     <li className="text-sm text-muted-foreground">
-                       {tS('UnitType')} : {offerData.unitType === "piece_only" ? tS('pieceOnly') : offerData.unitType === "pack_only" ? tS('packOnly') : tS('pieceOrPack')}
+                      {tS('UnitType')}: {offerData.unitType === "piece_only" ? tS('pieceOnly') : offerData.unitType === "pack_only" ? tS('packOnly') : tS('pieceOrPack')}
                     </li>
-                    {pieceOrNot && (
-                      <>
+                    {(offerData.unitType === "pack_only" || offerData.unitType === "piece_or_pack") && (
+                      <div className="flex gap-2 flex-col">
                         <li className="text-sm text-muted-foreground">
-                          {tS('packOnly')}: {offerData.packPrice || "N/A"}
+                          {tS('PackPrice')}: {calculateDiscountedPrice(offerData, true).toFixed(2)} {tid('coins')}
+                          {isProductOnSale(offerData) && (
+                            <span className="line-through text-muted-foreground ml-2">
+                              {offerData.packPrice.toFixed(2)} {tid('coins')}
+                            </span>
+                          )}
                         </li>
                         <li className="text-sm text-muted-foreground">
-                         {tS('pieceOrPack')}: {offerData.piecesPerPack || "N/A"}
+                          {tS('piecesPerPack')}: {offerData.piecesPerPack || "N/A"}
                         </li>
-                      </>
+                      </div>
                     )}
                   </ul>
                 </div>
-                <div className=" flex gap-2 items-center">
-                    <p>{tid('Quantity')}</p>
-                  <div className="flex items-center space-x-2 space-x-reverse gap-1">
-                      <Button
-                          variant="outline"
-                          size="icon"
-                          disabled={quantity <= offerData?.minOrderQuantity}
-                          onClick={() => {
-                            if (quantity > offerData?.minOrderQuantity) {
-                              setQuantity(quantity - 1);
-                            }
-                          }}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={quantity}
-                          min={false ? offerData?.minOrderQuantity : 1}
-                          className="w-16 text-center"
-                        />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            setQuantity(quantity + 1);
-                          }}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                <div className="flex gap-2 items-center">
+                  <p>{tid('Quantity')}</p>
+                  <div className="flex items-center space-x-2 gap-1">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      disabled={quantity <= (offerData?.minOrderQuantity || 1)}
+                      onClick={() => {
+                        if (quantity > (offerData?.minOrderQuantity || 1)) {
+                          setQuantity(quantity - 1);
+                        };
+                      }}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      value={quantity}
+                      min={offerData?.minOrderQuantity || 1}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (!isNaN(value) && value >= (offerData?.minOrderQuantity || 1)) {
+                          setQuantity(value);
+                        }
+                      }}
+                      className="w-16 text-center"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        setQuantity(quantity + 1);
+                      }}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
                   </div>
-                  
-                      </div>
-                  {message && (
-                      <Toast message={message} />
-                  )}
+                </div>
+                
+                {message && (
+                  <Toast message={message} />
+                )}
                 <Separator />
                 <div className="space-y-4">
                   <Button
@@ -275,6 +336,7 @@ export default function Page() {
                     onClick={() => {
                       handleAddCart({ id: offerData.id });
                     }}
+                    disabled={loadingCart}
                   >
                     {loadingCart ? (
                       <Loader2 className="h-5 w-5 ml-2 animate-spin" />
@@ -285,7 +347,6 @@ export default function Page() {
                       </div>
                     )}
                   </Button>
-
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="flex flex-col items-center space-y-2">
                       <Truck className="h-6 w-6 text-secondary" />
@@ -307,8 +368,6 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-                <Separator />
-              
               </div>
             </div>
           ) : (
@@ -318,7 +377,39 @@ export default function Page() {
           )}
         </div>
       </section>
-    
+       <section
+      className="py-12 bg-muted/30 rounded-lg flex flex-col jusitfy-center items-center w-full"
+      >
+      {loadingProduct ? (
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[100%]">
+      {Array.from({ length: 4 }).map((_, idx) => (
+      <Card key={idx} className="animate-pulse h-full p-5">
+        <Skeleton className="h-48 w-full" />
+        <CardContent className="p-4 flex-grow">
+          <Skeleton className="h-4 w-1/4 mb-2" />
+          <Skeleton className="h-4 w-3/4 mb-2" />
+          <Skeleton className="h-4 w-1/2 mb-2" />
+          <Skeleton className="h-6 w-1/4" />
+        </CardContent>
+        <CardFooter className="p-4 pt-0">
+          <Skeleton className="h-8 w-full" />
+        </CardFooter>
+      </Card>
+    ))}    
+    </div>
+      ) : productData.length > 0 ? (
+        <div>
+          <div className="text-center mb-10">
+        <h2 className="text-3xl font-bold">{tP("Browsemoreproducts")}</h2>
+      </div>
+            <ProductGrid  categoryId={categoryIds} factoryId={0}/>
+        </div>
+      ) : (
+        <div className="col-span-full text-center text-muted-foreground">
+          {tP('NoProduct')} {offerData?.name}
+        </div>
+      )}
+      </section>
     </div>
   );
-}
+};

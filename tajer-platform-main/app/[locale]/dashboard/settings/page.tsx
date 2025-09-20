@@ -22,6 +22,7 @@ import {
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
+  const t = useTranslations('dashboard')
   const formSchema = z.object({
     businessName: z.string().min(3, { message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل' }),
     phone: z.string().min(10, { message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل' }),
@@ -55,10 +56,10 @@ export default function Settings() {
     <div className="w-full flex flex-col gap-5">
          <div className="bg-card  rounded-2xl shadow-sm">
           <h1 className="text-2xl font-bold">
-            إعدادات حسابك 
+            {t('settingsTitle')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            قم باداره حسابك من هنا 
+              {t('settingsSubTitle')}
           </p>
         </div>
       {/* Header Tabs */}

@@ -37,7 +37,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const to = useTranslations("orders");
   const tc = useTranslations("common");
-
+  const t = useTranslations('dashboard')
   const fetchInvoice = async () => {
     try {
       const data = await fetch(
@@ -48,7 +48,7 @@ export default function Page() {
       setInvoiceData(res.data || []);
     } finally {
       setLoading(false);
-    }
+    };
   };
 
   useEffect(() => {
@@ -58,9 +58,9 @@ export default function Page() {
   return (
     <div className="font-cairo space-y-8 w-full mb-10">
       <div className="bg-card  rounded-2xl shadow-sm">
-        <h1 className="text-2xl font-bold">فواتيرك علي المنصه</h1>
+        <h1 className="text-2xl font-bold">{t('invice')}</h1>
         <p className="text-muted-foreground mt-2">
-          اطلع علي الطلبات التي وصلت علي حسابك
+          {t('invoiceSubTitle')} 
         </p>
       </div>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -68,7 +68,7 @@ export default function Page() {
         <div className="flex flex-row gap-2 md:flex-row md:gap-4">
           <Link href="/categories">
             <button className="inline-flex text-md items-center px-4 py-2 gap-2 bg-primary text-white rounded-md hover:bg-primary/90 cursor-pointer">
-              تصفح المنتجات
+               {t('browseProducts')}
               <Boxes />
             </button>
           </Link>
@@ -126,4 +126,4 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};

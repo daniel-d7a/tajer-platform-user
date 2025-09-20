@@ -6,12 +6,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 interface User {
   name: string;
   email: string;
-  role: "admin" | "trader" | "sales";
+  role: "ADMIN" | "MERCHANT" | "SALES_REP";
   commercialName?: string;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (userData: User) => void;
   logout: () => void;
   user: User | null;
@@ -21,18 +22,28 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const checkAuth = () => {
+      setIsLoading(true);
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
       const data = localStorage.getItem('data');
 
       if (isLoggedIn && data) {
-        setIsAuthenticated(true);
-        setUser(JSON.parse(data) as User);
+        try {
+          setIsAuthenticated(true);
+          setUser(JSON.parse(data) as User);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('data');
+        }
       }
+      setIsLoading(false);
     };
+    
     checkAuth();
   }, []);
 
@@ -51,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );
@@ -63,4 +74,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}

@@ -39,6 +39,7 @@ interface OrdersResponse {
 
 export default function Page() {
   const to = useTranslations("orders");
+  const t = useTranslations('dashboard')
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<string>("PENDING");
   const [activeBtn, setActiveBtn] = useState<string>("PENDING");
@@ -86,9 +87,11 @@ export default function Page() {
   return (
     <div className="font-cairo space-y-8 w-full mb-10">
       <div className="bg-card  rounded-2xl shadow-sm">
-        <h1 className="text-2xl font-bold">إلقاء نظره سريعه علي طلباتك</h1>
+        <h1 className="text-2xl font-bold"> 
+          {t('orders')}    
+         </h1>
         <p className="text-muted-foreground mt-2">
-          إحصائيات مفصلة عن طلباتك الحاليه !
+          {t('ordersSubTitle')}    
         </p>
       </div>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

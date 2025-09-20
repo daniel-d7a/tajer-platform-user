@@ -27,13 +27,29 @@ interface ProductType {
     manufacturer: string;
     piecePrice: number;
     piecesPerPack: number;
+    discountType:string;
     unitType: string;
     id: number;
+    discountAmount : number;
     packPrice:number;
     minOrderQuantity:number
   };
 }
-
+interface product {
+  name: string;
+    name_ar:string;
+    imageUrl: string;
+    category: string;
+    manufacturer: string;
+    piecePrice: number;
+    piecesPerPack: number;
+    discountType:string;
+    unitType: string;
+    id: number;
+    discountAmount : number;
+    packPrice:number;
+    minOrderQuantity:number
+}
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons")
@@ -48,6 +64,17 @@ export default function SpecialProducts() {
     const lang = segments[0]; 
     setLanguage(lang)
   }, [pathname]);
+    const calculateDiscountedPrice = (offer: product , isPack: boolean = false) => {
+    const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
+    
+    if (offer.discountAmount <= 0) return originalPrice;
+    
+    if (offer.discountType === 'percentage') {
+      return originalPrice * (1 - offer.discountAmount / 100);
+    } else {
+      return Math.max(0, originalPrice - offer.discountAmount);
+    };
+  };
   const fetchSpecialProducts = async () => {
     try {
       const data = await fetch(
@@ -78,8 +105,9 @@ export default function SpecialProducts() {
             {t('subTitle')}
           </p>
         </div>
+        <div className="w-full flex items-center justify-center flex-col">
         {loading ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[100%]">
     {Array.from({ length: 4 }).map((_, idx) => (
       <Card key={idx} className="animate-pulse h-full p-5">
         <Skeleton className="h-48 w-full" />
@@ -96,15 +124,17 @@ export default function SpecialProducts() {
     ))}
   </div>
 ) : Products?.length ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    {Products.slice(0, 4).map((product) => (
-      <Link key={product.id} className="w-[100%] h-full" href={`/products/${product.product.id}`}>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-[100%]">
+    {Products.slice(0, 3).map((product) => (
+      <Link key={product.id} className="w-[90%] h-full" href={`/products/${product.product.id}`}>
         <Card className="overflow-hidden flex flex-col h-full  rounded-2xl hover:scale-105 duration-300">
           <div className="relative pt-[100%]">
-            {product.isOnSale && (
+            {product.product.discountAmount > 0 && (
               <Badge className="absolute top-2 right-2 bg-primary z-10">
-                offer
-              </Badge>
+                 {product.product.discountType === 'percentage' 
+                      ? `${product.product.discountAmount}% ${t('offer')}` 
+                      : `${product.product.discountAmount} JD ${t('offer')}`}
+              </Badge> 
             )}
             <Image
               src={product.product.imageUrl || "/placeholder.svg"}
@@ -118,54 +148,74 @@ export default function SpecialProducts() {
             <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">
               {language === 'en' ? product.product.name : product.product.name_ar}
             </h3>
-            <p className="text-sm text-muted-foreground mb-2">
+            {/* <p className="text-sm text-muted-foreground mb-2">
               {product.product.manufacturer}
-            </p>
-
-            <div className="flex items-baseline mt-2">
-              {product.product.unitType === "pack_only" ||
-              product.product.unitType === "piece_or_pack" ? (
-                <div className="flex gap-2 flex-col w-full">
-                  <div className="flex items-center">
-                    <div className="flex items-center gap-2 w-full">
-                      <span className="text-lg font-bold">
-                        {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                      </span>
-                      /
-                       <span className="text-xs text-muted-foreground  ">
-                        {language === 'en' ? product.product.name : product.product.name_ar}
-                    </span>
-                    </div>
+            </p> */}
+              <div className="flex items-baseline mt-2">
+                    {product.product.unitType === "pack_only" || product.product.unitType === "piece_or_pack" ? (
+                      <div className="flex gap-2 flex-col w-full">
+                        <div className="flex items-center">
+                          <div className="flex items-center gap-2 w-full">
+                            {product.product.discountAmount > 0 ? (
+                              <div className="flex gap-2">
+                                <span className="text-lg font-bold">
+                                  {calculateDiscountedPrice(product.product, false).toFixed(2)} {tc('coins')}
+                                </span>
+                                <span className="line-through text-muted-foreground">
+                                  {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-lg font-bold">
+                                {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                              </span>
+                            )}
+                            <span className="text-xs text-muted-foreground">
+                              / {language === 'en' ? product.product.name : product.product.name_ar}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-md w-[100%] mr-2 ">
+                            {t('PackPrice')}: {calculateDiscountedPrice(product.product, true).toFixed(2)} {tc('coins')}
+                            {product.product.discountAmount > 0 && (
+                              <span className="line-through text-muted-foreground ml-2">
+                                {product.product.packPrice.toFixed(2)} {tc('coins')}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <span className="text-xs text-muted-foreground">
+                            {t('piecesPerPack')}: {product.product.piecesPerPack}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 w-full">
+                        {product.product.discountAmount > 0 ? (
+                          <div className="flex gap-2 w-full">
+                            <span className="text-lg font-bold">
+                              {calculateDiscountedPrice(product.product).toFixed(2)} {tc('coins')}
+                            </span>
+                            <span className="line-through text-muted-foreground">
+                              {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-lg font-bold">
+                            {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <span className="text-md w-[100%] mr-2 ">
-                      {t('PackPrice')}  : {product.product.packPrice} {tc('coins')}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs text-muted-foreground">
-                       {t('piecesPerPack')}  : {product.product.piecesPerPack}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <span className="text-lg font-bold">
-                    {product.product.piecePrice} {tc('coins')}
-                  </span>
-                  <span className="text-xs text-muted-foreground mr-1 truncate w-25">
-                    / {language === 'en' ? product.product.name : product.product.name_ar}
-                  </span>
-                </>
-              )}
-            </div>
 
             <div className="flex flex-col gap-2">
               <span className="text-xs text-muted-foreground">
                {t('UnitType')} : {product.product.unitType === "piece_only" ? t('pieceOnly') : product.product.unitType === "pack_only" ? t('packOnly') : t('pieceOrPack')}
               </span>
             </div>
-
             <p className="text-xs text-muted-foreground mt-1">
               {t('minOrder')} : {product.product.minOrderQuantity} {product.name}
             </p>
@@ -189,6 +239,7 @@ export default function SpecialProducts() {
     <p className="text-center">{t('NotFoundProducts')}</p>
   </div>
 )}
+        </div>
 
              <div className="text-center mt-8">
                    <Link href="/special-products" >

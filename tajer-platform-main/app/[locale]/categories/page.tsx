@@ -8,7 +8,7 @@ import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
+ 
 export default function CategoriesPage() {
   const t = useTranslations('categories');
   const router = useRouter();

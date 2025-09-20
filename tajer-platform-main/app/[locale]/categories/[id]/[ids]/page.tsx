@@ -3,10 +3,12 @@ import {useState} from 'react'
 import ProductGrid from '@/components/products/product-grid';
 import { useParams,useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 export default function Page() {
     const router = useRouter();
-  
+    const t = useTranslations('categories');
+
   const [searchValue,setSearchValue] = useState('')
   const {id} = useParams();
     const handleSearch = (e: React.FormEvent) => {
@@ -20,11 +22,11 @@ export default function Page() {
         <Input
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          placeholder='searchPlaceholder'
+          placeholder={t('searchPlaceholder')}
           className="pr-10"
         />
       </form>
       <ProductGrid factoryId={0} categoryId={Number(id)}/>
     </div>
-  )
-}
+  );
+};

@@ -4,11 +4,12 @@ import ProductGrid from '@/components/products/product-grid';
 import { useParams,useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useTranslations } from 'next-intl';
 export default function Page() {
-    const router = useRouter();
-  
+  const router = useRouter();
+  const t = useTranslations('common')
   const [searchValue,setSearchValue] = useState('')
-  const {id} = useParams();
+  const {id} = useParams(); 
     const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     router.push(`?search=${encodeURIComponent(searchValue)}&page=1`);
@@ -20,7 +21,7 @@ export default function Page() {
         <Input
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          placeholder='searchPlaceholder'
+          placeholder={t('searchPlaceholder')}
           className="pr-10"
         />
       </form>

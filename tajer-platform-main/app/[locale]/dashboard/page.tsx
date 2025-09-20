@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -12,8 +11,7 @@ type StatsType = {
   totalSpent: number;
   pendingOrders: number;
   totalCashback: number;
-};
-
+}; 
 type OrderType = {
   id: number;
   merchantId: number;
@@ -24,7 +22,6 @@ type OrderType = {
     commercialName: string;
   };
 };
-
 type OrdersResponse = {
   stats: StatsType;
   data: OrderType[];
@@ -32,8 +29,8 @@ type OrdersResponse = {
 const DashboardPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const tc = useTranslations('common');
-  const td = useTranslations('dashboard')
-  const to = useTranslations('orders')
+  const td = useTranslations('dashboard');
+  const to = useTranslations('orders');
   const router = useRouter();
   const [ordersData, setOrdersData] = useState<OrderType[]>([]);
   const [stats, setStats] = useState<StatsType>({
@@ -47,8 +44,8 @@ const DashboardPage: React.FC = () => {
     if (!isAuthenticated) {
       router.push("/login");
     };
+    // eslint-disable-next-line
   }, [isAuthenticated]);
-
   const fetchOrders = async () => {
     try {
       const data = await fetch(
@@ -87,15 +84,15 @@ const DashboardPage: React.FC = () => {
         <p className="text-lg font-medium">{tc('noSignIn')}</p>
       </div>
     );
-  }
+  } 
   return (
     <div className="space-y-8 md:p-8">
           <div className="bg-card  rounded-2xl shadow-sm">
-          <h1 className="text-2xl font-bold">
-          إلقاء نظره سريعه علي أداء متجرك
+          <h1 className="text-2xl font-bold sm:text-xl">
+            {td('titel1')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            إحصائيات مفصلة عن أداء متجرك !
+            {td('subTitle1')}
           </p>
         </div>
       {/* Stats Cards */}
@@ -129,37 +126,40 @@ const DashboardPage: React.FC = () => {
       <div className="rounded-xl ">
         <h2 className="text-2xl font-bold mb-4">{td('recentOrders')}</h2>
         <div className="overflow-x-auto rounded-xl border shadow-sm mb-5">
-          <table className="w-full min-w-[600px] text-center border-collapse">
-            <thead className=" border-b">
-              <tr className="text-lg">
-                <th className="p-3">{to('label.orderid')} </th>
-                <th className="p-3">{to('label.merchnat')} </th>
-                <th className="p-3">{to('label.total')} </th>
-                <th className="p-3">{to('label.status')}</th>
-                <th className="p-3">{to('label.createdAt')} </th>
-                <th className="p-3">{to('label.actions')}</th>
-              </tr>
-            </thead>
-            <tbody className="text-base">
-              {!loading && ordersData.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="p-6 text-center text-muted-foreground">
-                      {to('noOrders')}
-                  </td>
+          <div className="min-w-[700px]">
+            <table className="w-full text-center border-collapse">
+              <thead className=" border-b">
+                <tr className="text-lg">
+                  <th className="p-3 whitespace-nowrap">{to('label.orderid')} </th>
+                  <th className="p-3 whitespace-nowrap">{to('label.merchnat')} </th>
+                  <th className="p-3 whitespace-nowrap">{to('label.total')} </th>
+                  <th className="p-3 whitespace-nowrap">{to('label.status')}</th>
+                  <th className="p-3 whitespace-nowrap">{to('label.createdAt')} </th>
+                  <th className="p-3 whitespace-nowrap">{to('label.actions')}</th>
                 </tr>
-              )}
-              {ordersData.map((order) => (
-                <OrderRow
-                  key={order.id}
-                  id={order.id}
-                  merchant={order.merchant.commercialName}
-                  totalValue={order.totalValue}
-                  status={order.status}
-                  createdAt={order.createdAt}
-                />
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-base">
+                {!loading && ordersData.length === 0 && (
+                  <tr>
+                    {/* Fixed colspan from 5 to 6 to match the number of columns */}
+                    <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                        {to('noOrders')}
+                    </td>
+                  </tr>
+                )}
+                {ordersData.map((order) => (
+                  <OrderRow
+                    key={order.id}
+                    id={order.id}
+                    merchant={order.merchant.commercialName}
+                    totalValue={order.totalValue}
+                    status={order.status}
+                    createdAt={order.createdAt}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
