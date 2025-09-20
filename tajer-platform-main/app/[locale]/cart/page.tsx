@@ -74,7 +74,6 @@ export default function CartPage() {
     const checkAuth = () => {
       setIsAuthenticated(true);
     };
-
     const fetchCart = async () => {
       try {
         setLoading(true);

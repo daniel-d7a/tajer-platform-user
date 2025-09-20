@@ -157,13 +157,21 @@ export default function Header() {
             >
               {tc("companies")}
             </Link>
-            <Link
-              href="/about"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {tc("about")}
-            </Link>
+          {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                {tc('dashboard')}
+              </Link>
+            ) : (
+              <Link
+                href="/about"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                {tc("about")}
+              </Link>
+            )}
 
             <Link href="/cart" className="w-full">
               <Button variant="outline" className="w-full">
