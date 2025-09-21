@@ -45,6 +45,7 @@
     "register": "سجّل الآن",
     "logout": "تسجيل الخروج",
     "profile": "حسابي",
+    "browseBroduct": "عرض المنتج",
     "orders": "الطلبات",
     "cart": "عربة التسوق",
     "menu": "القائمة",
@@ -128,6 +129,7 @@
     "cta": "سجّل الآن",
     "PackPrice" : "سعر الحزمه",
     "piece" : "قطعه",
+    "DownloadTajer" : "حمل تطبيق تاجر ",
     "searchPlaceholder" :"ابحث عن الخصومات والعروض لدينا...",
     "pieces" :" قطع",
     "piecesPerPack" : "عدد القطع في الحزمه",
@@ -396,6 +398,7 @@
     "verificationCodePlaceholder": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني",
     "location": "الموقع",
     "locateMe": "تحديد موقعي",
+    
     "locating": "جاري تحديد الموقع...",
     "located": "تم تحديد موقعك",
     "cityPlaceholder": "اختر مدينتك",

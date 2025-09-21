@@ -1,102 +1,97 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Boxes } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+interface BannersType {
+  id: number;
+  imageUrl: string;
+  link: string;
+  headline: string;
+}
 
 export default function Hero() {
-  const t = useTranslations('home');
   const tc = useTranslations('header');
-
-  const slides = [
-    {
-      id: 1,
-      title: t('heroTitle1'),
-      description: t('heroDesc1'),
-      image: '/hero.png',
-    },
-    {
-      id: 2,
-      title: t('heroTitle2'),
-      description: t('heroDesc2'),
-      image: '/hero.png',
-    },
-    {
-      id: 3,
-      title: t('heroTitle3'),
-      description: t('heroDesc3'),
-      image: '/hero.png',
-    },
-    {
-      id: 4,
-      title: t('heroTitle4'),
-      description: t('heroDesc4'),
-      image: '/hero.png',
-    },
-  ];
+  const [banners,setBanners] = useState<BannersType[]>([])
+  const [loading,setLoading] = useState<boolean>(true)
+  const fetchBanners =  async () =>{
+    try{
+      const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/banners');
+      const res = await data.json();
+      setBanners(res || []);
+    }catch (error) {
+      console.error(error);
+    }finally{
+      setLoading(false);
+    };
+  }
+  useEffect(() => {
+      fetchBanners();
+  },[])
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1));
+      setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
     }, 5000);
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, [banners?.length]);
 
   const nextSlide = () => {
-    setCurrentSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1));
+    setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1));
+    setCurrentSlide(prev => (prev === 0 ? banners?.length - 1 : prev - 1));
   };
 
   return (
     <div className="relative overflow-hidden rounded-lg w-[95%] mx-auto ">
       <div className="relative h-[400px] md:h-[500px]">
-        {slides.map((slide, index) => (
+        {loading ? (
+             <div className="col-span-5 flex items-center h-full justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+        banners?.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
+            className={`absolute inset-0 transition-opacity  duration-1000 ${
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <div className="absolute inset-0 bg-black/60 z-10" />
+            <div className="absolute inset-0 bg-black/25  z-10" />
             <Image
-              src={slide.image || '/placeholder.svg'}
-              alt={slide.title}
+              src={slide.imageUrl || '/placeholder.svg'}
+              alt={slide.headline}
               fill
               sizes="(max-width: 768px) 100vw, 100vw"
-              quality={90}
+              quality={80}
               className="object-cover object-center"
               priority={index === 0}
             />
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-6">
               <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
-                {slide.title}
+                {slide.headline}
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-white/90">
-                {slide.description}
-              </p>
               <div className="mt-8">
-                <Link href="/register">
+                <Link href={slide.link}>
                   <Button
                     size="lg"
                     className="bg-primary hover:bg-primary/90 text-lg"
                   >
-                    {tc('register')}
+                    {tc('browseBroduct')} <Boxes/>
                   </Button>
                 </Link>
               </div>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
-
       <Button
         variant="ghost"
         size="icon"
@@ -118,7 +113,7 @@ export default function Hero() {
       </Button>
 
       <div className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 space-x-2">
-        {slides.map((_, index) => (
+        {banners?.map((_, index) => (
           <button
             key={index}
             className={`h-2 w-2 rounded-full ${
@@ -132,4 +127,4 @@ export default function Hero() {
       </div>
     </div>
   );
-}
+};

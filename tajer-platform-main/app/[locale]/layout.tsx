@@ -11,7 +11,6 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
 import { AnimationProvider } from '@/components/providers/animation-provider';
-
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
@@ -62,21 +61,16 @@ export default async function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
-            
             <NextIntlClientProvider locale={locale}>
-
               <Header />
-                            <AnimationProvider>
-
+              <AnimationProvider>
               <main>{children}</main>
-                                          </AnimationProvider>
-
+              </AnimationProvider>
               <Footer />
-
             </NextIntlClientProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   );
-}
+};

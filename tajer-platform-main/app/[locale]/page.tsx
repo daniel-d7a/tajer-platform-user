@@ -8,7 +8,7 @@ import CallToAction from "@/components/home/call-to-action";
 import SpecialProducts from "@/components/home/special-products";
 import GoogleMap from "@/components/home/GoogleMap";
 import Factories from "@/components/home/factories";
-
+import Page from '@/app/[locale]/faq/page'
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -19,7 +19,6 @@ const containerVariants = {
     }
   }
 };
-
 const itemVariants = {
   hidden: { 
     opacity: 0, 
@@ -46,31 +45,28 @@ export default function Home() {
       <motion.div variants={itemVariants} className="flex justify-center items-center p-4">
         <Hero />
       </motion.div>
-      
-      <motion.div variants={itemVariants}>
-        <FeaturedCategories />
-      </motion.div>
-      
-      <motion.div variants={itemVariants}>
+         <motion.div variants={itemVariants}>
         <SpecialOffers />
       </motion.div>
-      
       <motion.div variants={itemVariants}>
         <Factories />
       </motion.div>
-      
-      <motion.div variants={itemVariants}>
+ <motion.div variants={itemVariants}>
         <SpecialProducts />
+      </motion.div>
+      <motion.div variants={itemVariants}>
+        <FeaturedCategories />
+      </motion.div>
+        <motion.div variants={itemVariants}>
+        <Page />
       </motion.div>
       
       <motion.div variants={itemVariants}>
         <HowItWorks />
       </motion.div>
-      
       <motion.div variants={itemVariants}>
         <GoogleMap />
       </motion.div>
-      
       <motion.div variants={itemVariants}>
         <CallToAction />
       </motion.div>

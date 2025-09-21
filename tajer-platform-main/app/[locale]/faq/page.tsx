@@ -1,9 +1,7 @@
 "use client";
-
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from 'next/image'
 import {useEffect, useState} from 'react'
 import { usePathname } from "next/navigation";
 
@@ -39,10 +37,9 @@ export default function FAQ() {
   },[]);
   return (
     <div className="max-w-full mx-auto p-6 flex flex-col ">
-            <Image src="/tajer-logo.svg" alt="placeholder" className="mx-auto" width={300} height={300}></Image>
     
       <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">
-        {language === 'ar' ? 'الاسئلة الشائعة' : 'FAQ'}
+        {language === 'ar' ? 'تعرف علينا اكثر' : 'Discover More About Tajer:'}
       </h2>
       <Accordion.Root type="single" collapsible className="space-y-5">
         {data.map((faq, i) => (
@@ -104,4 +101,4 @@ export default function FAQ() {
       `}</style>
     </div>
   );
-}
+};

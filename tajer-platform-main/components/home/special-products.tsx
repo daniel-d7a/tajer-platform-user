@@ -53,7 +53,7 @@ interface product {
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons")
-  const tc = useTranslations("common")
+  const tc = useTranslations("common") 
   const router = useRouter();
   const [Products, setProducts] = useState<ProductType[] | null>(null);
   const [loading, SetLoading] = useState(true);
@@ -133,7 +133,7 @@ export default function SpecialProducts() {
               <Badge className="absolute top-2 right-2 bg-primary z-10">
                  {product.product.discountType === 'percentage' 
                       ? `${product.product.discountAmount}% ${t('offer')}` 
-                      : `${product.product.discountAmount} JD ${t('offer')}`}
+                      : `${product.product.discountAmount} ${tc('coins')} ${t('offer')}`}
               </Badge> 
             )}
             <Image

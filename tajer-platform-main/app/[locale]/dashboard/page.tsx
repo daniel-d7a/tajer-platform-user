@@ -6,12 +6,14 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Truck, Wallet, DollarSign } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { OrderRow } from "@/components/dashboard/OrderRow";
+
 type StatsType = {
   totalOrders: number;
   totalSpent: number;
   pendingOrders: number;
   totalCashback: number;
 }; 
+
 type OrderType = {
   id: number;
   merchantId: number;
@@ -22,10 +24,12 @@ type OrderType = {
     commercialName: string;
   };
 };
+
 type OrdersResponse = {
   stats: StatsType;
   data: OrderType[];
 };
+
 const DashboardPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const tc = useTranslations('common');
@@ -40,12 +44,14 @@ const DashboardPage: React.FC = () => {
     totalCashback: 0,
   });
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
     };
     // eslint-disable-next-line
   }, [isAuthenticated]);
+
   const fetchOrders = async () => {
     try {
       const data = await fetch(
@@ -85,18 +91,20 @@ const DashboardPage: React.FC = () => {
       </div>
     );
   } 
+
   return (
     <div className="space-y-8 md:p-8">
-          <div className="bg-card  rounded-2xl shadow-sm">
-          <h1 className="text-2xl font-bold sm:text-xl">
-            {td('titel1')}
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            {td('subTitle1')}
-          </p>
-        </div>
+      <div className="bg-card rounded-2xl shadow-sm">
+        <h1 className="text-2xl font-bold sm:text-xl">
+          {td('titel1')}
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          {td('subTitle1')}
+        </p>
+      </div>
+      
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-3  lg:grid-cols-4 gap-4 ">
+      <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <StatCard
           title={td('cardreview.totalOrder')}
           value={stats.totalOrders}
@@ -122,47 +130,49 @@ const DashboardPage: React.FC = () => {
           loading={loading}
         />
       </div>
+      
       {/* Recent Orders */}
-      <div className="rounded-xl ">
+      <div className="rounded-xl">
         <h2 className="text-2xl font-bold mb-4">{td('recentOrders')}</h2>
-        <div className="overflow-x-auto rounded-xl border shadow-sm mb-5">
-          <div className="min-w-[700px]">
-            <table className="w-full text-center border-collapse">
-              <thead className=" border-b">
-                <tr className="text-lg">
-                  <th className="p-3 whitespace-nowrap">{to('label.orderid')} </th>
-                  <th className="p-3 whitespace-nowrap">{to('label.merchnat')} </th>
-                  <th className="p-3 whitespace-nowrap">{to('label.total')} </th>
-                  <th className="p-3 whitespace-nowrap">{to('label.status')}</th>
-                  <th className="p-3 whitespace-nowrap">{to('label.createdAt')} </th>
-                  <th className="p-3 whitespace-nowrap">{to('label.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="text-base">
-                {!loading && ordersData.length === 0 && (
-                  <tr>
-                    {/* Fixed colspan from 5 to 6 to match the number of columns */}
-                    <td colSpan={6} className="p-6 text-center text-muted-foreground">
-                        {to('noOrders')}
-                    </td>
-                  </tr>
-                )}
-                {ordersData.map((order) => (
-                  <OrderRow
-                    key={order.id}
-                    id={order.id}
-                    merchant={order.merchant.commercialName}
-                    totalValue={order.totalValue}
-                    status={order.status}
-                    createdAt={order.createdAt}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        
+        {/* الحاوية القابلة للتمرير */}
+      <div className="rounded-xl border shadow-sm mb-5 overflow-x-auto max-w-full">
+  <table className="min-w-[700px] w-max text-center border-collapse">
+    <thead className="border-b">
+      <tr className="text-lg">
+        <th className="p-3 whitespace-nowrap">{to('label.orderid')}</th>
+        <th className="p-3 whitespace-nowrap">{to('label.merchnat')}</th>
+        <th className="p-3 whitespace-nowrap">{to('label.total')}</th>
+        <th className="p-3 whitespace-nowrap">{to('label.status')}</th>
+        <th className="p-3 whitespace-nowrap">{to('label.createdAt')}</th>
+        <th className="p-3 whitespace-nowrap">{to('label.actions')}</th>
+      </tr>
+    </thead>
+    <tbody className="text-base">
+      {!loading && ordersData.length === 0 && (
+        <tr>
+          <td colSpan={6} className="p-6 text-center text-muted-foreground">
+            {to('noOrders')}
+          </td>
+        </tr>
+      )}
+      {ordersData.map((order) => (
+        <OrderRow
+          key={order.id}
+          id={order.id}
+          merchant={order.merchant.commercialName}
+          totalValue={order.totalValue}
+          status={order.status}
+          createdAt={order.createdAt}
+        />
+      ))}
+    </tbody>
+  </table>
+</div>
+
       </div>
     </div>
   );
 };
+
 export default DashboardPage;

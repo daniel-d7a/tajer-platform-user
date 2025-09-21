@@ -43,15 +43,46 @@ export default function CallToAction() {
   }, [pathname]);
 
   if (loading) {
-    return (
+    return ( 
    <div className="col-span-5 flex items-center justify-center">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
           </div>
     );
   }
-
   return (
-    <section className="py-16 bg-secondary/10 rounded-lg text-center m-5 flex flex-col md:flex-row items-center gap-8 md:gap-12 p-6">
+    <section className="py-16 bg-secondary/10 rounded-lg text-center m-5 flex flex-col md:flex-col items-center gap-8 md:gap-12 p-6">
+      <div className='flex flex-col gap-5'>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+          {t('joinTajer')}
+        </h2>
+           <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
+          {t('joinTajerDesc')}
+        </p>
+        <div className='flex gap-5 w-full items-center justify-center'>
+            <Link href='/register' className="w-full sm:w-auto flex justify-center">
+            <Button 
+              size="lg" 
+              className="w-full bg-primary hover:bg-primary/90 transition-all duration-300 transform flex items-center gap-2"
+            >
+             
+              {t('joinAsTajer')}
+            </Button>
+          </Link>
+          
+          <Link href='/about' className="w-full sm:w-auto flex justify-center">
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-300 flex items-center gap-2"
+            >
+             
+              {t('getToKnowUs')}
+
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className='flex items-center justify-between w-full gap-10'>
       <motion.div 
         className='relative w-full md:w-1/2 h-80 md:h-96 rounded-md overflow-hidden'
         initial={{ opacity: 0, x: -50 }}
@@ -98,7 +129,7 @@ export default function CallToAction() {
                 width={20}
                 height={20}
               />
-              حمل تطبيق تاجر   
+              {t('DownloadTajer')}
             </Button>
           </Link>
           
@@ -114,11 +145,13 @@ export default function CallToAction() {
                 width={40}
                 height={40}
               />
-              حمل تطبيق تاجر   
+              {t('DownloadTajer')}
+
             </Button>
           </Link>
         </motion.div>
       </motion.div>
+      </div>
     </section>
   );
-}
+};

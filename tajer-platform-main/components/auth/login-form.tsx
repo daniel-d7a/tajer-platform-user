@@ -62,8 +62,14 @@ export default function LoginForm() {
          })
       });
       if(response.ok){
-        router.push(redirectTo);
         const resData = await response.json(); 
+        if(resData.user.role === 'ADMIN'){
+          router.push('https://tajer-admin-worker.tajerplatform.workers.dev/login');
+        }else if(resData.user.role === 'SALES_REP'){
+         router.push('https://tajer-sales-worker.tajerplatform.workers.dev/');
+        }else{
+            router.push(redirectTo);
+        };
         setSuccessMsg('جاري تحويلك لصفحتك الشخصيه ');
         localStorage.setItem("data", JSON.stringify(resData.user));
         login(resData.user);

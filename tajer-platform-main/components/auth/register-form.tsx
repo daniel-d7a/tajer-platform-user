@@ -94,7 +94,7 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
-
+  const [errorMessage,setErrorMessage] = useState('')
   const t = useTranslations('auth');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -248,15 +248,15 @@ export default function RegisterForm() {
 })
       });
       if (!response.ok) {
+        setErrorMessage('حدث خطا اثناء انشاء الحساب يرجي التاكد من رقم الهاتف مره اخري')
         const err = await response.json();
            if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
-        setApiError('الحساب موجود بالفعل من فضلك سجل الدخول');
-        router.push('/login');
+          setApiError('الحساب موجود بالفعل من فضلك سجل الدخول');
+          router.push('/login');
       };
       } else {
         setSuccessMsg(' تم إنشاء الحساب بنجاح! سيتم تحويلك قريبًا الي صفحه الرئيسيه الخاصه بك..');
         router.push(redirectTo);
-
       };
     } finally{
       setIsLoading(false);
@@ -491,7 +491,11 @@ export default function RegisterForm() {
               <AlertDescription>{successMsg}</AlertDescription>
             </Alert>
           )}
-
+          {errorMessage && (
+            <Alert className='border-destructive'>
+              <AlertDescription className='text-destructive'>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
           <Button
             type="submit"
             className="w-full bg-secondary hover:bg-secondary/90"
