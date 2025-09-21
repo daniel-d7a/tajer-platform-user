@@ -27,6 +27,7 @@ type Offer = {
   minOrderQuantity: number;
   factory: {
     name: string;
+    name_ar: string;
   };
 };
 
@@ -57,7 +58,7 @@ export default function SpecialOffers() {
     const fetchOffers = async () => {
       try {
         const res = await fetch(
-          `https://tajer-backend.tajerplatform.workers.dev/api/public/offers?categoryId=&search=${search}&page=&limit=`
+          `https://tajer-backend.tajerplatform.workers.dev/api/public/offers?categoryId=&search=${search || ''}&page=&limit=`
         );
         const json = await res.json();
         setOffersData(json.data); 
@@ -90,7 +91,7 @@ export default function SpecialOffers() {
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
          <form onSubmit={handleSearch} className="relative mb-6 ">
-          <div className="">
+          <div>
                   <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         value={searchValue}
@@ -98,7 +99,7 @@ export default function SpecialOffers() {
                         placeholder={t('searchPlaceholder')}
                         className="pr-10"
                       />
-                                </div>
+            </div>
 
                 </form>
       <div className="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -124,8 +125,8 @@ export default function SpecialOffers() {
                 <div className="relative pt-[100%]">
                   <Badge className="absolute top-2 right-2 bg-primary z-10">
                     {offer.discountType === 'percentage' 
-                      ? `${offer.discountAmount}% ${t('off')}` 
-                      : `${offer.discountAmount} JD ${t('off')}`}
+                      ? `${offer.discountAmount}% ${tc('offer')}` 
+                      : `${offer.discountAmount} ${tc('coins')} ${tc('offer')}`}
                   </Badge>
                   <Image
                     src={offer.imageUrl || "/placeholder.svg"}
@@ -139,7 +140,7 @@ export default function SpecialOffers() {
                     {language === 'en' ? offer.name : offer.name_ar}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-2">
-                    {offer.factory.name}
+                    {language === 'en' ? offer.factory.name : offer.factory.name_ar}
                   </p>
 
                   <div className="flex items-baseline mt-2">
@@ -162,7 +163,7 @@ export default function SpecialOffers() {
                               </span>
                             )}
                             <span className="text-xs text-muted-foreground">
-                              {tc('perPiece')}
+                              /{language === 'en' ? offer.name : offer.name_ar}
                             </span>
                           </div>
                         </div>

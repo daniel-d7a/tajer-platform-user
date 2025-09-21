@@ -146,7 +146,6 @@ export default function Companies() {
                     {getDiscountText(company)}
                   </Badge>
                 )}
-                
                 <Avatar className="w-full h-32 mb-4">
                   <AvatarImage
                     className="w-full h-full object-cover rounded-lg"
@@ -154,27 +153,18 @@ export default function Companies() {
                     alt={language === 'ar' ? company.name_ar : company.name || t('name')}
                   />
                 </Avatar>
-                
                 <h3 className="text-xl font-semibold text-center mb-2">
                   {language === 'ar' ? company.name_ar : company.name}
                 </h3>
-                
-                {hasDiscount(company) && (
-                  <p className="text-sm text-green-600 mb-2 text-center">
-                    {t('specialDiscount') || 'Special discount available'}
-                  </p>
-                )}
-                
                 <Link
                   href={`/companies/${company.id}`}
                   className="bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors hover:bg-primary/90"
                 >
-                  {t('Details')}
+                  {t('Details')} 
                 </Link>
               </div>
             ))}
       </div>
-      
       {/* Pagination */}
       {meta.last_page > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
@@ -187,7 +177,6 @@ export default function Companies() {
           ))}
         </div>
       )}
-      
       {!loading && companies.length === 0 && (
         <div className="text-center py-8">
           <p className="text-muted-foreground">{t('noCompaniesFound') || 'No companies found'}</p>
@@ -195,4 +184,4 @@ export default function Companies() {
       )}
     </div>
   );
-}
+};

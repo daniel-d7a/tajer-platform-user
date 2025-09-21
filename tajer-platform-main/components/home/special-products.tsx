@@ -124,9 +124,9 @@ export default function SpecialProducts() {
     ))}
   </div>
 ) : Products?.length ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-[100%]">
-    {Products.slice(0, 3).map((product) => (
-      <Link key={product.id} className="w-[90%] h-full" href={`/products/${product.product.id}`}>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[95%]">
+    {Products.slice(0, 4).map((product) => (
+      <Link key={product.id} className="w-[100%] h-full" href={`/products/${product.product.id}`}>
         <Card className="overflow-hidden flex flex-col h-full  rounded-2xl hover:scale-105 duration-300">
           <div className="relative pt-[100%]">
             {product.product.discountAmount > 0 && (

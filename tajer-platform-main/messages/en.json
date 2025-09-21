@@ -86,6 +86,7 @@
     "UnitType" : "Unit Type",
     "pieceOnly" :"piece Only",
     "packOnly" : "pack Only",
+    "searchPlaceholder" :"Search for offers...",
     "pieceOrPack" :"piece Or Pack",
     "PackPrice" : "Pack Price",
     "minOrder" : "min order",
@@ -148,7 +149,12 @@
       "searchPlaceholder" : "Find our brands...",
       "Registeredcompanies" : "Registered companies",
       "name" : "company",
-      "Details" : "Show Details"
+      "title" : "Our partners in success",
+      "Details" : "Show Products",
+      "noCompaniesFound" : "no companies found try to search another company ",
+      "off" : "Discount",
+            "specialDiscount":"special discount"
+
   },
     "orders" : { 
       "BrowseProducts" : "Browse Products",

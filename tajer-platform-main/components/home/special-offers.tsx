@@ -9,7 +9,6 @@ import { Skeleton } from "../ui/skeleton";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "../ui/button";
 import { usePathname, useRouter } from "next/navigation";
-
 type Offer = { 
   id: number;
   name: string;
@@ -54,7 +53,7 @@ export default function SpecialOffers() {
           "https://tajer-backend.tajerplatform.workers.dev/api/public/offers"
         );
         const json = await res.json();
-        setOffersData(json.data.slice(0, 3)); 
+        setOffersData(json.data.slice(0, 4)); 
       } catch (err) {
         console.error("something went wrong", err);
         setErrorMessage(t('errorMessage'));
@@ -63,6 +62,7 @@ export default function SpecialOffers() {
       };
     };
     fetchOffers();
+    //eslint-disable-next-line
   }, []);
 
   const calculateDiscountedPrice = (offer: Offer, isPack: boolean = false) => {
@@ -82,9 +82,9 @@ export default function SpecialOffers() {
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="w-[95%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
-          Array.from({ length: 3 }).map((_, idx) => (
+          Array.from({ length: 4 }).map((_, idx) => (
             <Card key={idx} className="animate-pulse h-full p-5">
               <Skeleton className="h-48 w-full" />
               <CardContent className="p-4 flex-grow">
@@ -180,7 +180,6 @@ export default function SpecialOffers() {
                           </span>
                         )}
                         <span className="text-xs text-muted-foreground">
-                          {tc('perPiece')}
                         </span>
                       </div>
                     )}

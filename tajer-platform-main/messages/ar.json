@@ -128,6 +128,7 @@
     "cta": "سجّل الآن",
     "PackPrice" : "سعر الحزمه",
     "piece" : "قطعه",
+    "searchPlaceholder" :"ابحث عن الخصومات والعروض لدينا...",
     "pieces" :" قطع",
     "piecesPerPack" : "عدد القطع في الحزمه",
     "featuredCategories": "تصفح حسب التصنيف",
@@ -202,7 +203,12 @@
     "searchPlaceholder" : "ابحث عن علاماتنا التجاريه ...",
     "Registeredcompanies" : "الشركات المسجله",
       "name" : "شركه",
-      "Details" : "عرض التفاصيل"
+      "title" : "شركاؤنا في النجاح",
+      "Details" : "عرض المنتجات", 
+      "noCompaniesFound" : "لا توجد مصانع جرب البحث عن مصانع اخري",
+      "off" : "خصم",
+
+      "specialDiscount":"يوجد خصم خاص"
   },
   "orders" : {
     "BrowseProducts" : "تصفح المنتجات",

@@ -1,6 +1,5 @@
 "use client"
 import Image from 'next/image';
-import HowItWorks from '@/components/home/how-it-works';
 import {useTranslations} from 'next-intl';
 import { usePathname } from "next/navigation";
 import { useState,useEffect } from 'react';
@@ -50,7 +49,6 @@ export default function About() {
               <li className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">{t('li4')}</li>
             </ul>
           </div>
-          <HowItWorks/>
           <div className='space-y-4 text-center'>
               <p  className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 {t('found')} <strong className='text-primary'>{t('strongs.leading')}</strong>  {t('stand')}
