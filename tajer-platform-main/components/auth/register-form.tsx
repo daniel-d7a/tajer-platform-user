@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { MapPin, AlertCircle } from 'lucide-react';
-
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -29,60 +29,13 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-const businessTypes = [
-  { value: 'supermarket', label: 'supermarket' },
-  { value: 'resturant', label: 'resturant' },
-  { value: 'pharmacy', label: 'pharmacy' },
-  { value: 'bakery', label: 'bakery' },
-  { value: 'clothes', label: 'clothes' },
-  { value: 'coffee_shop', label: 'coffee shop' },
-];
 
-const cities = [
-  { value: 'amman', label: 'عمان' },
-  { value: 'zarqa', label: 'الزرقاء' },
-  { value: 'irbid', label: 'إربد' },
-  { value: 'russeifa', label: 'الرصيفة' },
-  { value: 'wadi_sir', label: 'وادي السير' },
-  { value: 'aqaba', label: 'العقبة' },
-  { value: 'salt', label: 'السلط' },
-  { value: 'madaba', label: 'مادبا' },
-  { value: 'jerash', label: 'جرش' },
-  { value: 'ajloun', label: 'عجلون' },
-  { value: 'karak', label: 'الكرك' },
-  { value: 'tafilah', label: 'الطفيلة' },
-  { value: 'maan', label: 'معان' },
-];
 
-const formSchema = z.object({
-  businessName: z.string().min(3, {
-    message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل',
-  }),
-  phone: z.string().min(8, {
-    message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل',
-  }),
-  verificationCode: z
-    .string()
-    .min(4, {
-      message: 'يجب أن يكون رمز التحقق 4 أرقام',
-    })
-    .optional(),
-  city: z.string({
-    required_error: 'يرجى اختيار المدينة أو تحديد الموقع',
-  }),
-  businessType: z.string({
-    required_error: 'يرجى اختيار نوع العمل',
-  }),
-  password: z.string().min(8, {
-    message: 'يجب أن تكون كلمة المرور 8 أحرف على الأقل',
-  }),
-  referralCode: z.string().optional(),
-  termsAccepted: z.boolean().refine(val => val === true, {
-    message: 'يجب الموافقة على الشروط والأحكام',
-  }),
-});
+
 
 export default function RegisterForm() {
+
+
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
@@ -96,7 +49,40 @@ export default function RegisterForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [errorMessage,setErrorMessage] = useState('')
   const t = useTranslations('auth');
-
+  const [language,setLanguage] = useState('en')
+  const pathname = usePathname();
+  const formSchema = z.object({
+  businessName: z.string().min(3, {
+    message:t('commercialNameError'),
+  }),
+  phone: z.string().min(8, {
+    message: t('errorPhoneNumber'),
+  }),
+  verificationCode: z
+    .string()
+    .min(4, {
+      message:t('errorCode'),
+    })
+    .optional(),
+  city: z.string({
+    required_error: t('cityError'),
+  }),
+  businessType: z.string({
+    required_error: t('businessesError'),
+  }),
+  password: z.string().min(8, {
+    message: t('passwordError'),
+  }),
+  referralCode: z.string().optional(),
+  termsAccepted: z.boolean().refine(val => val === true, {
+    message: t('termsError'),
+  }),
+});
+    useEffect(() => {
+      const segments = pathname.split("/").filter(Boolean);
+      const lang = segments[0]; 
+      setLanguage(lang)
+    }, [pathname]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -110,6 +96,30 @@ export default function RegisterForm() {
     },
   });
 
+const businessTypes = [
+  { value: 'shop', label: t('businessTypes.shop') },
+  { value: 'supermarket', label: t('businessTypes.supermarket') },
+  { value: 'restaurant', label: t('businessTypes.restaurant') },
+  { value: 'roastery', label: t('businessTypes.roastery') },
+  { value: 'sweets shop', label: t('businessTypes.coffee_shop') },
+  { value: 'coffee shop', label: t('businessTypes.sweets_shop') },
+  { value: 'cafe', label: t('businessTypes.bookstore') },
+  { value: 'library', label: t('businessTypes.cafe') },
+];
+const cities = [
+  { value: 'amman', label: t('cities.amman') },
+  { value: 'zarqa', label: t('cities.zarqa') },
+  { value: 'irbid', label: t('cities.irbid') },
+  { value: 'russeifa', label: t('cities.russeifa') },
+  { value: 'aqaba', label: t('cities.aqaba') },
+  { value: 'salt', label: t('cities.salt') },
+  { value: 'Madaba', label: t('cities.Madaba ')},
+  { value: 'jerash', label:t('cities.jerash') },
+  { value: 'ajloun', label: t('cities.ajloun') },
+  { value: 'karak', label: t('cities.Karak') },
+  { value: 'tafilah', label: t('cities.tafilah') },
+  { value: 'maan', label: t('cities.maan') }
+];
   function getCityFromCoordinates(lat: number, lng: number): string {
     const jordanianCities = [
       { name: 'عمان', lat: 31.9454, lng: 35.9284, value: 'amman' },
@@ -117,17 +127,15 @@ export default function RegisterForm() {
       { name: 'إربد', lat: 32.5556, lng: 35.85, value: 'irbid' },
       { name: 'العقبة', lat: 29.532, lng: 35.0063, value: 'aqaba' },
       { name: 'السلط', lat: 32.0389, lng: 35.7272, value: 'salt' },
-      { name: 'مادبا', lat: 31.7197, lng: 35.7956, value: 'madaba' },
+      { name: 'مادبا', lat: 31.7197, lng: 35.7956, value: 'Madaba' },
       { name: 'جرش', lat: 32.2811, lng: 35.8992, value: 'jerash' },
       { name: 'عجلون', lat: 32.3328, lng: 35.7517, value: 'ajloun' },
       { name: 'الكرك', lat: 31.1801, lng: 35.7048, value: 'karak' },
       { name: 'الطفيلة', lat: 30.8378, lng: 35.604, value: 'tafilah' },
       { name: 'معان', lat: 30.1962, lng: 35.734, value: 'maan' },
     ];
-
     let closestCity = jordanianCities[0];
     let minDistance = Number.MAX_VALUE;
-
     jordanianCities.forEach(city => {
       const distance = Math.sqrt(
         Math.pow(lat - city.lat, 2) + Math.pow(lng - city.lng, 2)
@@ -139,12 +147,10 @@ export default function RegisterForm() {
     });
 
     if (minDistance > 2) {
-      return 'خارج الأردن';
+      return t('Outside');
     }
-
     return closestCity.name;
   };
-
   function detectLocation() {
     setIsDetectingLocation(true);
     setLocationError(null);
@@ -155,7 +161,6 @@ export default function RegisterForm() {
       setIsDetectingLocation(false);
       return;
     }
-
     navigator.geolocation.getCurrentPosition(
       position => {
         const lat = position.coords.latitude;
@@ -202,7 +207,6 @@ export default function RegisterForm() {
       }
     );
   };
-
   function sendVerificationCode() {
     const phone = form.getValues('phone');
     if (phone.length < 10) {
@@ -212,14 +216,11 @@ export default function RegisterForm() {
       });
       return;
     }
-
     setIsVerifying(true);
     setTimeout(() => {
       setIsVerifying(false);
     }, 1000);
   };
-
-    
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setApiError(null);
@@ -248,20 +249,19 @@ export default function RegisterForm() {
 })
       });
       if (!response.ok) {
-        setErrorMessage('حدث خطا اثناء انشاء الحساب يرجي التاكد من رقم الهاتف مره اخري')
+        setErrorMessage(t('errorsignUp'))
         const err = await response.json();
-           if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
-          setApiError('الحساب موجود بالفعل من فضلك سجل الدخول');
+          if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
+          setApiError(t('olreadyLogin'));
           router.push('/login');
       };
       } else {
-        setSuccessMsg(' تم إنشاء الحساب بنجاح! سيتم تحويلك قريبًا الي صفحه الرئيسيه الخاصه بك..');
+        setErrorMessage('')
+        setSuccessMsg(t('succesMessage'));
         router.push(redirectTo);
       };
     } finally{
       setIsLoading(false);
-      setIsLoading(false);
-
     };
   };
   return (
@@ -324,8 +324,8 @@ export default function RegisterForm() {
               />
             )}
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="space-y-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="flex items-center justify-between" >
               <h3 className="text-sm font-medium">{t('location')}</h3>
               <Button
                 type="button"
@@ -346,7 +346,6 @@ export default function RegisterForm() {
                 <AlertDescription>{locationError}</AlertDescription>
               </Alert>
             )}
-
             {detectedCity && (
               <div className="bg-secondary/10 p-4 rounded-lg border border-secondary/20">
                 <div className="flex items-center gap-2">
@@ -358,8 +357,7 @@ export default function RegisterForm() {
                     <p className="text-lg">{detectedCity}</p>
                     {detectedCity === 'خارج الأردن' && (
                       <p className="text-sm text-muted-foreground">
-                        يرجي العلم انه لن يعمل التطبيق بشكل مناسب لانك من خارج الأردن 
-                        يرجى اختيار المدينة يدوياً من القائمة أدناه
+                        {t('notWork')}
                       </p>
                     )}
                   </div>
@@ -378,12 +376,12 @@ export default function RegisterForm() {
                     value={field.value}
                     disabled={!!detectedCity && detectedCity !== 'خارج الأردن'}
                   >
-                    <FormControl>
-                      <SelectTrigger>
+                    <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                      <SelectTrigger >
                         <SelectValue placeholder={t('cityPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'}>
                       {cities.map(city => (
                         <SelectItem key={city.value} value={city.value}>
                           {city.label}
@@ -406,12 +404,12 @@ export default function RegisterForm() {
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <FormControl>
+                  <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <SelectTrigger>
                       <SelectValue placeholder={t('chooseBusinessType')} />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     {businessTypes.map(type => (
                       <SelectItem key={type.value} value={type.value}>
                         {type.label}
@@ -430,7 +428,7 @@ export default function RegisterForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('password')}</FormLabel>
-                <FormControl>
+                <FormControl >
                   <Input type="password" placeholder="********" {...field} />
                 </FormControl>
                 <FormMessage />
@@ -501,7 +499,7 @@ export default function RegisterForm() {
             className="w-full bg-secondary hover:bg-secondary/90"
             disabled={isLoading}
           >
-            {isLoading ? 'جاري التسجيل...' : 'إنشاء الحساب'}
+            {isLoading ? t('loading') : t('registerNow')}
           </Button>
 
           <div className="text-center text-sm">

@@ -381,6 +381,9 @@
     "registerNow": "سجّل الآن",
     "email": "البريد الإلكتروني",
     "phone": "رقم الهاتف",
+    "dontwork" : "",
+
+    "loading" : "جاري التحميل ...",
     "password": "كلمة المرور",
     "referralCode": "رمز الإحالة (اختياري)",
     "forgotPassword": "نسيت كلمة المرور؟",
@@ -395,21 +398,35 @@
     "sendVerification": "إرسال رمز التحقق",
     "verifiying": "جارٍ التحقق...",
     "verificationCode": "رمز التحقق",
+    "Outside" : "خارج الأردن",
+    "commercialNameError": "يجب أن يكون الاسم التجاري 3 أحرف على الأقل",
+    "errorPhoneNumber" : "يجب أن يكون رقم الهاتف 10 أرقام على الأقل",
+    "errorCode" : "يجب أن يكون رمز التحقق 4 أرقام",
+    "cityError" : "يرجى اختيار المدينة أو تحديد الموقع",
+    "businessesError" : "يرجى اختيار نوع العمل",
+    "passwordError" : "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "termsError" : "يجب الموافقة على الشروط والأحكام",
+    "errorsignUp" : "حدث خطا اثناء انشاء الحساب يرجي التاكد من رقم الهاتف مره اخري",
+    "olreadyLogin" : "الحساب موجود بالفعل من فضلك سجل الدخول",
+    "succesMessage" : " تم إنشاء الحساب بنجاح! سيتم تحويلك قريبًا الي صفحه الرئيسيه الخاصه بك",
+    "notWork" : "يرجى اختيار المدينة يدوياً من القائمة أدناه",
     "verificationCodePlaceholder": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني",
     "location": "الموقع",
     "locateMe": "تحديد موقعي",
-    
     "locating": "جاري تحديد الموقع...",
     "located": "تم تحديد موقعك",
     "cityPlaceholder": "اختر مدينتك",
     "businessType": "نوع العمل",
     "chooseBusinessType": "اختر نوع عملك",
-    "businessTypes": {
+      "businessTypes": {
       "supermarket": "سوبر ماركت",
+      "shop" : "متجر",
       "restaurant": "مطعم",
-      "sweetsShop": "محل حلويات",
+      "roastery": "محمصة",
+      "coffee_shop": "محل قهوه",
+      "sweets_shop": "محل حلويات",
       "bookstore": "مكتبة",
-      "coffeeShop": "كوفي شوب"
+      "cafe": "قهوه"
     },
     "city": "المدينة",
     "cities": {
@@ -417,9 +434,14 @@
       "zarqa": "الزرقاء",
       "irbid": "إربد",
       "russeifa": "الرصيفة",
-      "wadiSir": "وادي السير",
       "aqaba": "العقبة",
-      "salt": "السلط"
+      "Madaba ": "مأدبه",
+      "Karak": "الكرك",
+      "salt": "السلط",
+      "jerash": "الجرش",
+      "ajloun": "الجولان",
+      "tafilah": "الطفيله",
+      "maan": "ماعن"
     },
     "agreeTo": "أوافق على",
     "terms": "الشروط والأحكام"
