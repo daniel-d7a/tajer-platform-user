@@ -16,12 +16,6 @@ export function setUserLocaleClient(locale: string) {
   document.cookie = `user-locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
 }
 
-export function getUserLocaleClient(): string | null {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(/(?:^|;\s*)user-locale=([^;]+)/);
-  return match ? match[1] : null;
-}
-
 export default function LocaleSwitcherSelect({
   children,
   defaultValue,
@@ -42,7 +36,12 @@ export default function LocaleSwitcherSelect({
         segments[1] = nextLocale;
       }
       const newPath = segments.join('/');
-      router.replace(newPath);
+      
+      router.push(newPath);
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     });
   }
 

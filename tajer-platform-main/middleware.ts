@@ -5,7 +5,6 @@ import { routing } from './i18n/routing';
 
 const { locales } = routing;
 
-// نوع الـ Locale من next-intl
 type Locale = (typeof locales)[number];
 
 const intlMiddleware = createMiddleware(routing);
