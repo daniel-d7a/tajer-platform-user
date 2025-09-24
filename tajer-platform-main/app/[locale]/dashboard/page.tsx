@@ -136,7 +136,7 @@ const DashboardPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">{td('recentOrders')}</h2>
         
       <div className="rounded-xl border shadow-sm mb-5 overflow-x-auto max-w-full">
-  <table className="min-w-[700px] w-max text-center border-collapse">
+  <table className="min-w-full w-max text-center border-collapse">
     <thead className="border-b">
       <tr className="text-lg">
         <th className="p-3 whitespace-nowrap">{to('label.orderid')}</th>

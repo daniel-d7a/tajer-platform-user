@@ -39,9 +39,6 @@ export default function LocaleSwitcherSelect({
       
       router.push(newPath);
       
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     });
   }
 

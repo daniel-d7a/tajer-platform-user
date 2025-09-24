@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex-1 md:w-4/5 p-4 space-y-6 pb-16 md:pb-0">
         <div className="bg-card rounded-2xl shadow-sm p-4">
           <h1 className="text-3xl">
-            {tc('welcome')} <strong>{userData?.commercialName || td('defaultUser')}!</strong>
+            {tc('welcome')} <strong>{userData?.commercialName }!</strong>
           </h1>
         </div>
         <div className="bg-card rounded-2xl shadow-sm">
