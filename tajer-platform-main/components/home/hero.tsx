@@ -63,7 +63,7 @@ export default function Hero() {
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <div className="absolute inset-0 bg-black/25  z-10" />
+            <div className="absolute inset-0   z-10" />
             <Image
               src={slide.imageUrl || '/placeholder.svg'}
               alt={slide.headline}
@@ -73,21 +73,7 @@ export default function Hero() {
               className="object-cover object-center"
               priority={index === 0}
             />
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-6">
-              <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
-                {slide.headline}
-              </h1>
-              <div className="mt-8">
-                <Link href={slide.link}>
-                  <Button
-                    size="lg"
-                    className="bg-primary hover:bg-primary/90 text-lg"
-                  >
-                    {tc('browseBroduct')} <Boxes/>
-                  </Button>
-                </Link>
-              </div>
-            </div>
+           
           </div>
         ))
         )}
