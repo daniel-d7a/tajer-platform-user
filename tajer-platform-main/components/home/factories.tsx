@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Truck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
+
 interface Factory {
   id: number;
   name: string;
@@ -20,7 +22,14 @@ export default function Factories() {
   const [loading, setLoading] = useState(true);
   const [factories, setFactories] = useState<Factory[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const t = useTranslations('factories')
+  const t = useTranslations('factories');
+  const pathname = usePathname();
+
+  // استخرج اللغة من أول جزء في الـ pathname
+  const locale = pathname.split("/")[1] || "en";
+  // يمشي يمين لو عربي، شمال لو انجليزي
+  const isRTL = locale === "ar";
+
   useEffect(() => {
     const fetchFactories = async () => {
       try {
@@ -35,25 +44,31 @@ export default function Factories() {
         setLoading(false);
       }
     };
-
     fetchFactories();
   }, []);
 
   const duplicatedFactories = [...factories, ...factories, ...factories];
 
+  // Scroll animation بناءً على اللغة المستخرجة
   useEffect(() => {
     if (!scrollRef.current || factories.length === 0) return;
 
     const scrollContainer = scrollRef.current;
     let animationFrameId: number;
-    const scrollSpeed = 1; 
+    const scrollSpeed = 1;
 
     const animateScroll = () => {
       if (scrollContainer) {
-        scrollContainer.scrollLeft += scrollSpeed;
-        
-        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
-          scrollContainer.scrollLeft = 0;
+        if (isRTL) {
+          scrollContainer.scrollLeft -= scrollSpeed;
+          if (scrollContainer.scrollLeft <= 0) {
+            scrollContainer.scrollLeft = scrollContainer.scrollWidth / 3;
+          }
+        } else {
+          scrollContainer.scrollLeft += scrollSpeed;
+          if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
+            scrollContainer.scrollLeft = 0;
+          }
         }
       }
       animationFrameId = requestAnimationFrame(animateScroll);
@@ -77,10 +92,10 @@ export default function Factories() {
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
       scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [factories.length]);
+  }, [factories.length, isRTL, pathname]);
 
   return (
-    <section className="py-12">
+    <section className="py-12" dir='ltr'>
       <motion.div 
         className="mb-12"
         initial={{ opacity: 0 }}
@@ -108,26 +123,23 @@ export default function Factories() {
                   passHref
                 >
                   <motion.div
-                    className="flex-shrink-0  opacity-70 hover:opacity-100 hover:border-primary border-1 rounded-lg  shadow-lg  flex items-center justify-center p-2 cursor-pointer"
+                    className="flex-shrink-0 opacity-70 hover:opacity-100 hover:border-primary border-1 rounded-lg shadow-lg flex items-center justify-center p-2 cursor-pointer"
                     whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.2 } }}
                     transition={{ duration: 0.3 }}
                   >
-
                     {factory.imageUrl ? (
                       <div className="relative w-20 h-20">
-
-                       <Image
+                        <Image
                           src={factory.imageUrl}
                           alt={factory.name_ar || factory.name}
                           fill
                           sizes="80px"
                           className="object-contain"
                           onError={(e) => {
-                            // Fallback في حالة وجود خطأ في تحميل الصورة
                             e.currentTarget.style.display = 'none';
                           }}
                         />
-                        </div>
+                      </div>
                     ) : (
                       <Truck size={48} className="text-muted-foreground opacity-50" />
                     )}
@@ -151,4 +163,4 @@ export default function Factories() {
       `}</style>
     </section>
   );
-};
+}
