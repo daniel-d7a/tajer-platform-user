@@ -98,7 +98,7 @@ export default function Page() {
         <h2 className="text-2xl font-semibold">{to('OrdersTitle')}</h2>
         <div className="flex flex-row gap-2 md:flex-row md:gap-4 ">
           <Link
-            href="/products"
+            href="/categories"
             className="inline-flex items-center px-4 py-2 gap-2 bg-primary text-white rounded-md hover:bg-primary/90"
           >
               {to('BrowseProducts')}
