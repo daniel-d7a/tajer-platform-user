@@ -78,11 +78,11 @@ export default function Page() {
         {(!loading && invoiceData.length === 0) ? (
           <div className="text-center py-16">
             <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">empty</h2>
-            <p className="text-muted-foreground mb-6">emptyDesc</p>
+            <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
+            <p className="text-muted-foreground mb-6">{t('emptyDesc')}</p>
             <Link href="/categories">
               <Button className="bg-primary hover:bg-primary/90">
-                browseProducts
+                 {t('browseProducts')}
               </Button>
             </Link>
           </div>

@@ -5,15 +5,23 @@ import { ChangeEvent, ReactNode, useTransition } from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
+
 type Props = {
   children: ReactNode;
   defaultValue: string;
   label: string;
 };
+
+export function setUserLocaleClient(locale: string) {
+  document.cookie = `user-locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+}
+
 export function getUserLocaleClient(): string | null {
+  if (typeof document === 'undefined') return null;
   const match = document.cookie.match(/(?:^|;\s*)user-locale=([^;]+)/);
   return match ? match[1] : null;
 }
+
 export default function LocaleSwitcherSelect({
   children,
   defaultValue,
@@ -25,6 +33,9 @@ export default function LocaleSwitcherSelect({
 
   function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value as Locale;
+    
+    setUserLocaleClient(nextLocale);
+    
     startTransition(() => {
       const segments = pathname.split('/');
       if (segments.length > 1) {
@@ -33,7 +44,7 @@ export default function LocaleSwitcherSelect({
       const newPath = segments.join('/');
       router.replace(newPath);
     });
-  };
+  }
 
   return (
     <label
@@ -54,4 +65,4 @@ export default function LocaleSwitcherSelect({
       <span className="pointer-events-none absolute right-2 top-[8px]">⌄</span>
     </label>
   );
-};
+}

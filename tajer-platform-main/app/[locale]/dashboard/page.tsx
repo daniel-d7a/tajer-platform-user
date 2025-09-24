@@ -135,7 +135,6 @@ const DashboardPage: React.FC = () => {
       <div className="rounded-xl">
         <h2 className="text-2xl font-bold mb-4">{td('recentOrders')}</h2>
         
-        {/* الحاوية القابلة للتمرير */}
       <div className="rounded-xl border shadow-sm mb-5 overflow-x-auto max-w-full">
   <table className="min-w-[700px] w-max text-center border-collapse">
     <thead className="border-b">
@@ -169,10 +168,8 @@ const DashboardPage: React.FC = () => {
     </tbody>
   </table>
 </div>
-
       </div>
     </div>
   );
 };
-
 export default DashboardPage;

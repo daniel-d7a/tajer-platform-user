@@ -17,24 +17,26 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslations } from 'next-intl';
 
-const formSchema = z.object({
-  phone: z.string().min(8, {
-    message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل',
-  }),
-  verificationCode: z
-    .string()
-    .min(4, {
-      message: 'يجب أن يكون رمز التحقق 4 أرقام',
-    })
-    .optional(),
-});
+
 
 export default function ForgotPasswordForm() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
+  const t = useTranslations('auth')
+  const formSchema = z.object({
+  phone: z.string().min(8, {
+    message: t('errorPhoneNumberOrPassword'),
+  }),
+  verificationCode: z
+    .string()
+    .min(4, {
+      message: t('errorCode'),
+    })
+    .optional(),
+});
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,16 +50,15 @@ export default function ForgotPasswordForm() {
     if (phone.length < 10) {
       form.setError('phone', {
         type: 'manual',
-        message: 'يرجى إدخال رقم هاتف صحيح',
+        message:t('errorPhoneNumber'),
       });
       return;
     }
 
     setIsVerifying(true);
 
-    // هنا هتنده API عشان يبعث الكود
     setTimeout(() => {
-      setSuccessMsg('تم إرسال رمز التحقق إلى رقم الهاتف');
+      setSuccessMsg(t('sendVerification'));
     }, 1000);
   }
 
@@ -74,7 +75,7 @@ export default function ForgotPasswordForm() {
   };
   return (
     <div className='w-full flex justify-center items-center  h-screen'>
-    <Card className="p-6 w-[30%] ">
+      <Card className="p-6 w-[30%] ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -82,7 +83,7 @@ export default function ForgotPasswordForm() {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>رقم الهاتف</FormLabel>
+                <FormLabel>{t('phone')}</FormLabel>
                 <div className="flex gap-2">
                   <FormControl>
                     <Input {...field} placeholder="+962..." />
@@ -92,50 +93,45 @@ export default function ForgotPasswordForm() {
                     variant="outline"
                     onClick={sendVerificationCode}
                   >
-                    إرسال رمز التحقق
+                    {t('sendVerification')}  
                   </Button>
                 </div>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           {isVerifying && (
             <FormField
               control={form.control}
               name="verificationCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>رمز التحقق</FormLabel>
+                  <FormLabel>{t('verificationCode')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="أدخل رمز التحقق" />
+                    <Input {...field} placeholder={t('verificationCodePlaceholder')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
-
           {apiError && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{apiError}</AlertDescription>
             </Alert>
           )}
-
           {successMsg && (
             <Alert>
               <AlertDescription>{successMsg}</AlertDescription>
             </Alert>
           )}
-
           <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90">
-            تأكيد
+            {t('confirm')}
           </Button>
         </form>
       </Form>
     </Card>
-        </div>
-
+  </div>
   );
-}
+};

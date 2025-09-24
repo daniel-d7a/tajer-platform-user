@@ -22,14 +22,6 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { useTranslations } from 'next-intl';
 import { AlertCircle } from 'lucide-react';
 
-const formSchema = z.object({
-  phone: z.string().min(7, {
-    message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل',
-  }),
-  password: z.string().min(1, {
-    message: 'يرجى إدخال كلمة المرور',
-  }),
-});
 
 export default function LoginForm() {
   const t = useTranslations('auth');
@@ -40,7 +32,14 @@ export default function LoginForm() {
   const redirectTo = searchParams.get('redirect') || '/dashboard';
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
-
+const formSchema = z.object({
+  phone: z.string().min(7, {
+    message: t('errorPhoneNumber'),
+  }),
+  password: z.string().min(1, {
+    message: t('passwordError'),
+  }),
+});
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,13 +69,14 @@ export default function LoginForm() {
         }else{
             router.push(redirectTo);
         };
-        setSuccessMsg('جاري تحويلك لصفحتك الشخصيه ');
+        setSuccessMsg(t('succesMessage'));
         localStorage.setItem("data", JSON.stringify(resData.user));
         login(resData.user);
-      };
-      if(!response.ok){
-        setApiError( 'رقم الهاتف او كلمه السر غير صحيحه يرجي المحاوله مره اخري');
+      }else{
+        console.log('error')
+        setApiError(t('errorPhoneNumberOrPassword'));
       }
+      console.log(response)
     }finally{
       setIsLoading(false);
     };
@@ -87,6 +87,7 @@ export default function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
+            disabled= {isLoading}
             name="phone"
             render={({ field }) => (
               <FormItem>
@@ -103,6 +104,7 @@ export default function LoginForm() {
           <FormField
             control={form.control}
             name="password"
+            disabled= {isLoading}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('password')}</FormLabel>
@@ -138,7 +140,11 @@ export default function LoginForm() {
             className="w-full bg-primary hover:bg-primary/90"
             disabled={isLoading}
           >
-            {isLoading ? 'جاري تسجيل الدخول...' : t('login')}
+            {isLoading ? ( 
+               <div className="col-span-5 flex items-center h-full justify-center gap-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+          </div>
+              ): t('login')}
           </Button>
           <div className="text-center text-sm">
             {t('noAccount')}

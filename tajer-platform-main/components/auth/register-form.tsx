@@ -174,28 +174,25 @@ const cities = [
           const matchingCity = cities.find(city => city.label === cityName);
           if (matchingCity) {
             form.setValue('city', matchingCity.value);
-          }
-        }
-
+          };
+        };
         setIsDetectingLocation(false);
       },
       error => {
         setIsDetectingLocation(false);
-
         let errorMessage = 'حدث خطأ في تحديد الموقع';
         switch (error.code) {
           case error.PERMISSION_DENIED:
             errorMessage =
-              'تم رفض الإذن لتحديد الموقع. يرجى السماح بالوصول للموقع في إعدادات المتصفح';
-            break;
+              t('locationPermese')
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'معلومات الموقع غير متاحة';
+            errorMessage = t('locationPermese');
             break;
           case error.TIMEOUT:
-            errorMessage = 'انتهت مهلة تحديد الموقع';
+            errorMessage = t('locationTimeout');
             break;
           default:
-            errorMessage = 'حدث خطأ غير معروف في تحديد الموقع';
+            errorMessage = t('locationError');
             break;
         }
         setLocationError(errorMessage);
@@ -212,7 +209,7 @@ const cities = [
     if (phone.length < 10) {
       form.setError('phone', {
         type: 'manual',
-        message: 'يرجى إدخال رقم هاتف صحيح',
+        message: t('errorPhoneNumber'),
       });
       return;
     }
@@ -266,10 +263,11 @@ const cities = [
   };
   return (
     <Card className="p-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <Form  {...form}>
+        <form  onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
+            disabled={isLoading}
             name="businessName"
             render={({ field }) => (
               <FormItem>
@@ -284,6 +282,7 @@ const cities = [
           <div className="space-y-4">
             <FormField
               control={form.control}
+              disabled={isLoading}
               name="phone"
               render={({ field }) => (
                 <FormItem>
@@ -324,7 +323,7 @@ const cities = [
               />
             )}
           </div>
-          <div className="space-y-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <div className="space-y-4" aria-disabled= {isLoading} dir={language === 'ar' ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between" >
               <h3 className="text-sm font-medium">{t('location')}</h3>
               <Button
@@ -364,20 +363,25 @@ const cities = [
                 </div>
               </div>
             )}
-
             <FormField
               control={form.control}
               name="city"
+              disabled={isLoading}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('city')}</FormLabel>
                   <Select
+                  
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={!!detectedCity && detectedCity !== 'خارج الأردن'}
                   >
-                    <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                      <SelectTrigger >
+                    <FormControl
+
+                    dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                      <SelectTrigger    
+                      disabled={isLoading}
+                      >
                         <SelectValue placeholder={t('cityPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
@@ -395,6 +399,8 @@ const cities = [
             />
           </div>
           <FormField
+            disabled={isLoading}
+
             control={form.control}
             name="businessType"
             render={({ field }) => (
@@ -404,8 +410,12 @@ const cities = [
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <SelectTrigger>
+                  <FormControl
+
+                  dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <SelectTrigger
+                    disabled={isLoading}
+                    >
                       <SelectValue placeholder={t('chooseBusinessType')} />
                     </SelectTrigger>
                   </FormControl>
@@ -423,6 +433,8 @@ const cities = [
           />
 
           <FormField
+            disabled={isLoading}
+          
             control={form.control}
             name="password"
             render={({ field }) => (
@@ -437,6 +449,8 @@ const cities = [
           />
 
           <FormField
+            disabled={isLoading}
+
             control={form.control}
             name="referralCode"
             render={({ field }) => (
@@ -451,6 +465,7 @@ const cities = [
           />
 
           <FormField
+            disabled={isLoading}
             control={form.control}
             name="termsAccepted"
             render={({ field }) => (
@@ -499,7 +514,11 @@ const cities = [
             className="w-full bg-secondary hover:bg-secondary/90"
             disabled={isLoading}
           >
-            {isLoading ? t('loading') : t('registerNow')}
+            {isLoading ? (
+               <div className="col-span-5 flex items-center h-full justify-center gap-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+          </div>
+            ) : t('registerNow')}
           </Button>
 
           <div className="text-center text-sm">

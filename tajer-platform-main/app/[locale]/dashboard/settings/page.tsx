@@ -23,12 +23,13 @@ import {
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
   const t = useTranslations('dashboard')
+  const ta = useTranslations('auth')
   const formSchema = z.object({
-    businessName: z.string().min(3, { message: 'يجب أن يكون الاسم التجاري 3 أحرف على الأقل' }),
-    phone: z.string().min(10, { message: 'يجب أن يكون رقم الهاتف 10 أرقام على الأقل' }),
-    city: z.string({ required_error: 'يرجى اختيار المدينة أو تحديد الموقع' }),
-    password: z.string().min(8, { message: 'يجب أن تكون كلمة المرور 8 أحرف على الأقل' }),
-    businessType: z.string({ required_error: 'يرجى اختيار نوع العمل' }),
+    businessName: z.string().min(3, { message: ta('commercialNameError') }),
+    phone: z.string().min(10, { message: ta('errorPhoneNumber') }),
+    city: z.string({ required_error: ta('cityError') }),
+    password: z.string().min(8, { message: ta('passwordError') }),
+    businessType: z.string({ required_error: ta('businessesError')}),
     verificationCode: z.string().optional(),
     ConfirmPasswrod: z.string().optional(),
     ActiveBassword: z.string().optional(),

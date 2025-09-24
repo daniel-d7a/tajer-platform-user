@@ -14,7 +14,6 @@
     "coins" : "JD",
     "pieces" : "Pieces",
     "noData" : "No Data",
-    
     "terms": "Terms and Conditions",
     "privacy": "Privacy Policy", 
     "search": "Search for products...",
@@ -153,10 +152,11 @@
       "Registeredcompanies" : "Registered companies",
       "name" : "company",
       "title" : "Our partners in success",
+      "factoryProducts" : "Our Product from company",
       "Details" : "Show Products",
       "noCompaniesFound" : "no companies found try to search another company ",
       "off" : "Discount",
-            "specialDiscount":"special discount"
+      "specialDiscount":"special discount"
 
   },
     "orders" : { 
@@ -199,6 +199,8 @@
     "titel1" : "Take a quick look at your store's performance",
     "subTitle1" : "Detailed statistics about your store's performance!",
     "orders" : "Take a quick look at your requests",
+    "empty" : "No Orders Yet!",
+    "emptyDesc" : "Start by adding products to your cart",
     "ordersSubTitle" : "Detailed statistics about your current requests!",
     "invice" : "Your Invoices on the platform ",
     "invoiceSubTitle" : "Explore the requests that reached your account",
@@ -232,11 +234,11 @@
       "security" : "Security"
     },
     "security" : {
-      "title" : "إعدادات الحساب",
-      "acitvepassword" : "كلمه السر الحاليه",
-      "password" : "كلمة السر",
-      "confirmPassword" : "تأكيد كلمه السر",
-      "saveChanges" : "حفظ التغييرات"
+      "title" : "Account Settings",
+      "acitvepassword" : "Current Password",
+      "password" : "Password",
+      "confirmPassword" : "Confirm Password",
+      "saveChanges" : "Save Changes"
     }
   },
 "settingsProfile" : {
@@ -413,6 +415,7 @@
     "email": "Email",
     "loading" : "loading...",
     "phone": "Phone Number",
+    "confirm": "Confirm",
     "notWork" : "Please select the city manually from the list below.",
     "password": "Password",
     "commercialNameError" : "The trade name must be at least 3 characters long.",
@@ -432,6 +435,10 @@
     "haveAccount": "Already have an account?",
     "createAccount": "Create Account",
     "logout": "Logout",
+    "locationPermese" : "Location permission denied. Please allow location access in your browser settings.",
+    "locationTimeout" : "Location deadline has expired",
+    "errorPhoneNumberOrPassword" : "phone number or password is incorrect please try again !",
+    "locationError": "An unknown error occurred in determining the location.",
     "loginDesc": "Enter your account details to access the Tajer platform",
     "registerDesc": "Register now to access the largest wholesale market for merchants",
     "businessName": "Business Name",

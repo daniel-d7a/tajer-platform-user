@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingBag, ShoppingCart } from 'lucide-react';
+import { Boxes, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '../ui/skeleton';
@@ -238,6 +238,7 @@ export default function ProductGrid({ categoryId, factoryId }: { categoryId: num
             <Link href="/categories">
               <Button className="bg-primary hover:bg-primary/90">
                 {tn('browseProducts')}
+                <Boxes/>
               </Button>
             </Link>
           </div>

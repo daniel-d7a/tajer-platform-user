@@ -167,13 +167,13 @@ export default function Page() {
         ) : orders.length === 0 ? (
           <div className="py-16 flex flex-col items-center justify-center">
             <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">لا يوجد طلبات</h2>
+            <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
             <p className="text-muted-foreground mb-6">
-              لم يتم العثور على أي طلبات في هذه الحالة. جرب حالات أخرى أو ابدأ التسوق الآن!
+              {t('emptyDesc')}
             </p>
             <Link href="/products">
               <Button className="bg-primary hover:bg-primary/90">
-                تصفح المنتجات
+                {t('browseProducts')}
               </Button>
             </Link>
           </div>

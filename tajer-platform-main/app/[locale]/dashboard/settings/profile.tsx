@@ -24,34 +24,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { useTranslations } from "next-intl";
 
-const cities = [
-  { value: 'amman', label: 'عمان' },
-  { value: 'zarqa', label: 'الزرقاء' },
-  { value: 'irbid', label: 'إربد' },
-  { value: 'russeifa', label: 'الرصيفة' },
-  { value: 'wadi_sir', label: 'وادي السير' },
-  { value: 'aqaba', label: 'العقبة' },
-  { value: 'salt', label: 'السلط' },
-  { value: 'madaba', label: 'مادبا' },
-  { value: 'jerash', label: 'جرش' },
-  { value: 'ajloun', label: 'عجلون' },
-  { value: 'karak', label: 'الكرك' },
-  { value: 'tafilah', label: 'الطفيلة' },
-  { value: 'maan', label: 'معان' },
-];
+
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
   variable: "--font-cairo",
 });
-const businessTypes = [
-  { value: 'supermarket', label: 'supermarket' },
-  { value: 'resturant', label: 'resturant' },
-  { value: 'pharmacy', label: 'pharmacy' },
-  { value: 'bakery', label: 'bakery' },
-  { value: 'clothes', label: 'clothes' },
-  { value: 'coffee_shop', label: 'coffee shop' },
-];
+
 type UserData = {
   id?: number;
   commercialName?: string;
@@ -64,7 +43,8 @@ type UserData = {
 
 export default function Profile() {
   const t = useTranslations("settingsProfile");
-  const localUserData: UserData = typeof window !== "undefined"
+  const ta = useTranslations('auth')
+    const localUserData: UserData = typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("data") || "{}")
     : {};
   const [state, SetState] = useState(false);
@@ -76,6 +56,30 @@ export default function Profile() {
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
 
+const businessTypes = [
+  { value: 'shop', label: ta('businessTypes.shop') },
+  { value: 'supermarket', label: ta('businessTypes.supermarket') },
+  { value: 'restaurant', label: ta('businessTypes.restaurant') },
+  { value: 'roastery', label: ta('businessTypes.roastery') },
+  { value: 'sweets shop', label: ta('businessTypes.coffee_shop') },
+  { value: 'coffee shop', label: ta('businessTypes.sweets_shop') },
+  { value: 'cafe', label: ta('businessTypes.bookstore') },
+  { value: 'library', label: ta('businessTypes.cafe') },
+];
+const cities = [
+  { value: 'amman', label: ta('cities.amman') },
+  { value: 'zarqa', label: ta('cities.zarqa') },
+  { value: 'irbid', label: ta('cities.irbid') },
+  { value: 'russeifa', label: ta('cities.russeifa') },
+  { value: 'aqaba', label: ta('cities.aqaba') },
+  { value: 'salt', label: ta('cities.salt') },
+  { value: 'Madaba', label: ta('cities.Madaba ')},
+  { value: 'jerash', label:ta('cities.jerash') },
+  { value: 'ajloun', label: ta('cities.ajloun') },
+  { value: 'karak', label: ta('cities.Karak') },
+  { value: 'tafilah', label: ta('cities.tafilah') },
+  { value: 'maan', label: ta('cities.maan') }
+];
   const formSchema = z.object({
     businessName: z.string().min(3, { message: t('schema.businessNameMin') }),
     phone: z.string().min(10, { message: t('schema.phoneMin') }),

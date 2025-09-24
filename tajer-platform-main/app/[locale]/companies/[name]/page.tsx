@@ -1,14 +1,16 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation';
 import ProductGrid from '@/components/products/product-grid';
-
+import { useTranslations } from 'next-intl';
 interface factoryNames {
-  name:string;
+  name:string; 
   name_ar:string;
 }
 export default function Page() {
-    const {name} = useParams()
+    const t = useTranslations('factories');
+    const {name} = useParams();
+    const [loadings,setLoading] = useState(true)
     const [factoryName,setFactoryName] = useState<factoryNames>()
     const fetchFactoryName = async () =>{
       try{
@@ -16,17 +18,26 @@ export default function Page() {
         const data = await response.json()
         setFactoryName(data)
       }finally{
-        console.log('true')
+        setLoading(false)
       }
     }
     useEffect(() => {
-      fetchFactoryName()
+      fetchFactoryName();
+      //eslint-disable-next-line
   },[])
   return (
     <div className='p-6 flex flex-col gap-10'>
-
-        <h2 className="text-4xl font-bold text-center"> منتجاتنا من شركه {factoryName?.name_ar}  </h2>
+      {loadings ? (
+           <div className="col-span-5 flex items-center h-full justify-center gap-2">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+          </div>
+      ) : (
+        <>
+        <h2 className="text-4xl font-bold text-center">  {t('factoryProducts')}  {factoryName?.name_ar}  </h2>
         <ProductGrid factoryId={Number(name)} categoryId={0}/>
+        </>
+      )}
+        
     </div>
   );
 };
