@@ -6,7 +6,6 @@ import SpecialOffers from "@/components/home/special-offers";
 import HowItWorks from "@/components/home/how-it-works";
 import CallToAction from "@/components/home/call-to-action";
 import SpecialProducts from "@/components/home/special-products";
-import GoogleMap from "@/components/home/GoogleMap";
 import Factories from "@/components/home/factories";
 import Page from '@/app/[locale]/faq/page'
 const containerVariants = {
@@ -42,7 +41,7 @@ export default function Home() {
       variants={containerVariants}
       className="container mx-auto"
     >
-      <motion.div variants={itemVariants} className="flex justify-center items-center p-4">
+      <motion.div variants={itemVariants} className="flex items-center pt-4 pb-4 ">
         <Hero />
       </motion.div>
          <motion.div variants={itemVariants}>
@@ -64,9 +63,7 @@ export default function Home() {
       <motion.div variants={itemVariants}>
         <HowItWorks />
       </motion.div>
-      <motion.div variants={itemVariants}>
-        <GoogleMap />
-      </motion.div>
+   
       <motion.div variants={itemVariants}>
         <CallToAction />
       </motion.div>

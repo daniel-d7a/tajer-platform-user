@@ -123,16 +123,17 @@ export default function Factories() {
                   passHref
                 >
                   <motion.div
-                    className="flex-shrink-0 opacity-70 hover:opacity-100 hover:border-primary border-1 rounded-lg shadow-lg flex items-center justify-center p-2 cursor-pointer"
+                    className="flex-shrink-0 opacity-70 hover:opacity-100 hover:border-primary hover:border-1 rounded-lg  flex items-center justify-center p-2 cursor-pointer"
                     whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.2 } }}
                     transition={{ duration: 0.3 }}
                   >
                     {factory.imageUrl ? (
-                      <div className="relative w-20 h-20">
+                      <div className="relative w-32 min-w-20 h-20">
                         <Image
                           src={factory.imageUrl}
                           alt={factory.name_ar || factory.name}
                           fill
+                          quality={100}
                           sizes="80px"
                           className="object-contain"
                           onError={(e) => {

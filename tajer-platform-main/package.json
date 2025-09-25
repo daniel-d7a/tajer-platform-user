@@ -43,6 +43,7 @@
     "react-day-picker": "^9.7.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.58.1",
+    "react-intersection-observer": "^9.16.0",
     "recharts": "^2.15.3",
     "rtl-detect": "^1.1.2",
     "tailwind-merge": "^2.6.0",

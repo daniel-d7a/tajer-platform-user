@@ -10,44 +10,63 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
-import { AnimationProvider } from '@/components/providers/animation-provider';
+
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
   variable: "--font-cairo",
 });
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: string };
-}) {
-  const t = await getTranslations({
-    locale: params.locale,
-    namespace: "common",
-  });
+type Locale = (typeof routing.locales)[number];
 
-  return {
-    title: t("title"),
-    description: "منصة تاجر هي سوق الجملة الأول للتجار والشركات",
-    icons: {
-      icon: "/tajer-logo.svg",
-    },
-  };
-}
-export default async function RootLayout({
-  children,
-  params,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
-}) {
-  const { locale } = params;
-  const direction = getLangDir(locale);
+  params: { locale: string }; 
+}
 
-  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+export async function generateMetadata({ params }: RootLayoutProps) {
+  const { locale } = params;
+  
+  if (!routing.locales.includes(locale as Locale)) {
+    return {
+      title: "Tajer Platform",
+      description: "منصة تاجر هي سوق الجملة الأول للتجار والشركات",
+    };
+  }
+
+  try {
+    const t = await getTranslations({ 
+      locale: locale as Locale, 
+      namespace: "common" 
+    });
+
+    return {
+      title: t("title"),
+      description: "منصة تاجر هي سوق الجملة الأول للتجار والشركات",
+      icons: {
+        icon: "/tajer-logo.svg",
+      },
+    };
+  } catch {
+    return {
+      title: "Tajer Platform",
+      description: "منصة تاجر هي سوق الجملة الأول للتجار والشركات",
+    };
+  }
+}
+
+export default async function RootLayout({ 
+  children, 
+  params 
+}: RootLayoutProps) {
+  const { locale } = params;
+  
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
+
+  const direction = getLangDir(locale);
+
   return (
     <html
       suppressHydrationWarning
@@ -56,16 +75,14 @@ export default async function RootLayout({
       className={cairo.variable}
     >
       <body
-        className="min-h-screen bg-background font-cairo"
+        className="min-h-screen bg-background font-cairo antialiased"
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
-            <NextIntlClientProvider locale={locale}>
+            <NextIntlClientProvider locale={locale as Locale}>
               <Header />
-              <AnimationProvider>
-              <main>{children}</main>
-              </AnimationProvider>
+              <main className="min-h-screen">{children}</main>
               <Footer />
             </NextIntlClientProvider>
           </AuthProvider>

@@ -3,8 +3,7 @@
 import { Locale } from 'next-intl';
 import { ChangeEvent, ReactNode, useTransition } from 'react';
 import clsx from 'clsx';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 type Props = {
   children: ReactNode;
@@ -27,25 +26,23 @@ export default function LocaleSwitcherSelect({
 
   function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value as Locale;
-    
+
     setUserLocaleClient(nextLocale);
-    
+
     startTransition(() => {
       const segments = pathname.split('/');
       if (segments.length > 1) {
         segments[1] = nextLocale;
       }
       const newPath = segments.join('/');
-      
       router.push(newPath);
-      
     });
   }
 
   return (
     <label
       className={clsx(
-        'relative text-gray-400 ',
+        'relative text-gray-400',
         isPending && 'transition-opacity [&:disabled]:opacity-30'
       )}
     >

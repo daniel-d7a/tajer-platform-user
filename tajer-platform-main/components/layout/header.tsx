@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
@@ -16,25 +16,59 @@ import {
 } from "@/components/ui/dropdown-menu";
 import LocaleSwitcher from "../LocaleSwitcher";
 import { useTranslations } from "next-intl";
+
 export default function Header() {
   const t = useTranslations("header");
   const tc = useTranslations("common");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
 
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isMenuOpen) return;
+
+      if (typeof window === "undefined") return;
+      const currentY = window.scrollY;
+
+      if (currentY < 36) {
+        setShowHeader(true);
+        lastScrollY.current = currentY;
+        return;
+      }
+      if (currentY > lastScrollY.current && currentY > 36) {
+        setShowHeader(false);
+      } else if (currentY < lastScrollY.current) {
+        setShowHeader(true);
+      }
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMenuOpen]);
+
   const handleLogout = () => {
     logout();
     window.location.href = "/";
   };
+
   interface User {
     name: string;
     email: string;
     role: "admin" | "trader" | "sales";
-    commercialName?: string; // optional
+    commercialName?: string; 
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+    <header
+      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+      style={{ willChange: "transform" }}
+    >
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="mr-6 ml-6 flex items-center space-x-2">
@@ -179,7 +213,6 @@ export default function Header() {
                 {t("cart")}
               </Button>
             </Link>
-
             {isAuthenticated ? (
               <>
                 <Button
@@ -214,4 +247,4 @@ export default function Header() {
       )}
     </header>
   );
-}
+};

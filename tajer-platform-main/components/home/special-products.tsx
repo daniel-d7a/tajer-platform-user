@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import Link from "next/link";
@@ -35,46 +35,243 @@ interface ProductType {
     minOrderQuantity:number
   };
 }
-interface product {
+
+interface ProductBase {
   name: string;
-    name_ar:string;
-    imageUrl: string;
-    category: string;
-    manufacturer: string;
-    piecePrice: number;
-    piecesPerPack: number;
-    discountType:string;
-    unitType: string;
-    id: number;
-    discountAmount : number;
-    packPrice:number;
-    minOrderQuantity:number
+  name_ar:string;
+  imageUrl: string;
+  category: string;
+  manufacturer: string;
+  piecePrice: number;
+  piecesPerPack: number;
+  discountType:string;
+  unitType: string;
+  id: number;
+  discountAmount : number;
+  packPrice:number;
+  minOrderQuantity:number
 }
-export default function SpecialProducts() {
-  const t = useTranslations("specialProducts");
-  const tb = useTranslations("buttons")
-  const tc = useTranslations("common") 
-  const router = useRouter();
-  const [Products, setProducts] = useState<ProductType[] | null>(null);
-  const [loading, SetLoading] = useState(true);
-  const [language,setLanguage] = useState('en')
-  const pathname = usePathname();
-    useEffect(() => {
-    const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0]; 
-    setLanguage(lang)
-  }, [pathname]);
-    const calculateDiscountedPrice = (offer: product , isPack: boolean = false) => {
+
+// Custom hook to check if element is in viewport
+function useInView<T extends HTMLElement = HTMLElement>(opts?: { threshold?: number }) {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    let ticking = false;
+    const threshold = opts?.threshold ?? 0.18;
+
+    function handleScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        if (!node) return;
+        const rect = node.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        const visible = rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
+        setInView(visible);
+        ticking = false;
+      });
+    }
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [opts?.threshold]);
+
+  return [ref, inView] as const;
+}
+
+function ProductCard({
+  product,
+  idx,
+  language,
+  t,
+  tb,
+  tc,
+  router,
+}: {
+  product: ProductType;
+  idx: number;
+  language: string;
+  t: (key: string) => string;
+  tb: (key: string) => string;
+  tc: (key: string) => string;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const [cardRef, inView] = useInView<HTMLDivElement>({ threshold: 0.18 });
+
+  const calculateDiscountedPrice = (offer: ProductBase, isPack: boolean = false) => {
     const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
-    
     if (offer.discountAmount <= 0) return originalPrice;
-    
     if (offer.discountType === 'percentage') {
       return originalPrice * (1 - offer.discountAmount / 100);
     } else {
       return Math.max(0, originalPrice - offer.discountAmount);
-    };
+    }
   };
+
+  return (
+    <div
+      ref={cardRef}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0px)" : "translateY(60px)",
+        transition: "opacity 0.7s cubic-bezier(.4,.2,0,1), transform 0.7s cubic-bezier(.4,.2,0,1)",
+        transitionDelay: inView ? `${idx * 0.08}s` : "0s",
+        willChange: "opacity, transform",
+      }}
+      className="w-full h-full"
+    >
+      <Link className="w-full h-full block" href={`/products/${product.product.id}`}>
+        <Card className="overflow-hidden flex flex-col h-full  rounded-2xl hover:scale-105 duration-300">
+          <div className="relative pt-[100%]">
+            {product.product.discountAmount > 0 && (
+              <Badge className="absolute top-2 right-2 bg-primary z-10">
+                {product.product.discountType === 'percentage' 
+                  ? `${product.product.discountAmount}% ${t('offer')}` 
+                  : `${product.product.discountAmount} ${tc('coins')} ${t('offer')}`}
+              </Badge> 
+            )}
+            <Image
+              src={product.product.imageUrl || "/placeholder.svg"}
+              alt={product.product.name}
+              fill
+              className="object-cover absolute top-0 left-0"
+            />
+          </div>
+          <CardContent className="p-4 flex-grow">
+            <div className="text-sm text-muted-foreground mb-1"></div>
+            <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">
+              {language === 'en' ? product.product.name : product.product.name_ar}
+            </h3>
+            <div className="flex items-baseline mt-2">
+              {product.product.unitType === "pack_only" || product.product.unitType === "piece_or_pack" ? (
+                <div className="flex gap-2 flex-col w-full">
+                  <div className="flex items-center">
+                    <div className="flex items-center gap-2 w-full">
+                      {product.product.discountAmount > 0 ? (
+                        <div className="flex gap-2">
+                          <span className="text-lg font-bold">
+                            {calculateDiscountedPrice(product.product, false).toFixed(2)} {tc('coins')}
+                          </span>
+                          <span className="line-through text-muted-foreground">
+                            {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-lg font-bold">
+                          {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        / {language === 'en' ? product.product.name : product.product.name_ar}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-md w-[100%] mr-2 ">
+                      {t('PackPrice')}: {calculateDiscountedPrice(product.product, true).toFixed(2)} {tc('coins')}
+                      {product.product.discountAmount > 0 && (
+                        <span className="line-through text-muted-foreground ml-2">
+                          {product.product.packPrice.toFixed(2)} {tc('coins')}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {t('piecesPerPack')}: {product.product.piecesPerPack}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 w-full">
+                  {product.product.discountAmount > 0 ? (
+                    <div className="flex gap-2 w-full">
+                      <span className="text-lg font-bold">
+                        {calculateDiscountedPrice(product.product).toFixed(2)} {tc('coins')}
+                      </span>
+                      <span className="line-through text-muted-foreground">
+                        {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-lg font-bold">
+                      {product.product.piecePrice.toFixed(2)} {tc('coins')}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs text-muted-foreground">
+                {t('UnitType')} : {product.product.unitType === "piece_only" ? t('pieceOnly') : product.product.unitType === "pack_only" ? t('packOnly') : t('pieceOrPack')}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('minOrder')} : {product.product.minOrderQuantity} {product.name}
+            </p>
+          </CardContent>
+          <CardFooter className="p-4 pt-0">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/products/${product.id}`);
+              }}
+            >
+              <ShoppingCart className="h-4 w-4 ml-2" />
+              {tb('viewProducts')}
+            </Button>
+          </CardFooter>
+        </Card>
+      </Link>
+    </div>
+  );
+}
+
+function SkeletonCard({ idx }: { idx: number }) {
+  return (
+    <Card key={idx} className="animate-pulse h-full p-5">
+      <Skeleton className="h-48 w-full" />
+      <CardContent className="p-4 flex-grow">
+        <Skeleton className="h-4 w-1/4 mb-2" />
+        <Skeleton className="h-4 w-3/4 mb-2" />
+        <Skeleton className="h-4 w-1/2 mb-2" />
+        <Skeleton className="h-6 w-1/4" />
+      </CardContent>
+      <CardFooter className="p-4 pt-0">
+        <Skeleton className="h-8 w-full" />
+      </CardFooter>
+    </Card>
+  );
+}
+
+export default function SpecialProducts() {
+  const t = useTranslations("specialProducts");
+  const tb = useTranslations("buttons");
+  const tc = useTranslations("common");
+  const router = useRouter();
+  const [Products, setProducts] = useState<ProductType[] | null>(null);
+  const [loading, SetLoading] = useState(true);
+  const [language, setLanguage] = useState('en');
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
+
   const fetchSpecialProducts = async () => {
     try {
       const data = await fetch(
@@ -89,6 +286,7 @@ export default function SpecialProducts() {
       }
     } catch {
       setProducts(null);
+      SetLoading(false);
     };
   };
 
@@ -106,152 +304,44 @@ export default function SpecialProducts() {
           </p>
         </div>
         <div className="w-full flex items-center justify-center flex-col">
-        {loading ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[100%]">
-    {Array.from({ length: 4 }).map((_, idx) => (
-      <Card key={idx} className="animate-pulse h-full p-5">
-        <Skeleton className="h-48 w-full" />
-        <CardContent className="p-4 flex-grow">
-          <Skeleton className="h-4 w-1/4 mb-2" />
-          <Skeleton className="h-4 w-3/4 mb-2" />
-          <Skeleton className="h-4 w-1/2 mb-2" />
-          <Skeleton className="h-6 w-1/4" />
-        </CardContent>
-        <CardFooter className="p-4 pt-0">
-          <Skeleton className="h-8 w-full" />
-        </CardFooter>
-      </Card>
-    ))}
-  </div>
-) : Products?.length ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[95%]">
-    {Products.slice(0, 4).map((product) => (
-      <Link key={product.id} className="w-[100%] h-full" href={`/products/${product.product.id}`}>
-        <Card className="overflow-hidden flex flex-col h-full  rounded-2xl hover:scale-105 duration-300">
-          <div className="relative pt-[100%]">
-            {product.product.discountAmount > 0 && (
-              <Badge className="absolute top-2 right-2 bg-primary z-10">
-                 {product.product.discountType === 'percentage' 
-                      ? `${product.product.discountAmount}% ${t('offer')}` 
-                      : `${product.product.discountAmount} ${tc('coins')} ${t('offer')}`}
-              </Badge> 
-            )}
-            <Image
-              src={product.product.imageUrl || "/placeholder.svg"}
-              alt={product.product.name}
-              fill
-              className="object-cover absolute top-0 left-0"
-            />
-          </div>
-          <CardContent className="p-4 flex-grow">
-            <div className="text-sm text-muted-foreground mb-1"></div>
-            <h3 className="font-semibold mb-1 line-clamp-2 text-xl truncate w-full">
-              {language === 'en' ? product.product.name : product.product.name_ar}
-            </h3>
-            {/* <p className="text-sm text-muted-foreground mb-2">
-              {product.product.manufacturer}
-            </p> */}
-              <div className="flex items-baseline mt-2">
-                    {product.product.unitType === "pack_only" || product.product.unitType === "piece_or_pack" ? (
-                      <div className="flex gap-2 flex-col w-full">
-                        <div className="flex items-center">
-                          <div className="flex items-center gap-2 w-full">
-                            {product.product.discountAmount > 0 ? (
-                              <div className="flex gap-2">
-                                <span className="text-lg font-bold">
-                                  {calculateDiscountedPrice(product.product, false).toFixed(2)} {tc('coins')}
-                                </span>
-                                <span className="line-through text-muted-foreground">
-                                  {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-lg font-bold">
-                                {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                              </span>
-                            )}
-                            <span className="text-xs text-muted-foreground">
-                              / {language === 'en' ? product.product.name : product.product.name_ar}
-                            </span>
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-md w-[100%] mr-2 ">
-                            {t('PackPrice')}: {calculateDiscountedPrice(product.product, true).toFixed(2)} {tc('coins')}
-                            {product.product.discountAmount > 0 && (
-                              <span className="line-through text-muted-foreground ml-2">
-                                {product.product.packPrice.toFixed(2)} {tc('coins')}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            {t('piecesPerPack')}: {product.product.piecesPerPack}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 w-full">
-                        {product.product.discountAmount > 0 ? (
-                          <div className="flex gap-2 w-full">
-                            <span className="text-lg font-bold">
-                              {calculateDiscountedPrice(product.product).toFixed(2)} {tc('coins')}
-                            </span>
-                            <span className="line-through text-muted-foreground">
-                              {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-lg font-bold">
-                            {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-            <div className="flex flex-col gap-2">
-              <span className="text-xs text-muted-foreground">
-               {t('UnitType')} : {product.product.unitType === "piece_only" ? t('pieceOnly') : product.product.unitType === "pack_only" ? t('packOnly') : t('pieceOrPack')}
-              </span>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[100%]">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <SkeletonCard key={idx} idx={idx} />
+              ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t('minOrder')} : {product.product.minOrderQuantity} {product.name}
-            </p>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => router.push(`/products/${product.id}`)}
-            >
-              <ShoppingCart className="h-4 w-4 ml-2" />
-              {tb('viewProducts')}
-            </Button>
-          </CardFooter>
-        </Card>
-      </Link>
-    ))}
-  </div>
-) : (
-  <div className=" w-full">
-    <p className="text-center">{t('NotFoundProducts')}</p>
-  </div>
-)}
+          ) : Products?.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-[95%]">
+              {Products.slice(0, 4).map((product, idx) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  idx={idx}
+                  language={language}
+                  t={t}
+                  tb={tb}
+                  tc={tc}
+                  router={router}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className=" w-full">
+              <p className="text-center">{t('NotFoundProducts')}</p>
+            </div>
+          )}
         </div>
-
-             <div className="text-center mt-8">
-                   <Link href="/special-products" >
-                     <Badge
-                       variant="outline"
-                       className="text-base py-2 px-4  cursor-pointer hover:bg-secondary hover:text-white"
-                     >
-                        {tb('featuredProducts')}
-                     </Badge>
-                   </Link>
-                 </div>
+        <div className="text-center mt-8">
+          <Link href="/special-products" >
+            <Badge
+              variant="outline"
+              className="text-base py-2 px-4  cursor-pointer hover:bg-secondary hover:text-white"
+            >
+              {tb('featuredProducts')}
+            </Badge>
+          </Link>
+        </div>
       </div>
     </section>
   );
-};
+}

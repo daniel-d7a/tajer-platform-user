@@ -3,6 +3,8 @@
 import { CheckCircle, ShoppingCart, Truck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+
 export default function HowItWorks() {
   const t = useTranslations('home');
 
@@ -29,52 +31,100 @@ export default function HowItWorks() {
 
   return (
     <section className="py-12">
-      <motion.div 
-        className="text-center mb-10"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <h2 className="text-3xl font-bold">{t('howItWorks')}</h2>
-        <p className="mt-2 text-muted-foreground">{t('howItWorksDesc')}</p>
-      </motion.div>
-
-      <motion.div 
-        className="mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: {
-              staggerChildren: 0.2
-            }
-          }
-        }}
-        initial="hidden"
-        animate="visible"
-      >
-        {steps.map(step => (
-          <motion.div 
+      <SectionTitle 
+        title={t('howItWorks')} 
+        description={t('howItWorksDesc')} 
+      />
+      
+      <div className="mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        {steps.map((step, index) => (
+          <StepCard 
             key={step.id} 
-            className="text-center mx-auto w-[70%]"
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0 }
-            }}
-            whileHover={{ y: -5 }}
-          >
-            <motion.div 
-              className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: .5 }}
-            >
-              <step.icon className="h-8 w-8 text-primary" />
-            </motion.div>
-            <h3 className="text-xl font-semibold">{step.title}</h3>
-            <p className="mt-2 text-muted-foreground">{step.description}</p>
-          </motion.div>
+            step={step} 
+            index={index} 
+          />
         ))}
-      </motion.div>
+      </div>
     </section>
+  );
+}
+
+function SectionTitle({ title, description }: { title: string; description: string }) {
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  return (
+    <motion.div 
+      ref={ref}
+      className="text-center mb-10"
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <h2 className="text-3xl font-bold">{title}</h2>
+      <p className="mt-2 text-muted-foreground">{description}</p>
+    </motion.div>
+  );
+}
+
+type Step = {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+};
+
+function StepCard({ step, index }: { step: Step; index: number }) {
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  return (
+    <motion.div 
+      ref={ref}
+      className="text-center mx-auto w-[70%]"
+      initial={{ opacity: 0, y: 60, scale: 0.9 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 60, scale: 0.9 }}
+      transition={{ 
+        duration: 0.8, 
+        delay: index * 0.2,
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        y: -10,
+        transition: { duration: 0.3 }
+      }}
+    >
+      <motion.div 
+        className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={inView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
+        transition={{ 
+          duration: 0.6, 
+          delay: index * 0.2 + 0.3,
+          type: "spring",
+          stiffness: 100
+        }}
+        whileHover={{ 
+          rotate: 360,
+          scale: 1.1,
+          transition: { duration: 0.5 }
+        }}
+      >
+        <step.icon className="h-8 w-8 text-primary" />
+      </motion.div>
+      
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
+      >
+        <h3 className="text-xl font-semibold">{step.title}</h3>
+        <p className="mt-2 text-muted-foreground">{step.description}</p>
+      </motion.div>
+    </motion.div>
   );
 }
