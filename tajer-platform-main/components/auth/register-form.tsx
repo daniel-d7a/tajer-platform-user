@@ -91,7 +91,7 @@ export default function RegisterForm() {
       city: '',
       businessType: '',
       password: '',
-      referralCode: '',
+      referralCode: searchParams.get('referralCode') || '',
       termsAccepted: false,
     },
   });

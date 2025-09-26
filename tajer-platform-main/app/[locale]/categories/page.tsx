@@ -21,7 +21,7 @@ export default function CategoriesPage() {
     router.push(`?search=${encodeURIComponent(searchValue)}&page=1`);
   };
   return (
-    <div className="w-[90%] py-8 mx-auto">
+    <div className="w-[95%] py-8 mx-auto">
       <h1 className="text-3xl font-bold mb-6">{t('browseProducts')}</h1>
  
       <form onSubmit={handleSearch} className="relative mb-6">

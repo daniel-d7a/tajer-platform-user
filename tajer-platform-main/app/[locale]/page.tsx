@@ -39,7 +39,7 @@ export default function Home() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="container mx-auto"
+      className=" mx-auto"
     >
       <motion.div variants={itemVariants} className="flex items-center pt-4 pb-4 ">
         <Hero />
