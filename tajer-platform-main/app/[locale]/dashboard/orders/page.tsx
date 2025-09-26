@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Boxes, ShoppingBag } from "lucide-react";
+import { Boxes, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { OrderRow } from "@/components/dashboard/OrderRow";
 import { useSearchParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Merchant {
   commercialName?: string;
@@ -106,7 +107,7 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statuses.map((s) => (
           <Button
             key={s}
@@ -116,7 +117,6 @@ export default function Page() {
               setActiveBtn(s);
             }}
             className={
-              
               activeBtn === s
                 ? `bg-primary hover:bg-secondary text-white`
                 : `bg-background hover:bg-secondary border`
@@ -126,57 +126,44 @@ export default function Page() {
           </Button>
         ))}
       </div>
-      <div className="overflow-x-auto rounded-xl border shadow-sm mb-5">
+      <div className="overflow-x-auto rounded-xl flex flex-col w-full items-center justify-center border shadow-sm mb-5">
         {loading ? (
-          <table className="w-full text-center border-collapse min-w-[1000px]">
-            <thead>
-              <tr>
-                <th className="p-3 border-b">{to('label.orderid')}</th>
-                <th className="p-3 border-b">{to('label.merchnat')}</th>
-                <th className="p-3 border-b">{to('label.total')}</th>
-                <th className="p-3 border-b">{to('label.status')}</th>
-                <th className="p-3 border-b">{to('label.createdAt')}</th>
-                <th className="p-3 border-b">{to('label.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(5)].map((_, i) => (
-                <tr key={i} className="animate-pulse">
-                  <td className="p-3">
-                    <div className="h-4 w-16 bg-background/90 rounded"></div>
-                  </td>
-                  <td className="p-3">
-                    <div className="h-4 w-24 bg-background/90 rounded"></div>
-                  </td>
-                  <td className="p-3">
-                    <div className="h-4 w-12 bg-background/90 rounded"></div>
-                  </td>
-                  <td className="p-3">
-                    <div className="h-4 w-14 bg-background/90 rounded"></div>
-                  </td>
-                  <td className="p-3">
-                    <div className="h-4 w-20 bg-background/90 rounded"></div>
-                  </td>
-                  <td className="p-3">
-                    <div className="h-6 w-20 bg-background/90 rounded"></div>
+           <div className="w-full min-w-[1000px]">
+    {Array.from({ length: 3 }).map((_, index) => (
+      <div
+        key={index}
+        className="grid grid-cols-6 items-center text-center border-b p-4 gap-4"
+      >
+        <Skeleton className="h-4 w-16 mx-auto" />
+        <Skeleton className="h-4 w-24 mx-auto" />
+        <Skeleton className="h-4 w-20 mx-auto" />
+        <Skeleton className="h-4 w-16 mx-auto" />
+        <Skeleton className="h-4 w-24 mx-auto" />
+        <Skeleton className="h-8 w-20 mx-auto" />
+      </div>
+    ))}
+  </div>
+        ) : orders.length === 0 ? (
+          <tr>
+                  <td colSpan={6} className="p-8 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                        <Boxes className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-lg font-medium text-muted-foreground">
+                          {to('noOrders')}
+                        </p>
+                      </div>
+                      <Link href="/categories">
+                        <Button className="bg-primary hover:bg-primary/90 mt-4">
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          {to('BrowseProducts')}
+                        </Button>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : orders.length === 0 ? (
-          <div className="py-16 flex flex-col items-center justify-center">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
-            <p className="text-muted-foreground mb-6">
-              {t('emptyDesc')}
-            </p>
-            <Link href="/products">
-              <Button className="bg-primary hover:bg-primary/90">
-                {t('browseProducts')}
-              </Button>
-            </Link>
-          </div>
         ) : (
           <table className="w-full text-center border-collapse min-w-[1000px]">
             <thead>
@@ -192,6 +179,7 @@ export default function Page() {
             <tbody>
               {orders.map((order) => (
                 <OrderRow
+                  text_id={order.text_id || ""}
                   key={order.id}
                   id={order.id}
                   merchant={order.merchant?.commercialName || "-"}

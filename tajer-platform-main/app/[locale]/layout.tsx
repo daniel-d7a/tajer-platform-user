@@ -10,6 +10,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
+import { Toaster } from "react-hot-toast";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -82,7 +83,16 @@ export default async function RootLayout({
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
               <Header />
-              <main className="min-h-screen">{children}</main>
+              <main className="min-h-screen">
+                {children}
+                <Toaster 
+                toastOptions={
+                  {
+                    className: "bg-primary text-primary-foreground",
+                  }
+                }
+                position="top-right" reverseOrder={false} />
+              </main>
               <Footer />
             </NextIntlClientProvider>
           </AuthProvider>

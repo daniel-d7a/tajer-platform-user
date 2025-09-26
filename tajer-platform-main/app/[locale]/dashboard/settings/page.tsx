@@ -117,7 +117,6 @@ export default function Settings() {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-
                   )}
                 />
                     <FormField
@@ -140,7 +139,6 @@ export default function Settings() {
                 <Button className="bg-primary p-2 rounded-md px-4 py-2  text-white rounded-md shadow-sm text-sm font-medium ">{ts('security.saveChanges')}</Button>
             </div>       
             </div>
-
           </div>
         )}
       </div>

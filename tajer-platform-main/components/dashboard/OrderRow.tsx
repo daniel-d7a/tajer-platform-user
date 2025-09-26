@@ -8,6 +8,7 @@ type OrderRowProps = {
   totalValue: number;
   status: string;
   createdAt: string | null;
+  text_id:string;
 };
 
 
@@ -20,6 +21,7 @@ const statusColor: Record<string, string> = {
 
 export const OrderRow: React.FC<OrderRowProps> = ({
   id,
+  text_id,
   merchant,
   totalValue,
   status,
@@ -34,12 +36,12 @@ export const OrderRow: React.FC<OrderRowProps> = ({
   PENDING: to('status.PENDING'),
 };
   const formattedDate = createdAt
-    ? new Date(createdAt).toLocaleDateString("en-US")
+    ? new Date(createdAt).toLocaleDateString("en-US").replace(/\//g, '-')
     : tc('noData');
   const [openOrderDetails,setOpenOrderDetails] = useState(false)
   return (
     <tr className="border-b hover:bg-muted/40 duration-200">
-      <td className="p-3">{id}</td>
+      <td className="p-3">{text_id}</td>
       <td className="p-3">{merchant}</td>
       <td className="p-3">{tc('coins')} {totalValue.toFixed(2)}</td>
       <td className={`p-3 ${statusColor[status] || ""}`}>
@@ -49,12 +51,12 @@ export const OrderRow: React.FC<OrderRowProps> = ({
       </td>
       <td className="p-3">
       <button
-      className="px-3 py-1 text-sm bg-primary text-white rounded-md hover:bg-primary/90"
+      className="px-3 py-1 text-xs w-fit bg-primary text-white rounded-md lg:text-sm hover:bg-primary/90"
       onClick={() => setOpenOrderDetails(true)}>
         {to('showDetails')}
       </button>
       </td>
-      {openOrderDetails && <OpenOrder Id={id} onClose={() => setOpenOrderDetails(false)}/>}
+      {openOrderDetails && <OpenOrder text_id={text_id} Id={id} onClose={() => setOpenOrderDetails(false)}/>}
     </tr>
   );
 };

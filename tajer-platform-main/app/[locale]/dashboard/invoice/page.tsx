@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Boxes, ShoppingBag } from "lucide-react";
+import { Boxes, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { OrderRow } from "@/components/dashboard/OrderRow";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Merchant {
   commercialName?: string;
@@ -16,6 +17,7 @@ interface Invoice {
   totalValue: number;
   status: string;
   merchant: Merchant;
+  text_id:string;
 }
 
 interface ApiResponse {
@@ -36,7 +38,6 @@ export default function Page() {
   const [invoiceData, setInvoiceData] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const to = useTranslations("orders");
-  const tc = useTranslations("common");
   const t = useTranslations('dashboard')
   const fetchInvoice = async () => {
     try {
@@ -74,18 +75,28 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-xl border shadow-sm mb-5">
+      <div className="overflow-x-auto rounded-xl flex items-center justify-center border shadow-sm mb-5">
         {(!loading && invoiceData.length === 0) ? (
-          <div className="text-center py-16">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
-            <p className="text-muted-foreground mb-6">{t('emptyDesc')}</p>
-            <Link href="/categories">
-              <Button className="bg-primary hover:bg-primary/90">
-                 {t('browseProducts')}
-              </Button>
-            </Link>
-          </div>
+        <tr>
+                  <td colSpan={6} className="p-8 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                        <Boxes className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-lg font-medium text-muted-foreground">
+                          {to('noOrders')}
+                        </p>
+                      </div>
+                      <Link href="/categories">
+                        <Button className="bg-primary hover:bg-primary/90 mt-4">
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          {to('BrowseProducts')}
+                        </Button>
+                      </Link>
+                    </div>
+                  </td>
+          </tr>
         ) : (
           <table className="w-full text-center border-collapse">
             <thead>
@@ -100,18 +111,21 @@ export default function Page() {
             </thead>
             <tbody>
               {loading ? (
-                <tr className="hover:bg-muted">
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                  <td className="p-3 border-b">{tc("loading")}</td>
-                </tr>
+                Array.from({ length: 3 }).map((_, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-4"><Skeleton className="h-4 w-16 mx-auto" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-24 mx-auto" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-20 mx-auto" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16 mx-auto" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-24 mx-auto" /></td>
+                    <td className="p-4"><Skeleton className="h-8 w-20 mx-auto" /></td>
+                  </tr>
+                ))
               ) : (
                 invoiceData.map((invoice) => (
                   <OrderRow
                     key={invoice.id}
+                    text_id={invoice.text_id}
                     createdAt={invoice.createdAt}
                     id={invoice.id}
                     totalValue={Number(invoice.totalValue)}

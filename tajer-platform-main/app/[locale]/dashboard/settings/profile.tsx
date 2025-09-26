@@ -7,12 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import Toast from "./toast";
 import { Input } from "@/components/ui/input"; 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Cairo } from "next/font/google";
+import toast from "react-hot-toast";
 import {
   Form,
   FormControl,
@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from "next-intl";
+import { MapPin } from "lucide-react";
 
 
 const cairo = Cairo({
@@ -39,7 +40,7 @@ type UserData = {
   businessType?: string;
   email?: string;
   referralCode?: string;
-};
+}; 
 
 export default function Profile() {
   const t = useTranslations("settingsProfile");
@@ -49,13 +50,12 @@ export default function Profile() {
     : {};
   const [state, SetState] = useState(false);
   const [loading, SetLoading] = useState(false);
-  const [message, setMessage] = useState('');
   // Location state
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-
+ 
 const businessTypes = [
   { value: 'shop', label: ta('businessTypes.shop') },
   { value: 'supermarket', label: ta('businessTypes.supermarket') },
@@ -103,7 +103,6 @@ const cities = [
     },
   });
 
-  // Location detection functions from RegisterForm
   function getCityFromCoordinates(lat: number, lng: number): string {
     const jordanianCities = [
       { name: 'عمان', lat: 31.9454, lng: 35.9284, value: 'amman' },
@@ -231,9 +230,9 @@ const cities = [
     });
     const res = await (await EditeData).json();
     if(!(await EditeData).ok){
-      setMessage(t('messages.editError'));
+      toast.error(t('faild'))
     }else{
-      setMessage(t('messages.editSuccess'));
+      toast.success(t('success'))
     }
     localStorage.setItem("data", JSON.stringify(res));
     SetState(!state);
@@ -376,6 +375,7 @@ const cities = [
               disabled={isDetectingLocation}
               className="flex items-center gap-2"
             >
+              <MapPin/>
               {isDetectingLocation ? t('location.locating') : t('location.locateMe')}
             </Button>
           </div>
@@ -399,9 +399,7 @@ const cities = [
           )}
         </div>
       </form>
-      <div className="mt-2">
-        {state && <Toast message={message} />}
-      </div>
+    
       <div className="p-6 flex gap-2 ">
         <Button
           onClick={handleEdite}
@@ -412,10 +410,13 @@ const cities = [
           }
           disabled={loading}
         >
-          {t('fields.saveChanges')}
+          {loading ? (
+              <div className="col-span-5 flex items-center h-full justify-center gap-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+          </div>
+          ):t('fields.saveChanges')}
         </Button>
-
       </div>
     </Form>
   );
-}
+};

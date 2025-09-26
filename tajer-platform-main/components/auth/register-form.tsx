@@ -250,7 +250,6 @@ const cities = [
         const err = await response.json();
           if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
           setApiError(t('olreadyLogin'));
-          router.push('/login');
       };
       } else {
         setErrorMessage('')
@@ -374,7 +373,6 @@ const cities = [
                   
                     onValueChange={field.onChange}
                     value={field.value}
-                    disabled={!!detectedCity && detectedCity !== 'خارج الأردن'}
                   >
                     <FormControl
 

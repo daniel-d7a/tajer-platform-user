@@ -8,12 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
+import { ArrowRight, Minus, Plus, Trash2, ShoppingBag, Boxes } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useRouter } from 'next/navigation';
-import Toast from '../dashboard/settings/toast';
 import { usePathname } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Product {
   id: number;
@@ -60,9 +60,9 @@ export default function CartPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const t = useTranslations('cart');
   const tc = useTranslations('common');
-  const [message, setMessage] = useState('');
-    const [language, setLanguage] = useState('en');
-    const pathname = usePathname();
+  const [checkoutLoading,setCheckoutLoading] = useState(false);
+  const [language, setLanguage] = useState('en');  
+  const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
     useEffect(() => {
@@ -135,6 +135,7 @@ export default function CartPage() {
       return null;
     }
     try {
+      setCheckoutLoading(true)
       const response = await fetch(
         'https://tajer-backend.tajerplatform.workers.dev/api/orders/orders',
         {
@@ -153,15 +154,16 @@ export default function CartPage() {
           credentials: 'include',
         }
       );
-
       if (!response.ok) {
-        setMessage(t('checkoutError') || 'حصل خطا اثناء اضافه الطلبات يرجي المحاوله مره أخري لاحقا');
+        toast.error(t('checkoutError') || 'حصل خطا اثناء اضافه الطلبات يرجي المحاوله مره أخري لاحقا');
       } else {
-        setMessage(t('checkoutSuccess') || 'تمت اضافه المنتجات الي قائمه الإنتظار سيتم توصيل طلبك في اسرع وقت');
+        toast.success(t('checkoutSuccess') || 'تم اضافه الطلبات بنجاح');
         setCartItems([]);
       }
     } catch  {
-      setMessage(t('checkoutError') || 'حصل خطا اثناء اضافه الطلبات يرجي المحاوله مره أخري لاحقا');
+        toast.error(t('checkoutError') || 'حصل خطا اثناء اضافه الطلبات يرجي المحاوله مره أخري لاحقا');
+    }finally{
+      setCheckoutLoading(false)
     }
   };
 
@@ -261,7 +263,7 @@ export default function CartPage() {
           <p className="text-muted-foreground mb-6">{t('emptyDesc')}</p>
           <Link href="/categories">
             <Button className="bg-primary hover:bg-primary/90">
-              {t('browseProducts')}
+              {t('browseProducts')} <Boxes/>
             </Button>
           </Link>
         </div>
@@ -428,13 +430,19 @@ export default function CartPage() {
                   <span>{t('total')}</span>
                   <span>{total.toFixed(2)} {tc('coins')}</span>
                 </div>
-                {message && <Toast message={message}/>}
                 <Button 
                   onClick={handleCheckOut}
-                  className="w-full bg-secondary hover:bg-secondary/90" 
+                  className={`w-full bg-secondary hover:bg-secondary/90 
+                    ${checkoutLoading ? "opacity-60 cursor-not-allowed": "" }
+                    `}
                   size="lg"
+                  disabled={checkoutLoading}
                 >
-                  {t('checkout')}
+                  {checkoutLoading ? (
+                    <div className="col-span-5 flex items-center h-full justify-center gap-2">
+                      <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+                    </div>
+                  ) : t('checkout') }
                 </Button>
               </CardContent>
             </Card>

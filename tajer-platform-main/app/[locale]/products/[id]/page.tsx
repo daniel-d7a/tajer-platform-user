@@ -8,14 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import Toast from "../../dashboard/settings/toast";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "@/components/products/product-grid";
-
+import toast from "react-hot-toast";
 type Offer = { 
   id: number;
   name: string;
@@ -61,11 +60,10 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState('');
   const [loadingCart, setLoadingCart] = useState(false);
   const [categoryIds, setCategoryIDS] = useState<number[]>([]);
-  const [productData,setProductData] = useState([])
-  const [loadingProduct,setLoadingProduct] = useState(true)
+  const [productData,setProductData] = useState([]);
+  const [loadingProduct,setLoadingProduct] = useState(true);
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0] || 'en';
@@ -137,16 +135,16 @@ const fetchProductById = async () => {
         }
       );
       if (!res.ok) {
+        toast.error(tP('errorMessage'));
         throw new Error(`HTTP error! status: ${res.status}`);
       } else {
-        setMessage('Added to cart');
         setLoadingCart(false);
+        toast.success(tP('succesMessage'))
       };
       const data = await res.json();
       return data;
     } catch (err) {
       console.error("Error adding to cart:", err);
-      setMessage('Something went wrong. Please try again later.');
       setLoadingCart(false);
     }
   };
@@ -243,7 +241,7 @@ const fetchProductById = async () => {
                   )}
                 </div>
                     <h2 className="font-semibold mb-2">{tid('category')}</h2>
-                    <h3 className="">
+                    <div className="flex gap-2">
                     {offerData?.categories?.map((e) => (
                       <Link
                        href={`/categories/${e.id}`}
@@ -253,7 +251,7 @@ const fetchProductById = async () => {
                         {language === 'en' ? e.name : e.name_ar}
                         </Link>
                     ))}
-                  </h3>
+                  </div>
                 <Separator />
                 <div>
                 </div>
@@ -292,7 +290,8 @@ const fetchProductById = async () => {
                     <Button
                       variant="outline"
                       size="icon"
-                      disabled={quantity <= (offerData?.minOrderQuantity || 1)}
+
+                      disabled={quantity <= (offerData?.minOrderQuantity || 1) || loadingCart}
                       onClick={() => {
                         if (quantity > (offerData?.minOrderQuantity || 1)) {
                           setQuantity(quantity - 1);
@@ -305,6 +304,7 @@ const fetchProductById = async () => {
                       type="number"
                       value={quantity}
                       min={offerData?.minOrderQuantity || 1}
+                      disabled= {loadingCart}
                       onChange={(e) => {
                         const value = parseInt(e.target.value);
                         if (!isNaN(value) && value >= (offerData?.minOrderQuantity || 1)) {
@@ -316,6 +316,7 @@ const fetchProductById = async () => {
                     <Button
                       variant="outline"
                       size="icon"
+                      disabled = {loadingCart}
                       onClick={() => {
                         setQuantity(quantity + 1);
                       }}
@@ -324,10 +325,6 @@ const fetchProductById = async () => {
                     </Button>
                   </div>
                 </div>
-                
-                {message && (
-                  <Toast message={message} />
-                )}
                 <Separator />
                 <div className="space-y-4">
                   <Button
@@ -398,10 +395,11 @@ const fetchProductById = async () => {
     ))}    
     </div>
       ) : productData.length > 0 ? (
-        <div>
+        <div className="w-[95%] ">
           <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{tP("Browsemoreproducts")}</h2>
       </div>
+        
             <ProductGrid  categoryId={categoryIds} factoryId={0}/>
         </div>
       ) : (

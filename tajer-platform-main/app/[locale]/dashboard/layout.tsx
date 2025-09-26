@@ -78,7 +78,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
-
   if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -86,14 +85,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
-
   return (
     <div className="flex min-h-screen w-full bg-background" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Sidebar */}
-      <div className="hidden md:block w-1/5 border-l border-r bg-background">
-        <aside className="fixed h-screen w-1/5 p-4 font-cairo flex flex-col gap-5 items-center">
-          <h2 className="text-2xl font-bold mb-6">Tajer Dashboard</h2>
-          <nav className="w-full flex h-[70%] justify-between flex-col gap-2">
+      <div className="hidden lg:block w-64 bg-background border-r ">
+        <aside className="sticky top-0 h-fit w-64 p-6 font-cairo flex flex-col gap-4">
+          <h2 className="text-2xl font-bold mb-2">{tc('DashboardTitle')}</h2>
+          <nav className="flex-1 flex flex-col gap-2">
             {sidebarLinks.map((item) => (
               <SidebarButton
                 key={item.href}
@@ -106,23 +104,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </aside>
       </div>
-      
       {/* Main Content */}
-      <div className="flex-1 md:w-4/5 p-4 space-y-6 pb-16 md:pb-0">
-        <div className="bg-card rounded-2xl shadow-sm p-4">
-          <h1 className="text-3xl">
-            {tc('welcome')} <strong>{userData?.commercialName }!</strong>
-          </h1>
-        </div>
-        <div className="bg-card rounded-2xl shadow-sm">
-          {children}
+      <div className="flex-1 min-w-0"> 
+        <div className="p-4 md:p-6 space-y-6 pb-16 md:pb-0">
+          {/* Welcome Header */}
+          <div className="bg-card rounded-xl shadow-sm p-4 md:p-6">
+            <h1 className="text-2xl md:text-3xl font-semibold">
+              {tc('welcome')} <strong>{userData?.commercialName}!</strong>
+            </h1>
+          </div>
+          {/* Page Content */}
+          <div className="min-w-0">
+            {children}
+          </div>
         </div>
       </div>
-      
       <BottomNavMobile pathname={pathname} sidebarLinks={sidebarLinks} />
     </div>
   );
-}
+};
 
 type SidebarButtonProps = {
   label: string;
@@ -140,15 +140,39 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 p-3 rounded-xl transition-all text-lg hover:bg-muted hover:text-secondary
-        ${active ? "text-primary shadow-md hover:bg-muted" : ""}`}
+      className={`
+        relative flex items-center gap-3 p-3 rounded-xl transition-all duration-300 text-base 
+        hover:bg-muted/50 hover:text-secondary overflow-hidden
+        ${active 
+          ? "text-primary bg-primary/10 shadow-sm shadow-primary/20" 
+          : "text-foreground"
+        }
+      `}
     >
-      <span className="w-6 h-6 flex items-center justify-center">{icon}</span>
-      <span>{label}</span>
+      {/* Active Indicator Animation */}
+      {active && (
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl" />
+      )}
+      
+      {/* Slide-in Animation Bar */}
+      {active && (
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full transition-all duration-300" />
+      )}
+      
+      <span className={`relative z-10 w-5 h-5 flex items-center justify-center transition-transform duration-300 ${active ? 'scale-110' : 'scale-100'}`}>
+        {icon}
+      </span>
+      
+      <span className={`relative z-10 font-medium transition-all duration-300 ${active ? 'translate-x-1' : 'translate-x-0'}`}>
+        {label}
+      </span>
+
+      {/* Hover Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl" />
     </Link>
   );
 };
-
+ 
 type BottomNavMobileProps = {
   pathname: string | null;
   sidebarLinks: Array<{ label: string; icon: React.ReactNode; href: string }>;
@@ -156,16 +180,31 @@ type BottomNavMobileProps = {
 
 const BottomNavMobile: React.FC<BottomNavMobileProps> = ({ pathname, sidebarLinks }) => {
   return (
-    <nav className="fixed bg-background border-t flex md:hidden justify-between px-2 py-2 shadow-lg w-full bottom-0 left-0 z-50">
+    <nav className="fixed bg-background border-t flex lg:hidden justify-between px-2 py-3 shadow-lg w-full bottom-0 left-0 z-50">
       {sidebarLinks.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className={`flex flex-col items-center flex-1 py-1 px-2 text-xs hover:text-secondary transition-all 
-            ${isActiveRoute(pathname || "", item.href) ? "text-primary font-bold" : "text-muted-foreground"}`}
+          className={`
+            relative flex flex-col items-center flex-1 py-1 px-2 text-xs transition-all duration-300
+            ${isActiveRoute(pathname || "", item.href) 
+              ? "text-primary font-semibold scale-110" 
+              : "text-muted-foreground"
+            }
+          `}
         >
-          {item.icon}
-          <span>{item.label}</span>
+          {/* Mobile Active Indicator */}
+          {isActiveRoute(pathname || "", item.href) && (
+            <div className="absolute -top-3 w-full h-0.5 bg-primary rounded-full scale-105 transition-all duration-300" />
+          )}
+          
+          <span className={`mb-1 transition-transform duration-300 ${isActiveRoute(pathname || "", item.href) ? 'scale-110' : 'scale-100'}`}>
+            {item.icon}
+          </span>
+          
+          <span className="text-[10px] leading-tight transition-all duration-300">
+            {item.label}
+          </span>
         </Link>
       ))}
     </nav>
