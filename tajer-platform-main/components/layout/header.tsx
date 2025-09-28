@@ -52,7 +52,6 @@ export default function Header() {
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/";
   };
 
   interface User {

@@ -7,7 +7,7 @@ import HowItWorks from "@/components/home/how-it-works";
 import CallToAction from "@/components/home/call-to-action";
 import SpecialProducts from "@/components/home/special-products";
 import Factories from "@/components/home/factories";
-import Page from '@/app/[locale]/faq/page'
+import Page from '@/app/[locale]/faq/page';
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {

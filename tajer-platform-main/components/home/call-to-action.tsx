@@ -28,11 +28,14 @@ export default function CallToAction() {
       );
       const res = await data.json();
       setCallAction(res);
+      if(data.ok){
+        setLoading(false)
+      }else{
+        setLoading(true)
+      }
     } catch (error) {
       console.error('Error fetching call to action data:', error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {

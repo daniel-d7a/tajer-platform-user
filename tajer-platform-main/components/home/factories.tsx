@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Truck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Factory {
   id: number;
@@ -25,9 +26,7 @@ export default function Factories() {
   const t = useTranslations('factories');
   const pathname = usePathname();
 
-  // استخرج اللغة من أول جزء في الـ pathname
   const locale = pathname.split("/")[1] || "en";
-  // يمشي يمين لو عربي، شمال لو انجليزي
   const isRTL = locale === "ar";
 
   useEffect(() => {
@@ -38,10 +37,14 @@ export default function Factories() {
         );
         const data = await response.json();
         setFactories(data || []);
+        if(response.ok){
+          setLoading(false)
+        }else{
+          setLoading(true)
+        }
       } catch (error) {
         console.error('Error fetching factories:', error);
-      } finally {
-        setLoading(false);
+        toast.error('something went wron please try again')
       }
     };
     fetchFactories();
@@ -49,7 +52,6 @@ export default function Factories() {
 
   const duplicatedFactories = [...factories, ...factories, ...factories];
 
-  // Scroll animation بناءً على اللغة المستخرجة
   useEffect(() => {
     if (!scrollRef.current || factories.length === 0) return;
 

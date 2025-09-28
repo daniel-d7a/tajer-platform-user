@@ -1,5 +1,4 @@
-'use client';
-
+"use client";
 import { useState,useEffect } from 'react';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -91,7 +90,7 @@ export default function RegisterForm() {
       city: '',
       businessType: '',
       password: '',
-      referralCode: searchParams.get('referralCode') || '',
+      referralCode:'',
       termsAccepted: false,
     },
   });
@@ -241,7 +240,7 @@ const cities = [
   locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`, // be careful when you edite this line
   businessType: values.businessType,
   role: 'MERCHANT',
-  referredByRepId: null,
+  referredByRepId: Number(searchParams.get('referredByRepId')) || null,
   referralCode: values.referralCode || null,
 })
       });
@@ -255,6 +254,7 @@ const cities = [
         setErrorMessage('')
         setSuccessMsg(t('succesMessage'));
         router.push(redirectTo);
+        setApiError('')
       };
     } finally{
       setIsLoading(false);

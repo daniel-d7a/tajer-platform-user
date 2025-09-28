@@ -22,11 +22,14 @@ export default function Hero() {
       const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/banners');
       const res = await data.json();
       setBanners(res || []);
+      if(data.ok) {
+        setLoading(false)
+      }else{
+        setLoading(true)
+      }
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {

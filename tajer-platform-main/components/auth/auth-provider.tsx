@@ -53,11 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(true);
     setUser(data);
   };
-  const logout = () => {
+  const logout = async() => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('data');
     setIsAuthenticated(false);
     setUser(null);
+      await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/logout', {
+  method: 'POST',
+  credentials:'include'
+})
   };
 
   return (
