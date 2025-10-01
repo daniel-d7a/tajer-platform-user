@@ -41,24 +41,22 @@ export default function Home() {
       variants={containerVariants}
       className=" mx-auto"
     >
-      <motion.div variants={itemVariants} className="flex items-center pt-4 pb-4 ">
+      <motion.div variants={itemVariants} className="flex items-center max-h-[40%] pb-4 ">
         <Hero />
+      </motion.div>
+         <motion.div variants={itemVariants}>
+        <Factories />
       </motion.div>
          <motion.div variants={itemVariants}>
         <SpecialOffers />
       </motion.div>
-      <motion.div variants={itemVariants}>
-        <Factories />
-      </motion.div>
+   
  <motion.div variants={itemVariants}>
         <SpecialProducts />
       </motion.div>
       <motion.div variants={itemVariants}>
         <FeaturedCategories />
-      </motion.div>
-        <motion.div variants={itemVariants}>
-        <Page />
-      </motion.div>
+     
       
       <motion.div variants={itemVariants}>
         <HowItWorks />
@@ -66,6 +64,10 @@ export default function Home() {
    
       <motion.div variants={itemVariants}>
         <CallToAction />
+      </motion.div>
+       </motion.div>
+        <motion.div variants={itemVariants}>
+        <Page />
       </motion.div>
     </motion.div>
   );

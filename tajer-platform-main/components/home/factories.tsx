@@ -102,7 +102,7 @@ export default function Factories() {
         className="mb-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        transition={{ delay: 0.2, duration: .4 }}
       >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold">{t('title')}</h2>
@@ -150,8 +150,6 @@ export default function Factories() {
                 </Link>
               ))}
             </div>
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent pointer-events-none" />
           </div>
         )}
       </motion.div>

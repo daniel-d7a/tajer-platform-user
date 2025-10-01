@@ -60,22 +60,17 @@ export default function Hero() {
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
-    opacity: 0
   }),
   center: () => ({
     x:  0,
-    opacity: 1,
     transition: {
       x: { type: "spring" as const, stiffness: 300, damping: 30 },
-      opacity: { duration: 0.4 }
     }
   }),
   exit: (direction: number) => ({
     x: direction < 0 ? 300 : -300,
-    opacity: 0,
     transition: {
       x: { type: "spring" as const, stiffness: 300, damping: 30 },
-      opacity: { duration: 0.3 }
     }
   })
 };
@@ -93,8 +88,8 @@ const slideVariants = {
   };
 
   return (
-    <div className="relative overflow-hidden  w-full">
-      <div className="relative h-[400px] md:h-[550px]">
+    <div className="relative overflow-hidden h-[60%] w-full">
+<div className="relative h-[300px] md:h-[400px]">
         {loading ? (
           <div className="flex items-center  h-full justify-center">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>

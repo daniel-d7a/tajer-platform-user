@@ -227,10 +227,26 @@ export default function CartPage() {
 
   return (
     <div className="w-[90%] mx-auto py-8">
-      <div className="mb-6">
+     
+      
+      {cartItems.length === 0 ? (
+        <div className="text-center h-screen flex items-center flex-col  py-16">
+          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
+          <p className="text-muted-foreground mb-6">{t('emptyDesc')}</p>
+          <Link href="/categories">
+            <Button className="bg-primary hover:bg-primary/90">
+              {t('browseProducts')} <Boxes/>
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+             <div className="mb-6">
         <div className='flex justify-between items-center'>
           <Link href="/categories">
-            <Button variant="ghost" className="mb-4 bg-primary hover:bg-primary/100">
+            <Button variant="ghost" className="mb-4 bg-primary text-white hover:bg-primary/100">
               <ArrowRight className="h-4 w-4 ml-2" />
               {t('continueShopping')}
             </Button>
@@ -255,21 +271,6 @@ export default function CartPage() {
           }
         </p>
       </div>
-      
-      {cartItems.length === 0 ? (
-        <div className="text-center py-16">
-          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">{t('empty')}</h2>
-          <p className="text-muted-foreground mb-6">{t('emptyDesc')}</p>
-          <Link href="/categories">
-            <Button className="bg-primary hover:bg-primary/90">
-              {t('browseProducts')} <Boxes/>
-            </Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-4">
             {cartItems.map(item => {
               const isOnSale = isProductOnSale(item.product);
               const originalPrice = getOriginalItemPrice(item);

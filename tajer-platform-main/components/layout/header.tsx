@@ -74,8 +74,8 @@ export default function Header() {
             <Image
               src="/tajer-logo.svg"
               alt="تاجر"
-              width={60}
-              height={60}
+              width={90}
+              height={90}
               className="ml-2"
             />
           </Link>
@@ -194,6 +194,8 @@ export default function Header() {
               <Link
                 href="/dashboard"
                 className="text-sm font-medium transition-colors hover:text-primary"
+                              onClick={() => setIsMenuOpen(false)}
+
               >
                 {tc('dashboard')}
               </Link>
@@ -201,6 +203,8 @@ export default function Header() {
               <Link
                 href="/about"
                 className="text-sm font-medium transition-colors hover:text-primary"
+                              onClick={() => setIsMenuOpen(false)}
+
               >
                 {tc("about")}
               </Link>
