@@ -117,37 +117,55 @@ const fetchProductById = async () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offerData]);
 
-  const handleAddCart = async ({ id }: AddCartParams) => {
-    try {
-      setLoadingCart(true);
-      const res = await fetch(
-        "https://tajer-backend.tajerplatform.workers.dev/api/cart/items",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            productId: id,
-            quantity: quantity,
-          }),
-        }
-      );
-      if (!res.ok) {
-        toast.error(tP('errorMessage'));
-        throw new Error(`HTTP error! status: ${res.status}`);
-      } else {
-        setLoadingCart(false);
-        toast.success(tP('succesMessage'))
-      };
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Error adding to cart:", err);
+const updateCartItemsCount = (count: number) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('cartItemsCount', count.toString());
+    window.dispatchEvent(new Event('cartUpdated'));
+  }
+};
+
+const handleAddCart = async ({ id }: AddCartParams) => {
+  try {
+    setLoadingCart(true);
+    const res = await fetch(
+      "https://tajer-backend.tajerplatform.workers.dev/api/cart/items",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: id,
+          quantity: quantity,
+        }),
+      }
+    );
+    if (!res.ok) {
+      toast.error(tP('errorMessage'));
+      throw new Error(`HTTP error! status: ${res.status}`);
+    } else {
       setLoadingCart(false);
+      toast.success(tP('succesMessage'));
+      
+      const currentCount = getCartItemsCount();
+      updateCartItemsCount(currentCount + 1); 
     }
-  };
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    setLoadingCart(false);
+  }
+};
+
+const getCartItemsCount = (): number => {
+  if (typeof window !== 'undefined') {
+    const count = localStorage.getItem('cartItemsCount');
+    return count ? parseInt(count) : 0;
+  }
+  return 0;
+};
   const calculateDiscountedPrice = (offer: Offer, isPack: boolean = false) => {
     const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
     

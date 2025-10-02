@@ -397,6 +397,12 @@
     "total": "Total",
     "deleteAll" : "Delete All Shoopping Cart",
     "loading" : "loading shopping cart ...",
+    "confirmDeleteTitle" : "Confirm Delete Cart Items",
+    "confirmDeleteAllMessage" : "Are you sure you want to delete all items from your shopping cart? This action cannot be undone.",
+    "delete" : "Delete",
+    
+    "cancel" : "Cancel",
+    "note" : "Tajer product prices and availability are subject to change. The shopping cart is a temporary place to keep a list of products and view the latest prices for each product.",
     "checkout": "Checkout",
     "deliveryTime": "Delivery within 24-48 hours",
     "codAvailable": "Cash on Delivery available",

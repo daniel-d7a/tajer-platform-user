@@ -64,10 +64,9 @@
   --input: oklch(89.8% 0 0);
   --ring: oklch(15% 0 0);
   --radius: 0.5rem;
-  /* Correct Tajer colors in OKLCH */
-  --primary: oklch(65% 0.15 148); /* Green #3bb371 */
+  --primary: oklch(65% 0.15 148); 
   --primary-foreground: oklch(100% 0 0);
-  --secondary: oklch(77% 0.12 64); /* Orange #fa9f4d */
+  --secondary: oklch(77% 0.12 64);
   --secondary-foreground: oklch(100% 0 0);
   --sideBar :rgb(28, 28, 32);
 }
@@ -89,10 +88,9 @@
   --input: oklch(25% 0 0);
   --ring: oklch(83% 0 0);
 
-  /* Correct Tajer colors in OKLCH for dark mode */
-  --primary: oklch(65% 0.15 148); /* Green #3bb371 */
+  --primary: oklch(65% 0.15 148); 
   --primary-foreground: oklch(100% 0 0);
-  --secondary: oklch(77% 0.12 64); /* Orange #fa9f4d */
+  --secondary: oklch(77% 0.12 64); 
   --secondary-foreground: oklch(100% 0 0);
 }
 

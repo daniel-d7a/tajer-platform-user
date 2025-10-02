@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -16,23 +16,41 @@ import {
 } from "@/components/ui/dropdown-menu";
 import LocaleSwitcher from "../LocaleSwitcher";
 import { useTranslations } from "next-intl";
+import { Badge } from "../ui/badge";
+import { getCartItemsCount } from "@/app/[locale]/cart/page";
 
 export default function Header() {
   const t = useTranslations("header");
   const tc = useTranslations("common");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
-
   const [showHeader, setShowHeader] = useState(true);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const count = getCartItemsCount();
+      setCartItemsCount(count);
+    };
+
+    updateCartCount();
+
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    const interval = setInterval(updateCartCount, 2000);
+
+    return () => {
+      window.removeEventListener('cartUpdated', updateCartCount);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       if (isMenuOpen) return;
-
       if (typeof window === "undefined") return;
       const currentY = window.scrollY;
-
       if (currentY < 36) {
         setShowHeader(true);
         lastScrollY.current = currentY;
@@ -45,7 +63,6 @@ export default function Header() {
       }
       lastScrollY.current = currentY;
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isMenuOpen]);
@@ -54,13 +71,6 @@ export default function Header() {
     logout();
   };
 
-  interface User {
-    name: string;
-    email: string;
-    role: "admin" | "trader" | "sales";
-    commercialName?: string; 
-  }
-
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-transform duration-300 ${
@@ -68,41 +78,44 @@ export default function Header() {
       }`}
       style={{ willChange: "transform" }}
     >
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center">
-          <Link href="/" className="mr-6 ml-6 flex items-center space-x-2">
+      <div className="container flex h-16 items-center justify-between px-4 sm:px-6">
+        {/* Left Section - Logo & Navigation */}
+        <div className="flex items-center flex-1">
+          <Link href="/" className="flex items-center space-x-2 mr-4 sm:mr-6">
             <Image
               src="/tajer-logo.svg"
               alt="تاجر"
-              width={90}
-              height={90}
-              className="ml-2"
+              width={80}
+              height={80}
+              className="w-16 h-16 sm:w-20 sm:h-20"
             />
           </Link>
-          <nav className="hidden md:flex items-center space-x-6 ">
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link
               href="/categories"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-colors hover:text-primary px-2 py-1"
             >
               {tc("categories")}
             </Link>
             <Link
               href="/companies?search=&page=1"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-colors hover:text-primary px-2 py-1"
             >
               {tc("companies")}
             </Link>
             {isAuthenticated ? (
               <Link
                 href="/dashboard"
-                className="text-sm font-medium transition-colors hover:text-primary"
+                className="text-sm font-medium transition-colors hover:text-primary px-2 py-1"
               >
                 {tc('dashboard')}
               </Link>
             ) : (
               <Link
                 href="/about"
-                className="text-sm font-medium transition-colors hover:text-primary"
+                className="text-sm font-medium transition-colors hover:text-primary px-2 py-1"
               >
                 {tc("about")}
               </Link>
@@ -110,58 +123,75 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
-          <LocaleSwitcher />
+        {/* Right Section - Actions */}
+        <div className="flex items-center justify-end space-x-2 sm:space-x-3 flex-1">
+          <div className="hidden sm:flex items-center space-x-2">
+            <ThemeToggle />
+            <LocaleSwitcher />
+          </div>
 
-          <Link href="/cart" className="hidden md:flex">
-            <Button variant="ghost" size="icon">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">{t("cart")}</span>
-            </Button>
+          {/* Cart Icon */}
+          <Link href="/cart" className="relative p-2 hover:bg-muted rounded-md transition-colors">
+            <ShoppingCart className="h-5 w-5" />
+            {cartItemsCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 min-w-0 p-0 bg-transparent flex items-center justify-center text-secondary text-sm font-bold"
+              >
+                {cartItemsCount > 99 ? '99+' : cartItemsCount}
+              </Badge>
+            )}
           </Link>
+
+          {/* Desktop Auth Buttons */}
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="hidden md:flex">
-                  <User className="h-4 w-4 ml-2" />
-                  {user?.commercialName || t("profile")}
+                <Button variant="ghost" className="hidden md:flex items-center space-x-1">
+                  <User className="h-4 w-4" />
+                  <span className="max-w-32 truncate">
+                    {user?.commercialName || t("profile")}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{t("profile")}</Link>
+                  <Link href="/dashboard" className="cursor-pointer">
+                    {t("profile")}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/orders">{t("orders")}</Link>
+                  <Link href="/dashboard/orders" className="cursor-pointer">
+                    {t("orders")}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                   <LogOut className="h-4 w-4 ml-2" />
                   {t("logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
-              <Link href="/register" className="hidden md:flex">
-                <Button className="bg-secondary hover:bg-secondary/90">
+            <div className="hidden md:flex items-center space-x-2">
+              <Link href="/register">
+                <Button className="bg-secondary hover:bg-secondary/90 text-sm px-3 py-2 h-9">
                   {t("register")}
                 </Button>
               </Link>
-
-              <Link href="/login" className="hidden md:flex">
-                <Button  variant="outline">
+              <Link href="/login">
+                <Button variant="outline" className="text-sm px-3 py-2 h-9">
                   {t("login")}
                 </Button>
               </Link>
-            </>
+            </div>
           )}
 
+          {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden h-9 w-9"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -173,81 +203,102 @@ export default function Header() {
           </Button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="container md:hidden mx-auto w-[80%]  ">
-          <nav className="flex flex-col space-y-4 py-4 items-center">
-            <Link
-              href="/categories"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {tc("categories")}
-            </Link>
-            <Link
-              href="/companies"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {tc("companies")}
-            </Link>
-          {isAuthenticated ? (
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium transition-colors hover:text-primary"
-                              onClick={() => setIsMenuOpen(false)}
-
-              >
-                {tc('dashboard')}
-              </Link>
-            ) : (
-              <Link
-                href="/about"
-                className="text-sm font-medium transition-colors hover:text-primary"
-                              onClick={() => setIsMenuOpen(false)}
-
-              >
-                {tc("about")}
-              </Link>
-            )}
-
-            <Link href="/cart" className="w-full">
-              <Button variant="outline" className="w-full">
-                <ShoppingCart className="h-5 w-5 ml-2" />
-                {t("cart")}
-              </Button>
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleLogout}
+        <div className="md:hidden border-t bg-background/95 backdrop-blur">
+          <div className="container px-4 py-4">
+            <nav className="flex flex-col space-y-4">
+              {/* Mobile Navigation Links */}
+              <div className="flex flex-col space-y-3">
+                <Link
+                  href="/categories"
+                  className="text-base font-medium transition-colors hover:text-primary py-2 px-3 rounded-lg hover:bg-muted"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  <LogOut className="h-5 w-5 ml-2" />
-                  {t("logout")}
+                  {tc("categories")}
+                </Link>
+                <Link
+                  href="/companies"
+                  className="text-base font-medium transition-colors hover:text-primary py-2 px-3 rounded-lg hover:bg-muted"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {tc("companies")}
+                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    href="/dashboard"
+                    className="text-base font-medium transition-colors hover:text-primary py-2 px-3 rounded-lg hover:bg-muted"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {tc('dashboard')}
+                  </Link>
+                ) : (
+                  <Link
+                    href="/about"
+                    className="text-base font-medium transition-colors hover:text-primary py-2 px-3 rounded-lg hover:bg-muted"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {tc("about")}
+                  </Link>
+                )}
+              </div>
+
+              {/* Mobile Cart Button */}
+              <Link 
+                href="/cart" 
+                className="relative"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Button variant="outline" className="w-full justify-center gap-2 py-3">
+                  <div className="flex items-center gap-3">
+                    <ShoppingCart className="h-5 w-5 ml-2" />
+                    {t("cart")}
+                  </div>
+                 
                 </Button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="w-full">
-                  <Button variant="outline" className="w-full">
-                    <User className="h-5 w-5 ml-2" />
-                    {t("login")}
+              </Link>
+
+              {/* Mobile Auth Buttons */}
+              <div className="flex flex-col space-y-3 pt-2">
+                {isAuthenticated ? (
+                  <Button
+                    variant="outline"
+                    className="w-full justify-center py-3"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-5 w-5 ml-2" />
+                    {t("logout")}
                   </Button>
-                </Link>
-                <Link href="/register" className="w-full">
-                  <Button className="w-full bg-secondary hover:bg-secondary/90">
-                    {t("register")}
-                  </Button>
-                </Link>
-              </>
-            )}
-            <div className="flex justify-center pt-2">
-              <ThemeToggle />
-            </div>
-          </nav>
+                ) : (
+                  <>
+                    <Link href="/login" className="w-full">
+                      <Button variant="outline" className="w-full justify-center py-3" onClick={() => setIsMenuOpen(false)}>
+                        <User className="h-5 w-5 ml-2" />
+                        {t("login")}
+                      </Button>
+                    </Link>
+                    <Link href="/register" className="w-full">
+                      <Button className="w-full bg-secondary hover:bg-secondary/90 justify-center py-3" onClick={() => setIsMenuOpen(false)}>
+                        {t("register")}
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              {/* Mobile Theme & Locale */}
+              <div className="flex items-center justify-between pt-4 border-t">
+                <ThemeToggle />
+                <LocaleSwitcher />
+              </div>
+            </nav>
+          </div>
         </div>
       )}
     </header>
   );
-};
+}
