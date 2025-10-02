@@ -55,7 +55,7 @@ export default function CallToAction() {
 
   return (
     <section className="w-full py-12 lg:py-16 px-4 lg:px-8 bg-white">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-1">
         
       <motion.div
   className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-1/2"
@@ -118,9 +118,9 @@ export default function CallToAction() {
         src="/app.png"
         alt="app store"
         width={130}
-        height={40}
+        height={150}
         quality={100}
-        className="cursor-pointer hover:scale-105 transition-transform duration-200"
+        className="cursor-pointer object-cover hover:scale-105 transition-transform duration-200"
       />
     </Link>
   </motion.div>
@@ -140,7 +140,7 @@ export default function CallToAction() {
               fill
               className="object-contain object-center"
               priority
-              quality={90}
+              quality={100}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
             />
           </div>

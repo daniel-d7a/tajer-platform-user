@@ -51,7 +51,7 @@ export default function Home() {
         <SpecialOffers />
       </motion.div>
    
- <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants}>
         <SpecialProducts />
       </motion.div>
       <motion.div variants={itemVariants}>

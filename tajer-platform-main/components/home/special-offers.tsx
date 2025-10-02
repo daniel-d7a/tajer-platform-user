@@ -129,7 +129,7 @@ function OfferCard({
               alt={language === "en" ? offer.name : offer.name_ar}
               fill
               className="object-cover absolute top-0 left-0"
-              sizes="(max-width: 768px) 100vw, 25vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
               priority={idx === 0}
             />
           </div>
@@ -162,7 +162,7 @@ function OfferCard({
                       /{language === "en" ? "piece" : "قطعة"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex  gap-2 flex-col">
                     <span className="text-md font-medium">
                       {t("PackPrice")}: {calculateDiscountedPrice(offer, true).toFixed(2)} {tc("coins")}
                     </span>
@@ -170,7 +170,12 @@ function OfferCard({
                       <span className="line-through text-muted-foreground text-sm">
                         {offer.packPrice.toFixed(2)} {tc("coins")}
                       </span>
-                    )}
+                      
+                    )}  <div className="flex flex-col gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {t('piecesPerPack')}: {offer.piecesPerPack} / {language === 'en' ? "pieces" : "قطع في الحزمه"}
+                    </span>
+                  </div>
                   </div>
                 </>
               ) : (
@@ -266,7 +271,27 @@ export default function SpecialOffers() {
     fetchOffers();
   }, [t]);
 
-  const cardsPerSlide = 4;
+  // عدد الكروت في كل سلايد بناءً على حجم الشاشة
+  const getCardsPerSlide = () => {
+    if (typeof window === 'undefined') return 4;
+    return window.innerWidth < 768 ? 1 : 4;
+  };
+
+  const [cardsPerSlide, setCardsPerSlide] = useState(4);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCardsPerSlide(getCardsPerSlide());
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const totalSlides = Math.ceil(offersData.length / cardsPerSlide);
 
   // منطق الأسهم المحسّن
@@ -302,7 +327,6 @@ export default function SpecialOffers() {
       </div>
 
       <div className="relative w-[95%] mx-auto">
-        {/* زر السابق - يظهر فقط إذا كان هناك سلايدات سابقة */}
         {offersData.length > cardsPerSlide && (
           <button
             onClick={prevSlide}
@@ -318,7 +342,6 @@ export default function SpecialOffers() {
           </button>
         )}
 
-        {/* زر التالي - يظهر فقط إذا كان هناك سلايدات تالية */}
         {offersData.length > cardsPerSlide && (
           <button
             onClick={nextSlide}
@@ -348,7 +371,7 @@ export default function SpecialOffers() {
                 className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2"
               >
                 {loading ? (
-                  Array.from({ length: 4 }, (_, idx) => (
+                  Array.from({ length: cardsPerSlide }, (_, idx) => (
                     <SkeletonCard key={idx} idx={idx} />
                   ))
                 ) : slideGroup.length > 0 ? (

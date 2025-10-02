@@ -126,7 +126,6 @@ function ProductCard({
 
   return (
     <div
-
       ref={cardRef}
       style={{
         opacity: inView ? 1 : 0,
@@ -154,7 +153,7 @@ function ProductCard({
               alt={product.product.name}
               fill
               className="object-cover absolute top-0 left-0"
-              sizes="(max-width: 768px) 100vw, 25vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           </div>
           <CardContent className="p-4 flex-grow">
@@ -300,7 +299,27 @@ export default function SpecialProducts() {
     fetchSpecialProducts();
   }, []);
 
-  const cardsPerSlide = 4;
+  // عدد الكروت في كل سلايد بناءً على حجم الشاشة
+  const getCardsPerSlide = () => {
+    if (typeof window === 'undefined') return 4;
+    return window.innerWidth < 768 ? 1 : 4;
+  };
+
+  const [cardsPerSlide, setCardsPerSlide] = useState(4);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCardsPerSlide(getCardsPerSlide());
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const totalSlides = Products ? Math.ceil(Products.length / cardsPerSlide) : 0;
   
   const canGoNext = currentSlide < totalSlides - 1;
@@ -380,7 +399,7 @@ export default function SpecialProducts() {
                   className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2"
                 >
                   {loading ? (
-                    Array.from({ length: 4 }, (_, idx) => (
+                    Array.from({ length: cardsPerSlide }, (_, idx) => (
                       <SkeletonCard key={idx} idx={idx} />
                     ))
                   ) : slideGroup.length > 0 ? (
@@ -433,4 +452,4 @@ export default function SpecialProducts() {
       </div>
     </section>
   );
-};
+}
