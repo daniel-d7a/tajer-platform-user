@@ -295,7 +295,7 @@ export default function SpecialOffers() {
   }
 
   return (
-    <section className="py-12 bg-muted/30 rounded-lg">
+    <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Truck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -23,7 +22,6 @@ export default function Factories() {
   const [loading, setLoading] = useState(true);
   const [factories, setFactories] = useState<Factory[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const t = useTranslations('factories');
   const pathname = usePathname();
 
   const locale = pathname.split("/")[1] || "en";
@@ -104,9 +102,7 @@ export default function Factories() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: .4 }}
       >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold">{t('title')}</h2>
-        </div>
+     
         {loading ? (
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>

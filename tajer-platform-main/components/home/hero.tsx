@@ -88,7 +88,7 @@ const slideVariants = {
   };
 
   return (
-    <div className="relative overflow-hidden h-[60%] w-full">
+    <div dir='ltr' className="relative overflow-hidden h-[60%] w-full">
 <div className="relative h-[300px] md:h-[400px]">
         {loading ? (
           <div className="flex items-center  h-full justify-center">

@@ -92,18 +92,14 @@ function AnimatedCategoryCard({
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
           />
-          {/* تدرج لطيف علشان النص يظهر بوضوح */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
-          {/* الكلام في النص تمام */}
           <div className="absolute inset-0 flex items-center justify-center text-center p-6">
             <div className="transform group-hover:scale-105 transition-transform duration-300">
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg mb-2">
                 {language === 'en' ? category.name : category.name_ar}
               </h3>
-              <p className="text-white/90 text-lg md:text-xl drop-shadow-md">
-                {category.count} {language === 'en' ? 'products' : 'منتج'}
-              </p>
+            
             </div>
           </div>
         </div>
@@ -142,8 +138,7 @@ export default function FeaturedCategories() {
     fetchData();
   }, []);
 
-  // منطق السلايدر
-  const cardsPerSlide = 1; // كل سلايد يعرض كارت واحد علشان الكارت كبير
+  const cardsPerSlide = 1; 
   const totalSlides = Math.ceil(data.length / cardsPerSlide);
   
   const canGoNext = currentSlide < totalSlides - 1;
@@ -171,9 +166,9 @@ export default function FeaturedCategories() {
   }
 
   return (
-    <section className="py-12 bg-gradient-to-b from-background to-muted/20">
+    <section dir='ltr' className="py-12 bg-gradient-to-b from-background to-muted/20">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h2 className="text-3xl md:text-4xl font-bold ">
           {t('featuredCategories')}
         </h2>
         <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -182,7 +177,6 @@ export default function FeaturedCategories() {
       </div>
       
       <div className="relative w-full max-w-7xl mx-auto px-4">
-        {/* أزرار التنقل */}
         {data.length > cardsPerSlide && (
           <>
             <button
@@ -212,7 +206,6 @@ export default function FeaturedCategories() {
           </>
         )}
 
-        {/* منطقة السلايدر */}
         <div className="overflow-hidden rounded-xl">
           <div 
             className="flex transition-transform duration-500 ease-in-out"

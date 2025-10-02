@@ -126,6 +126,7 @@ function ProductCard({
 
   return (
     <div
+
       ref={cardRef}
       style={{
         opacity: inView ? 1 : 0,
@@ -197,7 +198,7 @@ function ProductCard({
                   </div>
                   <div className="flex flex-col gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {t('piecesPerPack')}: {product.product.piecesPerPack}
+                      {t('piecesPerPack')}: {product.product.piecesPerPack} / {language === 'en' ? "pieces" : "قطع في الحزمه"}
                     </span>
                   </div>
                 </div>
@@ -220,14 +221,7 @@ function ProductCard({
                 </div>
               )}
             </div>
-            <div className="flex flex-col gap-2 mt-2">
-              <span className="text-xs text-muted-foreground">
-                {t('UnitType')} : {product.product.unitType === "piece_only" ? t('pieceOnly') : product.product.unitType === "pack_only" ? t('packOnly') : t('pieceOrPack')}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t('minOrder')} : {product.product.minOrderQuantity} {product.product.unitType === "pack_only" ? t('packs') : t('pieces')}
-            </p>
+            
           </CardContent>
           <CardFooter className="p-4 pt-0">
             <Button
@@ -306,7 +300,6 @@ export default function SpecialProducts() {
     fetchSpecialProducts();
   }, []);
 
-  // سلايدر منطق
   const cardsPerSlide = 4;
   const totalSlides = Products ? Math.ceil(Products.length / cardsPerSlide) : 0;
   
@@ -337,7 +330,7 @@ export default function SpecialProducts() {
   }
 
   return (
-    <section className="py-12 bg-muted/30 rounded-lg">
+    <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
       <div>
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold">{t('title')}</h2>
@@ -346,9 +339,7 @@ export default function SpecialProducts() {
           </p>
         </div>
 
-        {/* السلايدر */}
         <div className="relative w-[95%] mx-auto">
-          {/* أزرار التنقل */}
           {Products && Products.length > cardsPerSlide && (
             <>
               <button
@@ -378,7 +369,6 @@ export default function SpecialProducts() {
             </>
           )}
 
-          {/* منطقة العرض */}
           <div className="overflow-hidden rounded-xl">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
@@ -412,7 +402,6 @@ export default function SpecialProducts() {
             </div>
           </div>
 
-          {/* مؤشرات السلايدات */}
           {totalSlides > 1 && (
             <div className="flex justify-center mt-8 gap-2">
               {Array.from({ length: totalSlides }, (_, index) => (
@@ -444,4 +433,4 @@ export default function SpecialProducts() {
       </div>
     </section>
   );
-}
+};
