@@ -17,7 +17,7 @@ import {
 import LocaleSwitcher from "../LocaleSwitcher";
 import { useTranslations } from "next-intl";
 import { Badge } from "../ui/badge";
-import { getCartItemsCount } from "@/app/[locale]/cart/page";
+import { getCartItemsCount } from "@/app/[locale]/cart/helper";
 
 export default function Header() {
   const t = useTranslations("header");

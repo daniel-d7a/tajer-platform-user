@@ -55,23 +55,14 @@ interface ApiResponse {
   meta?: object;
 }
 
-// دالة لحفظ عدد العناصر في localStorage
 const updateCartItemsCount = (count: number) => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('cartItemsCount', count.toString());
-    // إرسال event علشان الـ Header يسمع التغيير
     window.dispatchEvent(new Event('cartUpdated'));
   }
 };
 
-// دالة لجلب عدد العناصر من localStorage
-export const getCartItemsCount = (): number => {
-  if (typeof window !== 'undefined') {
-    const count = localStorage.getItem('cartItemsCount');
-    return count ? parseInt(count) : 0;
-  }
-  return 0;
-};
+
 
 export default function CartPage() {
   const [isAuthentication, setIsAuthenticated] = useState<boolean | null>(null);

@@ -62,13 +62,7 @@ const formSchema = z.object({
       });
       if(response.ok){
         const resData = await response.json(); 
-        if(resData.user.role === 'ADMIN'){
-          router.push('https://tajer-admin-worker.tajerplatform.workers.dev/login');
-        }else if(resData.user.role === 'SALES_REP'){
-         router.push('https://tajer-sales-worker.tajerplatform.workers.dev/');
-        }else{
-            router.push(redirectTo);
-        };
+        router.push(redirectTo);
         setSuccessMsg(t('succesMessage'));
         localStorage.setItem("data", JSON.stringify(resData.user));
         login(resData.user);

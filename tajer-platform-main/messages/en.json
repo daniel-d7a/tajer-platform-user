@@ -446,6 +446,8 @@
     "haveAccount": "Already have an account?",
     "createAccount": "Create Account",
     "logout": "Logout",
+    "errorRefferrlaCode" : "Referral code is already used!",
+    "errorPhoneNumberAgain" : "Phone number is already used!",
     "locationPermese" : "Location permission denied. Please allow location access in your browser settings.",
     "locationTimeout" : "Location deadline has expired",
     "errorPhoneNumberOrPassword" : "phone number or password is incorrect please try again !",

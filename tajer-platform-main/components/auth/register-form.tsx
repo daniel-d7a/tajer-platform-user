@@ -29,12 +29,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-
-
-
 export default function RegisterForm() {
-
-
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [detectedCity, setDetectedCity] = useState<string | null>(null);
@@ -50,38 +45,41 @@ export default function RegisterForm() {
   const t = useTranslations('auth');
   const [language,setLanguage] = useState('en')
   const pathname = usePathname();
+  
   const formSchema = z.object({
-  businessName: z.string().min(3, {
-    message:t('commercialNameError'),
-  }),
-  phone: z.string().min(8, {
-    message: t('errorPhoneNumber'),
-  }),
-  verificationCode: z
-    .string()
-    .min(4, {
-      message:t('errorCode'),
-    })
-    .optional(),
-  city: z.string({
-    required_error: t('cityError'),
-  }),
-  businessType: z.string({
-    required_error: t('businessesError'),
-  }),
-  password: z.string().min(8, {
-    message: t('passwordError'),
-  }),
-  referralCode: z.string().optional(),
-  termsAccepted: z.boolean().refine(val => val === true, {
-    message: t('termsError'),
-  }),
-});
-    useEffect(() => {
-      const segments = pathname.split("/").filter(Boolean);
-      const lang = segments[0]; 
-      setLanguage(lang)
-    }, [pathname]);
+    businessName: z.string().min(3, {
+      message:t('commercialNameError'),
+    }),
+    phone: z.string().min(8, {
+      message: t('errorPhoneNumber'),
+    }),
+    verificationCode: z
+      .string()
+      .min(4, {
+        message:t('errorCode'),
+      })
+      .optional(),
+    city: z.string({
+      required_error: t('cityError'),
+    }),
+    businessType: z.string({
+      required_error: t('businessesError'),
+    }),
+    password: z.string().min(8, {
+      message: t('passwordError'),
+    }),
+    referralCode: z.string().optional(),
+    termsAccepted: z.boolean().refine(val => val === true, {
+      message: t('termsError'),
+    }),
+  });
+
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0]; 
+    setLanguage(lang)
+  }, [pathname]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -95,30 +93,32 @@ export default function RegisterForm() {
     },
   });
 
-const businessTypes = [
-  { value: 'shop', label: t('businessTypes.shop') },
-  { value: 'supermarket', label: t('businessTypes.supermarket') },
-  { value: 'restaurant', label: t('businessTypes.restaurant') },
-  { value: 'roastery', label: t('businessTypes.roastery') },
-  { value: 'sweets shop', label: t('businessTypes.coffee_shop') },
-  { value: 'coffee shop', label: t('businessTypes.sweets_shop') },
-  { value: 'cafe', label: t('businessTypes.bookstore') },
-  { value: 'library', label: t('businessTypes.cafe') },
-];
-const cities = [
-  { value: 'amman', label: t('cities.amman') },
-  { value: 'zarqa', label: t('cities.zarqa') },
-  { value: 'irbid', label: t('cities.irbid') },
-  { value: 'russeifa', label: t('cities.russeifa') },
-  { value: 'aqaba', label: t('cities.aqaba') },
-  { value: 'salt', label: t('cities.salt') },
-  { value: 'Madaba', label: t('cities.Madaba ')},
-  { value: 'jerash', label:t('cities.jerash') },
-  { value: 'ajloun', label: t('cities.ajloun') },
-  { value: 'karak', label: t('cities.Karak') },
-  { value: 'tafilah', label: t('cities.tafilah') },
-  { value: 'maan', label: t('cities.maan') }
-];
+  const businessTypes = [
+    { value: 'shop', label: t('businessTypes.shop') },
+    { value: 'supermarket', label: t('businessTypes.supermarket') },
+    { value: 'restaurant', label: t('businessTypes.restaurant') },
+    { value: 'roastery', label: t('businessTypes.roastery') },
+    { value: 'sweets shop', label: t('businessTypes.coffee_shop') },
+    { value: 'coffee shop', label: t('businessTypes.sweets_shop') },
+    { value: 'cafe', label: t('businessTypes.bookstore') },
+    { value: 'library', label: t('businessTypes.cafe') },
+  ];
+
+  const cities = [
+    { value: 'amman', label: t('cities.amman') },
+    { value: 'zarqa', label: t('cities.zarqa') },
+    { value: 'irbid', label: t('cities.irbid') },
+    { value: 'russeifa', label: t('cities.russeifa') },
+    { value: 'aqaba', label: t('cities.aqaba') },
+    { value: 'salt', label: t('cities.salt') },
+    { value: 'Madaba', label: t('cities.Madaba ')},
+    { value: 'jerash', label:t('cities.jerash') },
+    { value: 'ajloun', label: t('cities.ajloun') },
+    { value: 'karak', label: t('cities.Karak') },
+    { value: 'tafilah', label: t('cities.tafilah') },
+    { value: 'maan', label: t('cities.maan') }
+  ];
+
   function getCityFromCoordinates(lat: number, lng: number): string {
     const jordanianCities = [
       { name: 'عمان', lat: 31.9454, lng: 35.9284, value: 'amman' },
@@ -133,8 +133,10 @@ const cities = [
       { name: 'الطفيلة', lat: 30.8378, lng: 35.604, value: 'tafilah' },
       { name: 'معان', lat: 30.1962, lng: 35.734, value: 'maan' },
     ];
+    
     let closestCity = jordanianCities[0];
     let minDistance = Number.MAX_VALUE;
+    
     jordanianCities.forEach(city => {
       const distance = Math.sqrt(
         Math.pow(lat - city.lat, 2) + Math.pow(lng - city.lng, 2)
@@ -149,7 +151,8 @@ const cities = [
       return t('Outside');
     }
     return closestCity.name;
-  };
+  }
+
   function detectLocation() {
     setIsDetectingLocation(true);
     setLocationError(null);
@@ -160,6 +163,7 @@ const cities = [
       setIsDetectingLocation(false);
       return;
     }
+    
     navigator.geolocation.getCurrentPosition(
       position => {
         const lat = position.coords.latitude;
@@ -173,8 +177,8 @@ const cities = [
           const matchingCity = cities.find(city => city.label === cityName);
           if (matchingCity) {
             form.setValue('city', matchingCity.value);
-          };
-        };
+          }
+        }
         setIsDetectingLocation(false);
       },
       error => {
@@ -182,8 +186,8 @@ const cities = [
         let errorMessage = 'حدث خطأ في تحديد الموقع';
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage =
-              t('locationPermese')
+            errorMessage = t('locationPermese');
+            break;
           case error.POSITION_UNAVAILABLE:
             errorMessage = t('locationPermese');
             break;
@@ -202,7 +206,8 @@ const cities = [
         maximumAge: 60000,
       }
     );
-  };
+  }
+
   function sendVerificationCode() {
     const phone = form.getValues('phone');
     if (phone.length < 10) {
@@ -216,54 +221,88 @@ const cities = [
     setTimeout(() => {
       setIsVerifying(false);
     }, 1000);
-  };
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    setApiError(null);
-    setSuccessMsg(null);
+  setIsLoading(true);
+  setApiError(null);
+  setSuccessMsg(null);
+  setErrorMessage('');
 
-    try {
-      const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/auth/register', {
+  form.clearErrors('phone');
+  form.clearErrors('referralCode');
+
+  try {
+    const response = await fetch(
+      'https://tajer-backend.tajerplatform.workers.dev/api/auth/register',
+      {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-          ,'Accept' : '*/*'
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: '*/*',
         },
-      body: JSON.stringify({
+        body: JSON.stringify({
+          commercialName: values.businessName,
+          phone: values.phone,
+          email: null,
+          passwordHash: values.password,
+          city: values.city,
+          area: values.city,
+          locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`,
+          businessType: values.businessType,
+          role: 'MERCHANT',
+          referredByRepId: Number(searchParams.get('referredByRepId')) || null,
+          referralCode: values.referralCode || null,
+        }),
+      }
+    );
 
-  commercialName: values.businessName,
-  phone: values.phone,
-  email: null, 
-  passwordHash: values.password,
-  city: values.city,
-  area: values.city, 
-  locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`, // be careful when you edite this line
-  businessType: values.businessType,
-  role: 'MERCHANT',
-  referredByRepId: Number(searchParams.get('referredByRepId')) || null,
-  referralCode: values.referralCode || null,
-})
-      });
-      if (!response.ok) {
-        setErrorMessage(t('errorsignUp'))
-        const err = await response.json();
-          if (err.message.includes("duplicate") || err.message.includes("Failed query")) {
-          setApiError(t('olreadyLogin'));
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log('Error response:', errorData); 
+      
+      const errorMessage = errorData.error?.issues?.[0]?.message || errorData.message || t('errorsignUp');
+      
+      if (errorMessage.toLowerCase().includes('phone') || 
+          errorMessage.toLowerCase().includes('duplicate') ||
+          errorMessage.toLowerCase().includes('رقم') ||
+          errorMessage.toLowerCase().includes('users.phone')) {
+        form.setError('phone', {
+          type: 'manual',
+          message: t('errorPhoneNumberAgain'),
+        });
       };
-      } else {
-        setErrorMessage('')
-        setSuccessMsg(t('succesMessage'));
-        router.push(redirectTo);
-        setApiError('')
-      };
-    } finally{
-      setIsLoading(false);
-    };
-  };
+      if (errorMessage.toLowerCase().includes('referral_code') || 
+          errorMessage.toLowerCase().includes('referral') ||
+          errorMessage.toLowerCase().includes('كود') ||
+          errorMessage.toLowerCase().includes('دعوة') ||
+          errorMessage.toLowerCase().includes('unique constraint')) {
+        form.setError('referralCode', {
+          type: 'manual',
+          message: t('errorRefferrlaCode'),
+        });
+      }
+      
+      const hasFieldError = form.formState.errors.phone || form.formState.errors.referralCode;
+      if (!hasFieldError) {
+        setApiError(t('errorsignUp'));
+      }
+    } else {
+      setSuccessMsg(t('succesMessage'));
+      router.push(redirectTo);
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    setApiError(t('errorsignUp'));
+  } finally {
+    setIsLoading(false);
+  }
+}
+
   return (
     <Card className="p-6">
-      <Form  {...form}>
-        <form  onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             disabled={isLoading}
@@ -278,6 +317,7 @@ const cities = [
               </FormItem>
             )}
           />
+          
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -303,6 +343,7 @@ const cities = [
                 </FormItem>
               )}
             />
+            
             {isVerifying && (
               <FormField
                 control={form.control}
@@ -322,8 +363,9 @@ const cities = [
               />
             )}
           </div>
-          <div className="space-y-4" aria-disabled= {isLoading} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-            <div className="flex items-center justify-between" >
+          
+          <div className="space-y-4" aria-disabled={isLoading} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">{t('location')}</h3>
               <Button
                 type="button"
@@ -338,12 +380,14 @@ const cities = [
                 {isDetectingLocation ? t('locating') : t('locateMe')}
               </Button>
             </div>
+            
             {locationError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{locationError}</AlertDescription>
               </Alert>
             )}
+            
             {detectedCity && (
               <div className="bg-secondary/10 p-4 rounded-lg border border-secondary/20">
                 <div className="flex items-center gap-2">
@@ -362,6 +406,7 @@ const cities = [
                 </div>
               </div>
             )}
+            
             <FormField
               control={form.control}
               name="city"
@@ -369,17 +414,9 @@ const cities = [
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('city')}</FormLabel>
-                  <Select
-                  
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl
-
-                    dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                      <SelectTrigger    
-                      disabled={isLoading}
-                      >
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                      <SelectTrigger disabled={isLoading}>
                         <SelectValue placeholder={t('cityPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
@@ -396,24 +433,17 @@ const cities = [
               )}
             />
           </div>
+          
           <FormField
             disabled={isLoading}
-
             control={form.control}
             name="businessType"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('businessType')}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl
-
-                  dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <SelectTrigger
-                    disabled={isLoading}
-                    >
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <SelectTrigger disabled={isLoading}>
                       <SelectValue placeholder={t('chooseBusinessType')} />
                     </SelectTrigger>
                   </FormControl>
@@ -432,13 +462,12 @@ const cities = [
 
           <FormField
             disabled={isLoading}
-          
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('password')}</FormLabel>
-                <FormControl >
+                <FormControl>
                   <Input type="password" placeholder="********" {...field} />
                 </FormControl>
                 <FormMessage />
@@ -448,7 +477,6 @@ const cities = [
 
           <FormField
             disabled={isLoading}
-
             control={form.control}
             name="referralCode"
             render={({ field }) => (
@@ -497,25 +525,28 @@ const cities = [
               <AlertDescription>{apiError}</AlertDescription>
             </Alert>
           )}
+          
           {successMsg && (
-            <Alert >
+            <Alert>
               <AlertDescription>{successMsg}</AlertDescription>
             </Alert>
           )}
+          
           {errorMessage && (
             <Alert className='border-destructive'>
               <AlertDescription className='text-destructive'>{errorMessage}</AlertDescription>
             </Alert>
           )}
+          
           <Button
             type="submit"
             className="w-full bg-secondary hover:bg-secondary/90"
             disabled={isLoading}
           >
             {isLoading ? (
-               <div className="col-span-5 flex items-center h-full justify-center gap-2">
-            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
-          </div>
+              <div className="flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+              </div>
             ) : t('registerNow')}
           </Button>
 
