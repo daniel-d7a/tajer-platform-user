@@ -78,7 +78,7 @@ export default function SpecialOffers() {
    const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
   const tc = useTranslations("common");
-  
+  const th = useTranslations('home')
   const [offersData, setOffersData] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -171,8 +171,8 @@ export default function SpecialOffers() {
   return (
     <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
-        <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
+        <h2 className="text-3xl font-bold">{th("specialOffers")}</h2>
+        <p className="mt-2 text-muted-foreground">{th("specialOffersDesc")}</p>
       </div>
 
       <div className="relative w-[95%] mx-auto">

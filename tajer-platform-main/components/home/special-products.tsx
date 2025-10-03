@@ -50,7 +50,7 @@ function SkeletonCard({ idx }: { idx: number }) {
     </Card>
   );
 }
-
+ 
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
