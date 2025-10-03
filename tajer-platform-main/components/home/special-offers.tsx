@@ -156,7 +156,7 @@ export default function SpecialOffers() {
   const prevSlide = () => {
     if (canGoPrev) {
       setCurrentSlide((prev) => prev - 1);
-    }
+    } 
   };
 
   const goToSlide = (slideIndex: number) => {
