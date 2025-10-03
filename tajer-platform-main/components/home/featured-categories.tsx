@@ -83,7 +83,7 @@ function AnimatedCategoryCard({
       className="w-full flex-shrink-0"
     >
       <Link href={`/categories/${category.id}`} className="block w-full">
-        <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl shadow-lg group hover:shadow-xl transition-all duration-500 mx-2">
+        <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500 mx-2">
           <Image
             src={category.imageUrl || '/coffee.jpg'}
             alt={category.name}
@@ -176,7 +176,7 @@ export default function FeaturedCategories() {
         </p>
       </div>
       
-      <div className="relative w-full max-w-7xl mx-auto px-4">
+      <div className="relative w-full  ">
         {data.length > cardsPerSlide && (
           <>
             <button
@@ -206,7 +206,7 @@ export default function FeaturedCategories() {
           </>
         )}
 
-        <div className="overflow-hidden rounded-xl">
+        <div className="overflow-hidden ">
           <div 
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}

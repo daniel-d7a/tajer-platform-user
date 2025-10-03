@@ -55,12 +55,9 @@ export default function Factories() {
 
     const scrollContainer = scrollRef.current;
     let animationFrameId: number;
-    let scrollSpeed = 5; 
-    let targetSpeed = 1.5; 
+    const scrollSpeed = 1.5; // سرعة ثابتة واحدة
 
     const animateScroll = () => {
-      scrollSpeed += (targetSpeed - scrollSpeed) * 0.05;
-
       if (isRTL) {
         scrollContainer.scrollLeft -= scrollSpeed;
         if (scrollContainer.scrollLeft <= 0) {
@@ -77,25 +74,22 @@ export default function Factories() {
 
     animateScroll();
 
-    if (window.innerWidth > 768) {
-      const handleMouseEnter = () => {
-        targetSpeed = .4;
-      };
-      const handleMouseLeave = () => {
-        targetSpeed = 1.5; 
-      };
+    const handleMouseEnter = () => {
+      cancelAnimationFrame(animationFrameId);
+    };
 
-      scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    const handleMouseLeave = () => {
+      animateScroll();
+    };
 
-      return () => {
-        cancelAnimationFrame(animationFrameId);
-        scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    }
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, [factories.length, isRTL, pathname]);
 
   return (
@@ -123,13 +117,11 @@ export default function Factories() {
                   passHref
                 >
                   <motion.div
-                    className="flex-shrink-0 opacity-70 hover:opacity-100 hover:border-primary hover:border-1 rounded-lg  flex items-center justify-center p-2 cursor-pointer"
+                    className="flex-shrink-0 opacity-70 hover:opacity-100 rounded-lg flex items-center justify-center p-2 cursor-pointer transition-all duration-300"
                     whileHover={{
-                      scale: 1.05,
-                      y: -5,
-                      transition: { duration: 0.2 },
+                      scale: 1.1, // zoom in بسيط
+                      transition: { duration: 0.3 },
                     }}
-                    transition={{ duration: 0.3 }}
                   >
                     {factory.imageUrl ? (
                       <div className="relative w-32 min-w-20 h-20">
@@ -139,7 +131,7 @@ export default function Factories() {
                           fill
                           quality={100}
                           sizes="80px"
-                          className="object-contain"
+                          className="object-contain transition-transform duration-300 hover:scale-110"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
