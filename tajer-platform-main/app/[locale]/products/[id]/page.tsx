@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "@/components/products/product-grid";
 import toast from "react-hot-toast";
+import ImageUpScale from "@/components/ImageUpScale";
 type Offer = { 
   id: number;
   name: string;
@@ -64,6 +65,8 @@ export default function Page() {
   const [categoryIds, setCategoryIDS] = useState<number[]>([]);
   const [productData,setProductData] = useState([]);
   const [loadingProduct,setLoadingProduct] = useState(true);
+  const [selectedImage,setSelectedImage] = useState('')
+  const [open,setOpen] = useState(false)
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0] || 'en';
@@ -182,6 +185,7 @@ const getCartItemsCount = (): number => {
     return offer.discountAmount && offer.discountAmount > 0;
   };
   return (
+    <>
     <div dir={language === 'ar' ? "rtl" : "ltr"} className="flex flex-col gap-3">
       <Head>
         <title>{offerData?.name || "Product Details"}</title>
@@ -203,7 +207,7 @@ const getCartItemsCount = (): number => {
             </div>
           ) : offerData ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4 w-full">
-              <div className="relative pt-[100%]">
+              <div className="relative pt-[100%] cursor-zoom-in">
                 {isProductOnSale(offerData) && (
                   <Badge className="absolute top-2 right-2 bg-primary z-10">
                     {offerData.discountType === 'percentage' 
@@ -211,11 +215,14 @@ const getCartItemsCount = (): number => {
                       : `${offerData.discountAmount} ${tid('coins')} ${tP('offer')}`}
                   </Badge>
                 )}
-              
                 <Image
                   src={offerData.imageUrl || "/placeholder.jpg"}
                   alt={language === 'ar' ? offerData.name_ar : offerData.name || "Product image"}
                   fill
+                  onClick={() =>{
+                    setOpen(true)
+                    setSelectedImage(offerData.imageUrl)
+                  }}
                   className="object-cover rounded-lg"
                 />
               </div>
@@ -427,5 +434,10 @@ const getCartItemsCount = (): number => {
       )}
       </section>
     </div>
+      {open && selectedImage && (
+        <ImageUpScale alt="image product"onClose = {() => setOpen(false)} src={selectedImage} />
+      )}
+        </>
+
   );
 };

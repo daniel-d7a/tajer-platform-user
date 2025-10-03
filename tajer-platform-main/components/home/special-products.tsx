@@ -1,16 +1,13 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import Link from "next/link";
-import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
-import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import {  ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
-
+import ProductCard from "../common/CommonCard";
 interface ProductType {
   id: string;
   name: string;
@@ -35,212 +32,6 @@ interface ProductType {
     minOrderQuantity: number;
   };
 }
-
-interface ProductBase {
-  name: string;
-  name_ar: string;
-  imageUrl: string;
-  category: string;
-  manufacturer: string;
-  piecePrice: number;
-  piecesPerPack: number;
-  discountType: string;
-  unitType: string;
-  id: number;
-  discountAmount: number;
-  packPrice: number;
-  minOrderQuantity: number;
-}
-
-// Custom hook for one-time animation
-function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { threshold?: number }) {
-  const ref = useRef<T | null>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || hasAnimated) return;
-
-    let ticking = false;
-    const threshold = opts?.threshold ?? 0.18;
-
-    function handleScroll() {
-      if (ticking || hasAnimated) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        if (!node) return;
-        const rect = node.getBoundingClientRect();
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        const visible = rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
-        
-        if (visible && !hasAnimated) {
-          setInView(true);
-          setHasAnimated(true);
-        }
-        ticking = false;
-      });
-    }
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [opts?.threshold, hasAnimated]);
-
-  return [ref, inView] as const;
-}
-
-function ProductCard({
-  product,
-  idx,
-  language,
-  t,
-  tb,
-  tc,
-  router,
-}: {
-  product: ProductType;
-  idx: number;
-  language: string;
-  t: (key: string) => string;
-  tb: (key: string) => string;
-  tc: (key: string) => string;
-  router: ReturnType<typeof useRouter>;
-}) {
-  const [cardRef, inView] = useOneTimeAnimation<HTMLDivElement>({ threshold: 0.18 });
-
-  const calculateDiscountedPrice = (offer: ProductBase, isPack: boolean = false) => {
-    const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
-    if (offer.discountAmount <= 0) return originalPrice;
-    if (offer.discountType === 'percentage') {
-      return originalPrice * (1 - offer.discountAmount / 100);
-    } else {
-      return Math.max(0, originalPrice - offer.discountAmount);
-    }
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0px)" : "translateY(60px)",
-        transition: inView 
-          ? "opacity 0.7s cubic-bezier(.4,.2,0,1), transform 0.7s cubic-bezier(.4,.2,0,1)" 
-          : "none",
-        transitionDelay: inView ? `${idx * 0.08}s` : "0s",
-        willChange: inView ? "opacity, transform" : "auto",
-      }}
-      className="w-full h-full flex-shrink-0"
-    >
-      <Link className="w-full h-full block" href={`/products/${product.product.id}`}>
-        <Card className="overflow-hidden flex flex-col h-full rounded-2xl duration-300 transition-transform border-2 hover:border-primary/30">
-          <div className="relative pt-[100%]">
-            {product.product.discountAmount > 0 && (
-              <Badge className="absolute top-2 right-2 bg-primary z-10">
-                {product.product.discountType === 'percentage' 
-                  ? `${product.product.discountAmount}% ${t('offer')}` 
-                  : `${product.product.discountAmount} ${tc('coins')} ${t('offer')}`}
-              </Badge> 
-            )}
-            <Image
-              src={product.product.imageUrl || "/placeholder.svg"}
-              alt={product.product.name}
-              fill
-              className="object-cover absolute top-0 left-0"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            />
-          </div>
-          <CardContent className="p-4 flex-grow">
-            <div className="text-sm text-muted-foreground mb-1"></div>
-            <h3 className="font-semibold mb-1 line-clamp-2 text-lg truncate w-full">
-              {language === 'en' ? product.product.name : product.product.name_ar}
-            </h3>
-            <div className="flex items-baseline mt-2">
-              {product.product.unitType === "pack_only" || product.product.unitType === "piece_or_pack" ? (
-                <div className="flex gap-2 flex-col w-full">
-                  <div className="flex items-center">
-                    <div className="flex items-center gap-2 w-full">
-                      {product.product.discountAmount > 0 ? (
-                        <div className="flex gap-2">
-                          <span className="text-lg font-bold text-primary">
-                            {calculateDiscountedPrice(product.product, false).toFixed(2)} {tc('coins')}
-                          </span>
-                          <span className="line-through text-muted-foreground text-sm">
-                            {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-lg font-bold text-primary">
-                          {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                        </span>
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        / {language === 'en' ? "piece" : "قطعة"}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-md w-[100%] mr-2 font-medium">
-                      {t('PackPrice')}: {calculateDiscountedPrice(product.product, true).toFixed(2)} {tc('coins')}
-                      {product.product.discountAmount > 0 && (
-                        <span className="line-through text-muted-foreground text-sm ml-2">
-                          {product.product.packPrice.toFixed(2)} {tc('coins')}
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      {t('piecesPerPack')}: {product.product.piecesPerPack} / {language === 'en' ? "pieces" : "قطع في الحزمه"}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 w-full">
-                  {product.product.discountAmount > 0 ? (
-                    <div className="flex gap-2 w-full">
-                      <span className="text-lg font-bold text-primary">
-                        {calculateDiscountedPrice(product.product).toFixed(2)} {tc('coins')}
-                      </span>
-                      <span className="line-through text-muted-foreground text-sm">
-                        {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-lg font-bold text-primary">
-                      {product.product.piecePrice.toFixed(2)} {tc('coins')}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-            
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button
-              variant="outline"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(`/products/${product.product.id}`);
-              }}
-            >
-              <ShoppingCart className="h-4 w-4 ml-2" />
-              {tb('viewProducts')}
-            </Button>
-          </CardFooter>
-        </Card>
-      </Link>
-    </div>
-  );
-}
-
 function SkeletonCard({ idx }: { idx: number }) {
   return (
     <Card key={idx} className="animate-pulse h-full flex-shrink-0">
@@ -264,7 +55,6 @@ export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
   const tc = useTranslations("common");
-  const router = useRouter();
   const [Products, setProducts] = useState<ProductType[] | null>(null);
   const [loading, SetLoading] = useState(true);
   const [language, setLanguage] = useState('en');
@@ -299,7 +89,6 @@ export default function SpecialProducts() {
     fetchSpecialProducts();
   }, []);
 
-  // عدد الكروت في كل سلايد بناءً على حجم الشاشة
   const getCardsPerSlide = () => {
     if (typeof window === 'undefined') return 4;
     return window.innerWidth < 768 ? 1 : 4;
@@ -312,7 +101,7 @@ export default function SpecialProducts() {
       setCardsPerSlide(getCardsPerSlide());
     };
 
-    handleResize(); // Set initial value
+    handleResize(); 
     window.addEventListener('resize', handleResize);
     
     return () => {
@@ -328,26 +117,22 @@ export default function SpecialProducts() {
   const nextSlide = () => {
     if (canGoNext) {
       setCurrentSlide(prev => prev + 1);
-    }
+    };
   };
-
   const prevSlide = () => {
     if (canGoPrev) {
       setCurrentSlide(prev => prev - 1);
-    }
+    };
   };
-
   const goToSlide = (slideIndex: number) => {
     setCurrentSlide(slideIndex);
   };
-
   const slideGroups = [];
   if (Products) {
     for (let i = 0; i < Products.length; i += cardsPerSlide) {
       slideGroups.push(Products.slice(i, i + cardsPerSlide));
-    }
-  }
-
+    };
+  };
   return (
     <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
       <div>
@@ -357,7 +142,6 @@ export default function SpecialProducts() {
             {t('subTitle')}
           </p>
         </div>
-
         <div className="relative w-[95%] mx-auto">
           {Products && Products.length > cardsPerSlide && (
             <>
@@ -387,7 +171,6 @@ export default function SpecialProducts() {
               </button>
             </>
           )}
-
           <div className="overflow-hidden rounded-xl">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
@@ -409,10 +192,10 @@ export default function SpecialProducts() {
                         product={product}
                         idx={idx}
                         language={language}
+                        type="product"
                         t={t}
                         tb={tb}
                         tc={tc}
-                        router={router}
                       />
                     ))
                   ) : null}
@@ -420,7 +203,6 @@ export default function SpecialProducts() {
               ))}
             </div>
           </div>
-
           {totalSlides > 1 && (
             <div className="flex justify-center mt-8 gap-2">
               {Array.from({ length: totalSlides }, (_, index) => (
@@ -438,7 +220,6 @@ export default function SpecialProducts() {
             </div>
           )}
         </div>
-
         <div className="text-center mt-8">
           <Link href="/special-products">
             <Badge
@@ -452,4 +233,4 @@ export default function SpecialProducts() {
       </div>
     </section>
   );
-}
+};

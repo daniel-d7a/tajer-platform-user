@@ -151,7 +151,6 @@ const DashboardPage: React.FC = () => {
             <thead className="border-b">
               <tr className="text-lg">
                 <th className="p-4 whitespace-nowrap">{to('label.orderid')}</th>
-                <th className="p-4 whitespace-nowrap">{to('label.merchnat')}</th>
                 <th className="p-4 whitespace-nowrap">{to('label.total')}</th>
                 <th className="p-4 whitespace-nowrap">{to('label.status')}</th>
                 <th className="p-4 whitespace-nowrap">{to('label.createdAt')}</th>

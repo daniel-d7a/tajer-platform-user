@@ -7,10 +7,10 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import { Boxes, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-
+import ImageUpScale from "@/components/ImageUpScale";
 interface Company {
   id: number;
   name: string;
@@ -56,9 +56,10 @@ export default function Companies() {
 
   const [searchValue, setSearchValue] = useState<string>(search|| "");
   const page = Number(searchParams.get("page")) || 1;
+    const [open,setOpen] = useState(false)
+  const [selectedImage,setSelectedImage] = useState('')
   const [language, setLanguage] = useState('en')
   const pathname = usePathname();
-  
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0] || 'en'; 
@@ -109,6 +110,7 @@ export default function Companies() {
   };
 
   return (
+    <>
     <div className="max-w-6xl mx-auto p-6">
       <h2 className="text-3xl font-bold mb-8 text-center">{t('Registeredcompanies')}</h2>
       
@@ -146,10 +148,14 @@ export default function Companies() {
                     {getDiscountText(company)}
                   </Badge>
                 )}
-                <Avatar className="w-full h-32 mb-4">
+                <Avatar className="w-full h-32 mb-4 cursor-zoom-in">
                   <AvatarImage
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-contain rounded-lg"
                     src={company.imageUrl || "/supermarket1.jpg"}
+                    onClick={() =>{
+                      setOpen(true);
+                      setSelectedImage(company.imageUrl || "/supermarket1.jpg");
+                    }}
                     alt={language === 'ar' ? company.name_ar : company.name || t('name')}
                   />
                 </Avatar>
@@ -158,9 +164,9 @@ export default function Companies() {
                 </h3>
                 <Link
                   href={`/companies/${company.id}`}
-                  className="bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors hover:bg-primary/90"
+                  className="flex items-center justify-center gap-2 bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors hover:bg-primary/90"
                 >
-                  {t('Details')} 
+                  {t('Details')} <Boxes className="w-4 h-4"/>
                 </Link>
               </div>
             ))}
@@ -172,6 +178,7 @@ export default function Companies() {
             <Link key={p} href={`?search=${encodeURIComponent(search)}&page=${p}`} scroll={true}>
               <Button variant={p === page ? "default" : "outline"} className="px-4 py-2 text-sm">
                 {p}
+
               </Button>
             </Link>
           ))}
@@ -183,5 +190,10 @@ export default function Companies() {
         </div>
       )}
     </div>
+      {selectedImage && open && (
+        <ImageUpScale alt="" src={selectedImage} onClose={() => setOpen(false)} />
+      )}
+        </>
+
   );
 };

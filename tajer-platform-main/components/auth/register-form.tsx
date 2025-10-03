@@ -433,7 +433,6 @@ export default function RegisterForm() {
               )}
             />
           </div>
-          
           <FormField
             disabled={isLoading}
             control={form.control}

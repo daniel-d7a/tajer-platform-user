@@ -63,27 +63,21 @@ const slideVariants = {
   }),
   center: () => ({
     x:  0,
-    transition: {
-      x: { type: "spring" as const, stiffness: 300, damping: 30 },
-    }
+   
   }),
   exit: (direction: number) => ({
     x: direction < 0 ? 300 : -300,
-    transition: {
-      x: { type: "spring" as const, stiffness: 300, damping: 30 },
-    }
+  
   })
 };
   const dotVariants = {
     inactive: {
       scale: 1,
       opacity: 0.5,
-      transition: { duration: 0.2 }
     },
     active: {
       scale: 1.2,
       opacity: 1,
-      transition: { duration: 0.2 }
     }
   };
 

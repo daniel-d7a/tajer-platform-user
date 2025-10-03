@@ -22,7 +22,6 @@ const statusColor: Record<string, string> = {
 export const OrderRow: React.FC<OrderRowProps> = ({
   id,
   text_id,
-  merchant,
   totalValue,
   status,
   createdAt,
@@ -42,7 +41,6 @@ export const OrderRow: React.FC<OrderRowProps> = ({
   return (
     <tr className="border-b hover:bg-muted/40 duration-200">
       <td className="p-3">{text_id}</td>
-      <td className="p-3">{merchant}</td>
       <td className="p-3">{tc('coins')} {totalValue.toFixed(2)}</td>
       <td className={`p-3 ${statusColor[status] || ""}`}>
         {statusMapping[status] || status}

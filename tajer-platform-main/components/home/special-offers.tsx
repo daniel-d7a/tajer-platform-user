@@ -2,16 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
-
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
-
+import ProductCard from "../common/CommonCard";
+import ImageUpScale from "../ImageUpScale";
 type Offer = { 
   id: number;
   name: string;
@@ -32,190 +30,33 @@ type Offer = {
   };
 };
 
-// Custom hook for one-time animation
-function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { threshold?: number }) {
-  const ref = useRef<T | null>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [inView, setInView] = useState(false);
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || hasAnimated) return;
-
-    let ticking = false;
-    const threshold = opts?.threshold ?? 0.15;
-
-    function handleScroll() {
-      if (ticking || hasAnimated) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        if (!node) return;
-        const rect = node.getBoundingClientRect();
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        const visible = rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
-        
-        if (visible && !hasAnimated) {
-          setInView(true);
-          setHasAnimated(true);
-        }
-        ticking = false;
-      });
-    }
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [opts?.threshold, hasAnimated]);
-
-  return [ref, inView] as const;
-}
-
-function OfferCard({
-  offer,
-  idx,
-  language,
-  t,
-  tc,
-  router,
-}: { 
-  offer: Offer; 
-  idx: number; 
-  language: string;
-  t: (key: string) => string;
-  tc: (key: string) => string;
-  router: ReturnType<typeof useRouter>;
-}) {
-  const [cardRef, inView] = useOneTimeAnimation<HTMLDivElement>({ threshold: 0.18 });
-
-  const calculateDiscountedPrice = (offer: Offer, isPack: boolean = false): number => {
-    const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
-    if (offer.discountAmount <= 0) return originalPrice;
-    if (offer.discountType === "percentage") {
-      return originalPrice * (1 - offer.discountAmount / 100);
-    }
-    return Math.max(0, originalPrice - offer.discountAmount);
+interface ProductType  {
+  id: string;
+  name: string;
+  isOnSale: boolean;
+  packPrice: number;
+  piecePrice: number;
+  minOrderQuantity: number;
+  unitType: string;
+  product: {
+    name: string;
+    name_ar: string;
+    imageUrl: string;
+    category: string;
+    manufacturer: string;
+    piecePrice: number;
+    piecesPerPack: number;
+    discountType: string;
+    unitType: string;
+    id: number;
+    discountAmount: number;
+    packPrice: number;
+    minOrderQuantity: number;
   };
-
-  return (
-    <div
-      ref={cardRef}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0px)" : "translateY(60px)",
-        transition: inView 
-          ? "opacity 0.7s cubic-bezier(.4,.2,0,1), transform 0.7s cubic-bezier(.4,.2,0,1)" 
-          : "none",
-        transitionDelay: inView ? `${idx * 0.08}s` : "0s",
-        willChange: inView ? "opacity, transform" : "auto",
-      }}
-      className="w-full h-full flex-shrink-0"
-    >
-      <Link href={`/products/${offer.id}`} className="block w-full h-full" tabIndex={0}>
-        <Card className="overflow-hidden flex flex-col h-full rounded-2xl duration-300 transition-transform border-2 hover:border-primary/30">
-          <div className="relative pt-[100%]">
-            <Badge className="absolute top-2 right-2 bg-primary z-10">
-              {offer.discountType === "percentage" 
-                ? `${offer.discountAmount}% ${tc("discount")}`
-                : `${offer.discountAmount} ${tc("coins")} ${tc("discount")}`
-              }
-            </Badge>
-            <Image
-              src={offer.imageUrl || "/placeholder.svg"}
-              alt={language === "en" ? offer.name : offer.name_ar}
-              fill
-              className="object-cover absolute top-0 left-0"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              priority={idx === 0}
-            />
-          </div>
-          <CardContent className="p-4 flex-grow">
-            <h3 className="font-semibold mb-1 line-clamp-2 text-lg">
-              {language === "en" ? offer.name : offer.name_ar}
-            </h3>
-            <p className="text-sm text-muted-foreground mb-2">
-              {language === "en" ? offer.factory.name : offer.factory.name_ar}
-            </p>
-            <div className="flex flex-col gap-2 mt-2">
-              {(offer.unitType === "pack_only" || offer.unitType === "piece_or_pack") ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    {offer.discountAmount > 0 ? (
-                      <>
-                        <span className="text-lg font-bold text-primary">
-                          {calculateDiscountedPrice(offer, false).toFixed(2)} {tc("coins")}
-                        </span>
-                        <span className="line-through text-muted-foreground text-sm">
-                          {offer.piecePrice.toFixed(2)} {tc("coins")}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-lg font-bold text-primary">
-                        {offer.piecePrice.toFixed(2)} {tc("coins")}
-                      </span>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      /{language === "en" ? "piece" : "قطعة"}
-                    </span>
-                  </div>
-                  <div className="flex  gap-2 flex-col">
-                    <span className="text-md font-medium">
-                      {t("PackPrice")}: {calculateDiscountedPrice(offer, true).toFixed(2)} {tc("coins")}
-                    </span>
-                    {offer.discountAmount > 0 && (
-                      <span className="line-through text-muted-foreground text-sm">
-                        {offer.packPrice.toFixed(2)} {tc("coins")}
-                      </span>
-                      
-                    )}  <div className="flex flex-col gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      {t('piecesPerPack')}: {offer.piecesPerPack} / {language === 'en' ? "pieces" : "قطع في الحزمه"}
-                    </span>
-                  </div>
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-2">
-                  {offer.discountAmount > 0 ? (
-                    <>
-                      <span className="text-lg font-bold text-primary">
-                        {calculateDiscountedPrice(offer).toFixed(2)} {tc("coins")}
-                      </span>
-                      <span className="line-through text-muted-foreground text-sm">
-                        {offer.piecePrice.toFixed(2)} {tc("coins")}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-lg font-bold text-primary">
-                      {offer.piecePrice.toFixed(2)} {tc("coins")}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button
-              variant="outline"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(`/products/${offer.id}`);
-              }}
-            >
-              <ShoppingCart className="h-4 w-4 ml-2" />
-              {t("viewOffer")}
-            </Button>
-          </CardFooter>
-        </Card>
-      </Link>
-    </div>
-  );
 }
+
+
 
 function SkeletonCard({ idx }: { idx: number }) {
   return (
@@ -234,15 +75,19 @@ function SkeletonCard({ idx }: { idx: number }) {
 }
 
 export default function SpecialOffers() {
-  const t = useTranslations("home");
+   const t = useTranslations("specialProducts");
+  const tb = useTranslations("buttons");
   const tc = useTranslations("common");
-  const [offersData, setOffersData] = useState<Offer[]>([]);
+  
+  const [offersData, setOffersData] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [language, setLanguage] = useState<string>('en');
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [showImageUpScale, setShowImageUpScale] = useState(false);
+  
   console.log(errorMessage)
-  const router = useRouter();
   const pathname = usePathname();
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -271,7 +116,6 @@ export default function SpecialOffers() {
     fetchOffers();
   }, [t]);
 
-  // عدد الكروت في كل سلايد بناءً على حجم الشاشة
   const getCardsPerSlide = () => {
     if (typeof window === 'undefined') return 4;
     return window.innerWidth < 768 ? 1 : 4;
@@ -284,7 +128,7 @@ export default function SpecialOffers() {
       setCardsPerSlide(getCardsPerSlide());
     };
 
-    handleResize(); // Set initial value
+    handleResize();
     window.addEventListener('resize', handleResize);
     
     return () => {
@@ -292,9 +136,14 @@ export default function SpecialOffers() {
     };
   }, []);
 
-  const totalSlides = Math.ceil(offersData.length / cardsPerSlide);
 
-  // منطق الأسهم المحسّن
+
+  const handleCloseImageUpScale = () => {
+    setShowImageUpScale(false);
+    setSelectedOffer(null);
+  };
+
+  const totalSlides = Math.ceil(offersData.length / cardsPerSlide);
   const canGoNext = currentSlide < totalSlides - 1;
   const canGoPrev = currentSlide > 0;
 
@@ -376,14 +225,15 @@ export default function SpecialOffers() {
                   ))
                 ) : slideGroup.length > 0 ? (
                   slideGroup.map((offer, idx) => (
-                    <OfferCard 
+                    <ProductCard 
                       key={offer.id} 
-                      offer={offer} 
                       idx={idx} 
                       language={language}
-                      t={t}
-                      tc={tc}
-                      router={router}
+                      type="offer"
+                       t={t}
+                        tb={tb}
+                        tc={tc}
+                      product={offer}
                     />
                   ))
                 ) : null}
@@ -391,7 +241,6 @@ export default function SpecialOffers() {
             ))}
           </div>
         </div>
-
         {totalSlides > 1 && (
           <div className="flex justify-center mt-8 gap-2">
             {Array.from({ length: totalSlides }, (_, index) => (
@@ -409,7 +258,6 @@ export default function SpecialOffers() {
           </div>
         )}
       </div>
-
       <div className="text-center mt-8">
         <Link href="/offers?search=&page=1">
           <Badge
@@ -420,6 +268,14 @@ export default function SpecialOffers() {
           </Badge>
         </Link>
       </div>
+
+      {showImageUpScale && selectedOffer && (
+        <ImageUpScale 
+          src={selectedOffer.imageUrl || "/placeholder.svg"}
+          alt={language === "en" ? selectedOffer.name : selectedOffer.name_ar}
+          onClose={handleCloseImageUpScale}
+        />
+      )}
     </section>
   );
 }

@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import toast from 'react-hot-toast';
 import DeleteConfirmationPopup from '@/components/DeleteCart';
-
+import ImageUpScale from '@/components/ImageUpScale';
 interface Product {
   id: number;
   name: string;
@@ -65,12 +65,14 @@ const updateCartItemsCount = (count: number) => {
 
 
 export default function CartPage() {
+    const t = useTranslations('cart');
+  const tc = useTranslations('common');
   const [isAuthentication, setIsAuthenticated] = useState<boolean | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const t = useTranslations('cart');
-  const tc = useTranslations('common');
+  const [selectedImage,setSelectedImage] = useState('')
+  const [open,setOpen] = useState(false)
   const [checkoutLoading,setCheckoutLoading] = useState(false);
   const [language, setLanguage] = useState('en');  
   const pathname = usePathname();
@@ -258,6 +260,7 @@ export default function CartPage() {
   if (!isAuthentication) return null;
 
   return (
+    <>
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
       <DeleteConfirmationPopup
         isOpen={showDeletePopup}
@@ -318,11 +321,15 @@ export default function CartPage() {
                 <Card key={item.id} className="overflow-hidden">
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row items-start gap-4">
-                      <div className="relative w-full sm:w-32 h-32 sm:h-32 flex-shrink-0 overflow-hidden rounded-lg mx-auto sm:mx-0">
+                      <div className="relative w-full sm:w-32 h-32 cursor-zoom-in sm:h-32 flex-shrink-0 overflow-hidden rounded-lg mx-auto sm:mx-0">
                         <Image
                           src={item.product?.imageUrl ?? '/placeholder.svg'}
                           alt={item.product?.name ?? 'product'}
                           fill
+                          onClick={() =>{
+                            setOpen(true);
+                            setSelectedImage(item.product?.imageUrl ?? '/placeholder.svg')
+                          }}
                           className="object-cover"
                           sizes="(max-width: 640px) 100vw, 128px"
                         />
@@ -503,5 +510,10 @@ export default function CartPage() {
         </div>
       )}
     </div>
+    {open && selectedImage && (
+      <ImageUpScale src={selectedImage} alt='cart items image'  onClose={() => setOpen(false)} />
+    )}
+        </>
+
   );
 }

@@ -35,14 +35,14 @@ export default function Factories() {
         );
         const data = await response.json();
         setFactories(data || []);
-        if(response.ok){
-          setLoading(false)
-        }else{
-          setLoading(true)
+        if (response.ok) {
+          setLoading(false);
+        } else {
+          setLoading(true);
         }
       } catch (error) {
         console.error('Error fetching factories:', error);
-        toast.error('something went wron please try again')
+        toast.error('something went wrong please try again');
       }
     };
     fetchFactories();
@@ -55,20 +55,21 @@ export default function Factories() {
 
     const scrollContainer = scrollRef.current;
     let animationFrameId: number;
-    const scrollSpeed = 1;
+    let scrollSpeed = 5; 
+    let targetSpeed = 1.5; 
 
     const animateScroll = () => {
-      if (scrollContainer) {
-        if (isRTL) {
-          scrollContainer.scrollLeft -= scrollSpeed;
-          if (scrollContainer.scrollLeft <= 0) {
-            scrollContainer.scrollLeft = scrollContainer.scrollWidth / 3;
-          }
-        } else {
-          scrollContainer.scrollLeft += scrollSpeed;
-          if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
-            scrollContainer.scrollLeft = 0;
-          }
+      scrollSpeed += (targetSpeed - scrollSpeed) * 0.05;
+
+      if (isRTL) {
+        scrollContainer.scrollLeft -= scrollSpeed;
+        if (scrollContainer.scrollLeft <= 0) {
+          scrollContainer.scrollLeft = scrollContainer.scrollWidth / 3;
+        }
+      } else {
+        scrollContainer.scrollLeft += scrollSpeed;
+        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
+          scrollContainer.scrollLeft = 0;
         }
       }
       animationFrameId = requestAnimationFrame(animateScroll);
@@ -76,53 +77,58 @@ export default function Factories() {
 
     animateScroll();
 
-    const handleMouseEnter = () => {
-      cancelAnimationFrame(animationFrameId);
-    };
+    if (window.innerWidth > 768) {
+      const handleMouseEnter = () => {
+        targetSpeed = .4;
+      };
+      const handleMouseLeave = () => {
+        targetSpeed = 1.5; 
+      };
 
-    const handleMouseLeave = () => {
-      animateScroll();
-    };
+      scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+      return () => {
+        cancelAnimationFrame(animationFrameId);
+        scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [factories.length, isRTL, pathname]);
 
   return (
-    <section className="py-12" dir='ltr'>
-      <motion.div 
+    <section className="py-12" dir="ltr">
+      <motion.div
         className="mb-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: .4 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
       >
-     
         {loading ? (
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="relative">
-            <div 
+            <div
               ref={scrollRef}
               className="flex overflow-x-auto hide-scrollbar gap-6 px-4 py-4"
-              style={{ scrollBehavior: 'smooth' }}
             >
               {duplicatedFactories.map((factory, index) => (
-                <Link 
-                  key={`${factory.id}-${index}`} 
+                <Link
+                  key={`${factory.id}-${index}`}
                   href={`/companies/${factory.id}`}
                   passHref
                 >
                   <motion.div
                     className="flex-shrink-0 opacity-70 hover:opacity-100 hover:border-primary hover:border-1 rounded-lg  flex items-center justify-center p-2 cursor-pointer"
-                    whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.2 } }}
+                    whileHover={{
+                      scale: 1.05,
+                      y: -5,
+                      transition: { duration: 0.2 },
+                    }}
                     transition={{ duration: 0.3 }}
                   >
                     {factory.imageUrl ? (

@@ -26,7 +26,7 @@ export default function DeleteConfirmationPopup({
       />
       
       {/* Popup Content */}
-      <div className="relative bg-background  rounded-lg shadow-xl w-full max-w-md animate-in slide-in-from-left duration-300">
+      <div className="relative bg-background  rounded-lg shadow-xl w-full max-w-xl animate-in slide-in-from-left duration-300">
         {/* Header */}
         <div dir="ltr" className="w-full flex items-center justify-between p-4 border-b">
           <button

@@ -124,7 +124,7 @@ export default function Header() {
         </div>
 
         {/* Right Section - Actions */}
-        <div className="flex items-center justify-end space-x-2 sm:space-x-3 flex-1">
+        <div className="flex items-center lg: justify-end space-x-2 sm:space-x-3 flex-1">
           <div className="hidden sm:flex items-center space-x-2">
             <ThemeToggle />
             <LocaleSwitcher />
@@ -203,7 +203,10 @@ export default function Header() {
           </Button>
         </div>
       </div>
-
+<div className="flex items-center lg:hidden justify-between p-2 border-t">
+                <ThemeToggle />
+                <LocaleSwitcher />
+              </div>
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t bg-background/95 backdrop-blur">
@@ -291,10 +294,7 @@ export default function Header() {
               </div>
 
               {/* Mobile Theme & Locale */}
-              <div className="flex items-center justify-between pt-4 border-t">
-                <ThemeToggle />
-                <LocaleSwitcher />
-              </div>
+              
             </nav>
           </div>
         </div>

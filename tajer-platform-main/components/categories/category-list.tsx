@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
-
+import ImageUpScale from "../ImageUpScale";
 interface SubCategory {
   id: number;
   name: string;
@@ -36,6 +36,8 @@ export default function CategoryList({search} : {search:string}) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [close,setIsClose] = useState(false)
+  const [selecetImage,setSelectedImage] = useState('')
   const [meta, setMeta] = useState<Meta | null>(null);
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
@@ -61,6 +63,7 @@ export default function CategoryList({search} : {search:string}) {
     fetchCategories();
   }, [page,search]);
   return (
+    <>
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
@@ -93,10 +96,14 @@ export default function CategoryList({search} : {search:string}) {
                 <div className="flex">
                   <div className="relative h-40 w-40">
                     <Image
+                      onClick={() =>{
+                        setSelectedImage(String(category.imageUrl))
+                        setIsClose(true)
+                      }}
                       src={category.imageUrl || "/library.jpg"}
                       alt={language === "en" ? category.name : category.name_ar}
                       fill
-                      className="object-cover"
+                      className="object-cover cursor-zoom-in"
                     />
                   </div>
                   <div className="p-4 flex-1">
@@ -164,5 +171,8 @@ export default function CategoryList({search} : {search:string}) {
         </div>
       )}
     </div>
+    {close && <ImageUpScale src={selecetImage} alt="category image" onClose={() => setIsClose(false)}/>}
+        </>
+
   );
 };
