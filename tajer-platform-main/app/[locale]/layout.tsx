@@ -13,11 +13,18 @@ import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
 import { Toaster } from "react-hot-toast";
 import LoadingAnimation from "@/components/common/Loading";
+
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
   variable: "--font-cairo",
 });
+
+declare global {
+  interface Window {
+    __: (key: string) => string;
+  }
+}
 
 type Locale = (typeof routing.locales)[number];
 
@@ -57,8 +64,6 @@ export async function generateMetadata({ params }: RootLayoutProps) {
   }
 }
 
-
-
 export default async function RootLayout({ 
   children, 
   params 
@@ -78,6 +83,17 @@ export default async function RootLayout({
       dir={direction}
       className={cairo.variable}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                window.__ = window.__ || function(key) { return key; };
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className="min-h-screen bg-background font-cairo antialiased"
         suppressHydrationWarning

@@ -11,7 +11,7 @@ export default function LoadingAnimation() {
           src="/loading.json"
           autoplay
           loop
-          style={{ height: '200px', width: '200px' }}
+          style={{ height: '400px', width: '400px' }}
         />
         <p className="mt-4 text-lg text-muted-foreground font-cairo">
           {t('loading')}
