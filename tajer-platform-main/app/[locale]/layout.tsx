@@ -13,20 +13,13 @@ import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
 import { Toaster } from "react-hot-toast";
 import LoadingAnimation from "@/components/common/Loading";
+import "@/lib/global-fix";
 
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
   variable: "--font-cairo",
 });
-
-declare global {
-  var __: (key: string) => string;
-}
-
-if (typeof global !== 'undefined') {
-  (global as any).__ = (key: string) => key;
-}
 
 type Locale = (typeof routing.locales)[number];
 
@@ -89,18 +82,6 @@ export default async function RootLayout({
         className="min-h-screen bg-background font-cairo antialiased"
         suppressHydrationWarning
       >
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof window !== 'undefined') {
-                window.__ = window.__ || function(key) { 
-                  console.warn('Translation function called before load:', key);
-                  return key; 
-                };
-              }
-            `,
-          }}
-        />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
