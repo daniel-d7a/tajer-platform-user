@@ -119,7 +119,6 @@ export default function Factories() {
                   <motion.div
                     className="flex-shrink-0 opacity-70 hover:opacity-100 rounded-lg flex items-center justify-center p-2 cursor-pointer transition-all duration-300"
                     whileHover={{
-                      scale: 1.1, // zoom in بسيط
                       transition: { duration: 0.3 },
                     }}
                   >

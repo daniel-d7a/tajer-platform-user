@@ -1,4 +1,5 @@
 import type React from "react";
+import { Suspense } from "react";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header";
@@ -11,7 +12,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getLangDir } from "rtl-detect";
 import { Toaster } from "react-hot-toast";
-
+import LoadingAnimation from "@/components/common/Loading";
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
@@ -56,6 +57,8 @@ export async function generateMetadata({ params }: RootLayoutProps) {
   }
 }
 
+
+
 export default async function RootLayout({ 
   children, 
   params 
@@ -82,22 +85,24 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
-              <Header />
-              <main className="min-h-screen">
-                {children}
-                <Toaster 
-                toastOptions={
-                  {
-                    className: "bg-primary text-primary-foreground",
-                  }
-                }
-                position="top-right" reverseOrder={false} />
-              </main>
-              <Footer />
+              <Suspense fallback={<LoadingAnimation />}>
+                <Header />
+                <main className="min-h-screen">
+                  {children}
+                  <Toaster 
+                    toastOptions={{
+                      className: "bg-primary text-primary-foreground",
+                    }}
+                    position="top-right" 
+                    reverseOrder={false} 
+                  />
+                </main>
+                <Footer />
+              </Suspense>
             </NextIntlClientProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   );
-};
+}

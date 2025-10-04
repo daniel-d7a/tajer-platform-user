@@ -205,7 +205,6 @@ export default function SpecialOffers() {
             <ChevronRight className="h-6 w-6" />
           </button>
         )}
-
         <div 
           ref={sliderRef}
           className="overflow-hidden rounded-xl"
