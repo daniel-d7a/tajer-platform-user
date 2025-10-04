@@ -21,9 +21,11 @@ const cairo = Cairo({
 });
 
 declare global {
-  interface Window {
-    __: (key: string) => string;
-  }
+  var __: (key: string) => string;
+}
+
+if (typeof global !== 'undefined') {
+  (global as any).__ = (key: string) => key;
 }
 
 type Locale = (typeof routing.locales)[number];
@@ -83,21 +85,22 @@ export default async function RootLayout({
       dir={direction}
       className={cairo.variable}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof window !== 'undefined') {
-                window.__ = window.__ || function(key) { return key; };
-              }
-            `,
-          }}
-        />
-      </head>
       <body
         className="min-h-screen bg-background font-cairo antialiased"
         suppressHydrationWarning
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                window.__ = window.__ || function(key) { 
+                  console.warn('Translation function called before load:', key);
+                  return key; 
+                };
+              }
+            `,
+          }}
+        />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
