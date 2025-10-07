@@ -215,7 +215,6 @@ export default function Page() {
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t">
                 <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
