@@ -46,7 +46,7 @@ export default function Profile() {
   const t = useTranslations("settingsProfile");
   const ta = useTranslations('auth')
     const localUserData: UserData = typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("data") || "{}")
+    ? JSON.parse(localStorage.getItem("userData") || "{}")
     : {};
   const [state, SetState] = useState(false);
   const [loading, SetLoading] = useState(false);

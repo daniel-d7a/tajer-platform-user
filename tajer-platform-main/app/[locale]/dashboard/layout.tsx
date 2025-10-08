@@ -55,7 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const data = localStorage.getItem("data");
+        const data = localStorage.getItem("userData");
         if (data) {
           setUserData(JSON.parse(data));
         }
