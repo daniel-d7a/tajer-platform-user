@@ -83,7 +83,7 @@ function AnimatedCategoryCard({
       className="w-full flex-shrink-0"
     >
       <Link href={`/categories/${category.id}`} className="block w-full">
-        <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500 mx-2">
+        <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500">
           <Image
             src={category.imageUrl || '/coffee.jpg'}
             alt={category.name}
@@ -235,7 +235,6 @@ export default function FeaturedCategories() {
           </div>
         </div>
 
-        {/* مؤشرات السلايدات */}
         {totalSlides > 1 && (
           <div className="flex justify-center mt-8 gap-3">
             {Array.from({ length: totalSlides }, (_, index) => (

@@ -15,7 +15,7 @@ export default function CategoriesPage() {
   const searchParams = useSearchParams();
   const currentSearch = searchParams.get("search") || "";
   const [searchValue, setSearchValue] = useState<string>(currentSearch);
-
+ 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     router.push(`?search=${encodeURIComponent(searchValue)}&page=1`);
