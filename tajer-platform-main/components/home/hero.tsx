@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -38,38 +38,52 @@ export default function Hero() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDirection(1);
-      setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [banners?.length]);
-
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setDirection(1);
     setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
-  };
+  }, [banners?.length]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setDirection(-1);
     setCurrentSlide(prev => (prev === 0 ? banners?.length - 1 : prev - 1));
+  }, [banners?.length]);
+
+  const handleManualNavigation = (navigationFunction: () => void) => {
+    setAutoPlay(false);
+    navigationFunction();
+    
+    setTimeout(() => {
+      setAutoPlay(true);
+    }, 10000);
   };
 
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
-  }),
-  center: () => ({
-    x:  0,
-   
-  }),
-  exit: (direction: number) => ({
-    x: direction < 0 ? 300 : -300,
-  
-  })
-};
+  useEffect(() => {
+    if (!autoPlay || banners?.length === 0) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [autoPlay, banners?.length, nextSlide]);
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 1,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 1,
+    })
+  };
+
   const dotVariants = {
     inactive: {
       scale: 1,
@@ -83,9 +97,9 @@ const slideVariants = {
 
   return (
     <div dir='ltr' className="relative overflow-hidden h-[60%] w-full">
-<div className="relative h-[300px] md:h-[400px]">
+      <div className="relative h-[300px] md:h-[400px]">
         {loading ? (
-          <div className="flex items-center  h-full justify-center">
+          <div className="flex items-center h-full justify-center">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
@@ -99,7 +113,14 @@ const slideVariants = {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  className="absolute inset-0"
+                  transition={{
+                    x: { 
+                      type: "tween", 
+                      ease: "easeInOut",
+                      duration: 0.4 
+                    }
+                  }}
+                  className="absolute inset-0 w-full h-full"
                 >
                   <Link href={slide.link}>
                     <div className="absolute inset-0 z-10" />
@@ -119,30 +140,25 @@ const slideVariants = {
         )}
       </div>
 
-      <motion.div
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
+        onClick={() => handleManualNavigation(prevSlide)}
       >
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
-          onClick={prevSlide}
-        >
-          <ChevronLeft className="h-6 w-6" />
-          <span className="sr-only">السابق</span>
-        </Button>
-      </motion.div>
-      <motion.div
+        <ChevronLeft className="h-6 w-6" />
+        <span className="sr-only">السابق</span>
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
+        onClick={() => handleManualNavigation(nextSlide)}
       >
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
-          onClick={nextSlide}
-        >
-          <ChevronRight className="h-6 w-6" />
-          <span className="sr-only">التالي</span>
-        </Button>
-      </motion.div>
+        <ChevronRight className="h-6 w-6" />
+        <span className="sr-only">التالي</span>
+      </Button>
 
       <div className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 space-x-2">
         {banners?.map((_, index) => (
@@ -155,8 +171,13 @@ const slideVariants = {
               index === currentSlide ? 'bg-white' : 'bg-white/50'
             }`}
             onClick={() => {
+              setAutoPlay(false);
               setDirection(index > currentSlide ? 1 : -1);
               setCurrentSlide(index);
+              
+              setTimeout(() => {
+                setAutoPlay(true);
+              }, 10000);
             }}
           >
             <span className="sr-only">شريحة {index + 1}</span>

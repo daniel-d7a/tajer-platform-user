@@ -1,13 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardFooter } from "../ui/card";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Skeleton } from "../ui/skeleton";
-import {  ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import ProductCard from "../common/CommonCard";
+import { AnimatePresence, motion } from "framer-motion";
+
 interface ProductType {
   id: string;
   name: string;
@@ -32,25 +32,9 @@ interface ProductType {
     minOrderQuantity: number;
   };
 }
-function SkeletonCard({ idx }: { idx: number }) {
-  return (
-    <Card key={idx} className="animate-pulse h-full flex-shrink-0">
-      <div className="relative pt-[100%]">
-        <Skeleton className="absolute top-0 left-0 w-full h-full" />
-      </div>
-      <CardContent className="p-4 flex-grow">
-        <Skeleton className="h-6 w-3/4 mb-2" />
-        <Skeleton className="h-4 w-1/2 mb-2" />
-        <Skeleton className="h-6 w-1/4 mb-2" />
-        <Skeleton className="h-4 w-3/4" />
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Skeleton className="h-10 w-full" />
-      </CardFooter>
-    </Card>
-  );
-}
- 
+
+
+
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
@@ -59,8 +43,10 @@ export default function SpecialProducts() {
   const [loading, SetLoading] = useState(true);
   const [language, setLanguage] = useState('en');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
   const pathname = usePathname();
-
+  console.log(autoPlay)
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0]; 
@@ -91,7 +77,10 @@ export default function SpecialProducts() {
 
   const getCardsPerSlide = () => {
     if (typeof window === 'undefined') return 4;
-    return window.innerWidth < 768 ? 1 : 4;
+    const width = window.innerWidth;
+    if (width < 768) return 1;
+    if (width < 1024) return 2;
+    return 4;
   };
 
   const [cardsPerSlide, setCardsPerSlide] = useState(4);
@@ -109,30 +98,85 @@ export default function SpecialProducts() {
     };
   }, []);
 
-  const totalSlides = Products ? Math.ceil(Products.length / cardsPerSlide) : 0;
-  
-  const canGoNext = currentSlide < totalSlides - 1;
-  const canGoPrev = currentSlide > 0;
+  // إنشاء الشرائح بنظام أبسط
+  const createSlideGroups = () => {
+    if (!Products || Products.length === 0) return [];
+    if (Products.length <= cardsPerSlide) return [Products];
 
-  const nextSlide = () => {
-    if (canGoNext) {
-      setCurrentSlide(prev => prev + 1);
-    };
+    const groups = [];
+    const step = 3; 
+    
+    for (let i = 0; i < Products.length; i += step) {
+      const group = [];
+      
+      for (let j = 0; j < cardsPerSlide; j++) {
+        const index = (i + j) % Products.length;
+        group.push(Products[index]);
+      }
+      
+      groups.push(group);
+      
+      if (groups.length * step >= Products.length + step) {
+        break;
+      }
+    }
+    
+    return groups;
   };
-  const prevSlide = () => {
-    if (canGoPrev) {
-      setCurrentSlide(prev => prev - 1);
-    };
+
+  const slideGroups = createSlideGroups();
+  const totalSlides = slideGroups.length;
+
+  const nextSlide = useCallback(() => {
+    setDirection(1);
+    setCurrentSlide(prev => (prev === totalSlides - 1 ? 0 : prev + 1));
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setDirection(-1);
+    setCurrentSlide(prev => (prev === 0 ? totalSlides - 1 : prev - 1));
+  }, [totalSlides]);
+
+  const handleManualNavigation = (navigationFunction: () => void) => {
+    setAutoPlay(false);
+    navigationFunction();
+    setTimeout(() => setAutoPlay(true), 10000);
   };
+
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 1,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 1,
+    })
+  };
+
+  const dotVariants = {
+    inactive: {
+      scale: 1,
+      opacity: 0.5,
+    },
+    active: {
+      scale: 1.2,
+      opacity: 1,
+    }
+  };
+
   const goToSlide = (slideIndex: number) => {
+    setAutoPlay(false);
+    setDirection(slideIndex > currentSlide ? 1 : -1);
     setCurrentSlide(slideIndex);
+    setTimeout(() => setAutoPlay(true), 10000);
   };
-  const slideGroups = [];
-  if (Products) {
-    for (let i = 0; i < Products.length; i += cardsPerSlide) {
-      slideGroups.push(Products.slice(i, i + cardsPerSlide));
-    };
-  };
+
   return (
     <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
       <div>
@@ -143,77 +187,85 @@ export default function SpecialProducts() {
           </p>
         </div>
         <div className="relative w-[95%] mx-auto">
-          {Products && Products.length > cardsPerSlide && (
+          {slideGroups.length > 1 && (
             <>
               <button
-                onClick={prevSlide}
-                disabled={!canGoPrev}
-                className={`absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 border rounded-full p-2 shadow-lg transition-all duration-300 ${
-                  canGoPrev 
-                    ? "bg-background/80 hover:bg-background hover:scale-110 cursor-pointer" 
-                    : "bg-muted/50 cursor-not-allowed opacity-50"
-                }`}
+                onClick={() => handleManualNavigation(prevSlide)}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-30 border rounded-full p-2 shadow-lg transition-all duration-300 bg-background/80 hover:bg-background hover:scale-110 cursor-pointer"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button
-                onClick={nextSlide}
-                disabled={!canGoNext}
-                className={`absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 border rounded-full p-2 shadow-lg transition-all duration-300 ${
-                  canGoNext 
-                    ? "bg-background/80 hover:bg-background hover:scale-110 cursor-pointer" 
-                    : "bg-muted/50 cursor-not-allowed opacity-50"
-                }`}
+                onClick={() => handleManualNavigation(nextSlide)}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-30 border rounded-full p-2 shadow-lg transition-all duration-300 bg-background/80 hover:bg-background hover:scale-110 cursor-pointer"
                 aria-label="Next slide"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
             </>
           )}
-          <div className="overflow-hidden rounded-xl">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {slideGroups.map((slideGroup, groupIndex) => (
-                <div
-                  key={groupIndex}
-                  className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2"
-                >
-                  {loading ? (
-                    Array.from({ length: cardsPerSlide }, (_, idx) => (
-                      <SkeletonCard key={idx} idx={idx} />
-                    ))
-                  ) : slideGroup.length > 0 ? (
-                    slideGroup.map((product, idx) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        idx={idx}
-                        language={language}
-                        type="product"
-                        t={t}
-                        tb={tb}
-                        tc={tc}
-                      />
-                    ))
-                  ) : null}
-                </div>
-              ))}
-            </div>
+          
+          <div className="overflow-hidden rounded-xl relative h-[550px] md:h-[550px] lg:h-[550px]">
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                {slideGroups.map((slideGroup, groupIndex) => (
+                  groupIndex === currentSlide && (
+                    <motion.div
+                      key={groupIndex}
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{
+                        x: { 
+                          type: "tween", 
+                          ease: "easeInOut",
+                          duration: 0.4 
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full"
+                    >
+                      <div className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
+                        {slideGroup.map((product, idx) => (
+                          <ProductCard
+                            key={`${product.id}-${groupIndex}-${idx}`}
+                            product={product}
+                            idx={idx}
+                            language={language}
+                            type="product"
+                            t={t}
+                            tb={tb}
+                            tc={tc}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )
+                ))}
+              </AnimatePresence>
+            )}
           </div>
+
           {totalSlides > 1 && (
             <div className="flex justify-center mt-8 gap-2">
               {Array.from({ length: totalSlides }, (_, index) => (
-                <button
+                <motion.button
                   key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentSlide 
-                      ? "bg-primary scale-105" 
+                  variants={dotVariants}
+                  initial="inactive"
+                  animate={index === currentSlide ? "active" : "inactive"}
+                  className={`h-3 w-3 rounded-full ${
+                    index === currentSlide
+                      ? "bg-primary"
                       : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
                   }`}
+                  onClick={() => goToSlide(index)}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
@@ -233,4 +285,4 @@ export default function SpecialProducts() {
       </div>
     </section>
   );
-};
+}

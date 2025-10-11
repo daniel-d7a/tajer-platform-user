@@ -72,7 +72,6 @@ export default function Page() {
           {language === 'ar' ? "التصنيفات الفرعيه ل"+ data?.name_ar : "Sub Categories for "+data?.name}
         </h1>
       }
-      
       {loading ? (
         Array.from({ length: 6 }).map((_, idx) => (
           <Card key={idx} className="overflow-hidden animate-pulse mt-2">
@@ -119,5 +118,5 @@ export default function Page() {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
