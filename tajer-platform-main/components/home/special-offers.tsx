@@ -12,50 +12,26 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-type Offer = { 
+// استخدم نفس الـ interface اللي في ProductCard
+interface ProductBase {
   id: number;
+  barcode: string | null;
   name: string;
   name_ar: string;
-  description: string;
-  imageUrl: string;
-  expiresAt: string;
-  discountType: string;
-  discountAmount: number;
-  piecePrice: number;
-  packPrice: number;
-  piecesPerPack: number;
-  unitType: string;
-  minOrderQuantity: number;
-  factory: {
-    name: string;
-    name_ar: string;
-  };
-};
-
-interface ProductType  {
-  id: string;
-  name: string;
-  isOnSale: boolean;
-  packPrice: number;
-  piecePrice: number;
-  minOrderQuantity: number;
-  unitType: string;
-  product: {
-    name: string;
-    name_ar: string;
-    imageUrl: string;
-    category: string;
-    manufacturer: string;
-    piecePrice: number;
-    piecesPerPack: number;
-    discountType: string;
-    unitType: string;
-    id: number;
-    discountAmount: number;
-    packPrice: number;
-    minOrderQuantity: number;
-  };
+  description: string | null;
+  description_ar: string | null;
+  unitType: "piece_only" | "pack_only" | "piece_and_pack" | string;
+  piecePrice: number | null;
+  packPrice: number | null;
+  piecesPerPack: number | null;
+  factoryId: number;
+  imageUrl: string | null;
+  image_public_id: string | null;
+  minOrderQuantity: number | null;
+  discountAmount: number | null;
+  discountType: "percentage" | "fixed_amount" | string | null;
 }
+
 
 
 export default function SpecialOffers() {
@@ -63,14 +39,14 @@ export default function SpecialOffers() {
   const tb = useTranslations("buttons");
   const tc = useTranslations("common");
   const th = useTranslations('home');
-  const [offersData, setOffersData] = useState<ProductType[]>([]);
+  const [offersData, setOffersData] = useState<ProductBase[]>([]); 
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [language, setLanguage] = useState<string>('en');
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [direction, setDirection] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
-  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<ProductBase | null>(null); 
   const [showImageUpScale, setShowImageUpScale] = useState(false);
   console.log(autoPlay,errorMessage)
   const pathname = usePathname();
@@ -89,14 +65,13 @@ export default function SpecialOffers() {
         );
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
-          setLoading(true)
-        }else{
-          setLoading(false)
         }
         const json = await res.json();
         setOffersData(json.data || []);
+        setLoading(false);
       } catch {
         setErrorMessage(t("errorMessage") || "Failed to load offers");
+        setLoading(false);
       } 
     };
     fetchOffers();
@@ -171,6 +146,7 @@ export default function SpecialOffers() {
       setAutoPlay(true);
     }, 10000);
   };
+  
   const slideVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? '100%' : '-100%',
@@ -196,6 +172,7 @@ export default function SpecialOffers() {
       opacity: 1,
     }
   };
+  
   const goToSlide = (slideIndex: number) => {
     setAutoPlay(false);
     setDirection(slideIndex > currentSlide ? 1 : -1);
@@ -205,6 +182,7 @@ export default function SpecialOffers() {
       setAutoPlay(true);
     }, 10000);
   };
+  
   return (
     <section dir="ltr" className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
@@ -279,7 +257,7 @@ export default function SpecialOffers() {
                           t={t}
                           tb={tb}
                           tc={tc}
-                          product={offer}
+                          product={offer} 
                         />
                       ))}
                     </div>

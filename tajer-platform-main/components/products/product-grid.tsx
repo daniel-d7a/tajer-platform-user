@@ -9,29 +9,23 @@ import { Skeleton } from '../ui/skeleton';
 import { useSearchParams, usePathname } from 'next/navigation';
 import ProductCard from '../common/CommonCard';
 
-interface ProductType  {
-  id: string;
+interface ProductBase {
+  id: number;
+  barcode: string | null;
   name: string;
-  isOnSale: boolean;
-  packPrice: number;
-  piecePrice: number;
-  minOrderQuantity: number;
-  unitType: string;
-  product: {
-    name: string;
-    name_ar: string;
-    imageUrl: string;
-    category: string;
-    manufacturer: string;
-    piecePrice: number;
-    piecesPerPack: number;
-    discountType: string;
-    unitType: string;
-    id: number;
-    discountAmount: number;
-    packPrice: number;
-    minOrderQuantity: number;
-  };
+  name_ar: string;
+  description: string | null;
+  description_ar: string | null;
+  unitType: "piece_only" | "pack_only" | "piece_and_pack" | string;
+  piecePrice: number | null;
+  packPrice: number | null;
+  piecesPerPack: number | null;
+  factoryId: number;
+  imageUrl: string | null;
+  image_public_id: string | null;
+  minOrderQuantity: number | null;
+  discountAmount: number | null;
+  discountType: "percentage" | "fixed_amount" | string | null;
 }
 
 export default function ProductGrid({ categoryId, factoryId }: { categoryId: number | number[]; factoryId: number }) {
@@ -41,7 +35,7 @@ export default function ProductGrid({ categoryId, factoryId }: { categoryId: num
   const tn = useTranslations('noProducts');
   
   const searchParams = useSearchParams();
-  const [productData, setProductData] = useState<ProductType[]>([]);
+  const [productData, setProductData] = useState<ProductBase[]>([]);
   const [loading, setLoading] = useState(true);
   const [meta, setMeta] = useState<{ last_page: number; total?: number }>({ last_page: 1 });
   const [language, setLanguage] = useState('en');

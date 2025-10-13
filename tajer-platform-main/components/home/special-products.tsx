@@ -8,38 +8,30 @@ import { usePathname } from "next/navigation";
 import ProductCard from "../common/CommonCard";
 import { AnimatePresence, motion } from "framer-motion";
 
-interface ProductType {
-  id: string;
+interface ProductBase {
+  id: number;
+  barcode: string | null;
   name: string;
-  isOnSale: boolean;
-  packPrice: number;
-  piecePrice: number;
-  minOrderQuantity: number;
-  unitType: string;
-  product: {
-    name: string;
-    name_ar: string;
-    imageUrl: string;
-    category: string;
-    manufacturer: string;
-    piecePrice: number;
-    piecesPerPack: number;
-    discountType: string;
-    unitType: string;
-    id: number;
-    discountAmount: number;
-    packPrice: number;
-    minOrderQuantity: number;
-  };
+  name_ar: string;
+  description: string | null;
+  description_ar: string | null;
+  unitType: "piece_only" | "pack_only" | "piece_and_pack" | string;
+  piecePrice: number | null;
+  packPrice: number | null;
+  piecesPerPack: number | null;
+  factoryId: number;
+  imageUrl: string | null;
+  image_public_id: string | null;
+  minOrderQuantity: number | null;
+  discountAmount: number | null;
+  discountType: "percentage" | "fixed_amount" | string | null;
 }
-
-
 
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
   const tc = useTranslations("common");
-  const [Products, setProducts] = useState<ProductType[] | null>(null);
+  const [Products, setProducts] = useState<ProductBase[] | null>(null); 
   const [loading, SetLoading] = useState(true);
   const [language, setLanguage] = useState('en');
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -47,6 +39,7 @@ export default function SpecialProducts() {
   const [autoPlay, setAutoPlay] = useState(true);
   const pathname = usePathname();
   console.log(autoPlay)
+  
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0]; 
@@ -235,7 +228,7 @@ export default function SpecialProducts() {
                         {slideGroup.map((product, idx) => (
                           <ProductCard
                             key={`${product.id}-${groupIndex}-${idx}`}
-                            product={product}
+                            product={product} 
                             idx={idx}
                             language={language}
                             type="product"
