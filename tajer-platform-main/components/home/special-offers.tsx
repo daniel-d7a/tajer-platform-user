@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import ProductCard from "../common/CommonCard";
 import ImageUpScale from "../ImageUpScale";
 import { AnimatePresence, motion } from "framer-motion";
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 type Offer = { 
   id: number;
@@ -85,14 +87,17 @@ export default function SpecialOffers() {
         const res = await fetch(
           "https://tajer-backend.tajerplatform.workers.dev/api/public/offers"
         );
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+          setLoading(true)
+        }else{
+          setLoading(false)
+        }
         const json = await res.json();
         setOffersData(json.data || []);
       } catch {
         setErrorMessage(t("errorMessage") || "Failed to load offers");
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
     fetchOffers();
   }, [t]);
@@ -166,11 +171,6 @@ export default function SpecialOffers() {
       setAutoPlay(true);
     }, 10000);
   };
-
-
-    
-
-
   const slideVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? '100%' : '-100%',
@@ -196,7 +196,6 @@ export default function SpecialOffers() {
       opacity: 1,
     }
   };
-
   const goToSlide = (slideIndex: number) => {
     setAutoPlay(false);
     setDirection(slideIndex > currentSlide ? 1 : -1);
@@ -206,7 +205,6 @@ export default function SpecialOffers() {
       setAutoPlay(true);
     }, 10000);
   };
-
   return (
     <section dir="ltr" className="py-12 bg-muted/30 rounded-lg">
       <div className="text-center mb-10">
@@ -237,9 +235,20 @@ export default function SpecialOffers() {
 
         <div ref={sliderRef} className="overflow-hidden rounded-xl relative h-[550px] md:h-[550px] lg:h-[550px]">
           {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
-            </div>
+            Array.from({ length: 4 }).map((_, idx) => (
+            <Card key={idx} className="animate-pulse  p-4">
+              <Skeleton className="h-8 " />
+              <CardContent className="p-4 flex-grow">
+                <Skeleton className="h-4 w-1/4 mb-2" />
+                <Skeleton className="h-4 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2 mb-2" />
+                <Skeleton className="h-6 w-1/4" />
+              </CardContent>
+              <CardFooter className="p-4 pt-0">
+                <Skeleton className="h-8 w-full" />
+              </CardFooter>
+            </Card>
+              ))
           ) : (
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
               {slideGroups.map((slideGroup, groupIndex) => (
@@ -322,4 +331,4 @@ export default function SpecialOffers() {
       )}
     </section>
   );
-}
+};

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import Image from 'next/image';
+import ProductGrid from '@/components/products/product-grid';
 
 interface Product {
   id: number,
@@ -24,6 +25,10 @@ interface Product {
     }
   ]
 }
+
+
+
+
 
 export default function Page() {
   const [loading,setLoading] = useState(false)
@@ -65,21 +70,30 @@ export default function Page() {
     // eslint-disable-next-line
   },[])
 
+  // Check if category has children or not
+  const hasChildren = data?.children && data.children.length > 0;
+
   return (
-    <div className="w-[90%] py-8 mx-auto">
+    <div className="w-[90%] flex flex-col gap-5 py-10 mx-auto">
       {!loading && 
         <h1 className='text-3xl font-bold text-center p-5'>
-          {language === 'ar' ? "التصنيفات الفرعيه ل"+ data?.name_ar : "Sub Categories for "+data?.name}
+          {language === 'ar' 
+            ? (hasChildren ? `التصنيفات الفرعية لـ ${data?.name_ar}` : `المنتجات من  ${data?.name_ar}`)
+            : (hasChildren ? `Sub Categories for ${data?.name}` : `Products in ${data?.name}`)
+          }
         </h1>
       }
+      
       {loading ? (
-        Array.from({ length: 6 }).map((_, idx) => (
-          <Card key={idx} className="overflow-hidden animate-pulse mt-2">
-            <div className="w-full h-56 md:h-64 lg:h-72 xl:h-80 bg-mutedcard animate-pulse"></div>
-          </Card>
-        ))
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <Card key={idx} className="overflow-hidden animate-pulse">
+              <div className="w-full h-56 md:h-64 lg:h-72 xl:h-80 bg-muted"></div>
+            </Card>
+          ))}
+        </div>
+      ) : hasChildren ? (
+        <div >
           {data?.children?.map((children, index) => (
             <Link 
               key={children.id} 
@@ -116,7 +130,9 @@ export default function Page() {
             </Link>
           ))}
         </div>
+      ) : (
+        <ProductGrid categoryId={Number(id)} factoryId={0}  />
       )}
     </div>
   );
-};
+}

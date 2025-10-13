@@ -310,7 +310,7 @@ export default function RegisterForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('businessName')}</FormLabel>
-                <FormControl>
+                <FormControl className='mt-2'>
                   <Input {...field} placeholder={t('businessNamePlaceholder')} />
                 </FormControl>
                 <FormMessage />
@@ -318,7 +318,7 @@ export default function RegisterForm() {
             )}
           />
           
-          <div className="space-y-4">
+          <div className="spa">
             <FormField
               control={form.control}
               disabled={isLoading}
@@ -327,12 +327,13 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>{t('phone')}</FormLabel>
                   <div className="flex gap-2">
-                    <FormControl>
+                    <FormControl className='mt-2'>
                       <Input {...field} placeholder="+962..." />
                     </FormControl>
                     <Button
                       type="button"
                       variant="outline"
+                      className='mt-2'
                       onClick={sendVerificationCode}
                       disabled={isVerifying}
                     >
@@ -351,7 +352,7 @@ export default function RegisterForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('verificationCode')}</FormLabel>
-                    <FormControl>
+                    <FormControl className='mt-2'>
                       <Input
                         placeholder={t('verificationCodePlaceholder')}
                         {...field}
@@ -414,8 +415,8 @@ export default function RegisterForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('city')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                  <Select  onValueChange={field.onChange} value={field.value}>
+                    <FormControl className='mt-2' dir={language === 'ar' ? 'rtl' : 'ltr'}>
                       <SelectTrigger disabled={isLoading}>
                         <SelectValue placeholder={t('cityPlaceholder')} />
                       </SelectTrigger>
@@ -441,7 +442,7 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>{t('businessType')}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                  <FormControl className='mt-2' dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <SelectTrigger disabled={isLoading}>
                       <SelectValue placeholder={t('chooseBusinessType')} />
                     </SelectTrigger>
@@ -466,14 +467,13 @@ export default function RegisterForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('password')}</FormLabel>
-                <FormControl>
+                <FormControl className='mt-2'>
                   <Input type="password" placeholder="********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             disabled={isLoading}
             control={form.control}
@@ -481,7 +481,7 @@ export default function RegisterForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('referralCode')}</FormLabel>
-                <FormControl>
+                <FormControl className='mt-2'>
                   <Input placeholder={t('referralCode')} {...field} />
                 </FormControl>
                 <FormMessage />
@@ -495,7 +495,7 @@ export default function RegisterForm() {
             name="termsAccepted"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-x-reverse space-y-0">
-                <FormControl>
+                <FormControl >
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}

@@ -33,6 +33,7 @@ interface Product {
 interface Item {
   id: number;
   product: Product;
+  quantity: number
 }
 
 const statusColor: Record<string, string> = {
@@ -224,7 +225,7 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
                       : tc('noData')
                   }
                 </p>
-                <p className='text-right'>{tod('orderProducts')} : {data.items?.length ?? 0} {tc('products')}</p>
+                <p className='text-right'>{tod('orderProducts')} : {data.items?.length ?? 0}</p>
               </div>
               <div className='border border-black-100 rounded-md p-5'>
                 <h2 className='text-right'>{tod('Demandproducts')}</h2>
@@ -285,8 +286,10 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
                             ) : (
                               <p>
                                 {originalPrice.toFixed(2)} {tc("coins")}
+                                
                               </p>
                             )}
+                            <p> {tod('quantity') + " : "+item.quantity}</p>
                           </div>
                         </div>
                       );

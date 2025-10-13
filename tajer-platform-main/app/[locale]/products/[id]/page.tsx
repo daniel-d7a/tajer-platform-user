@@ -3,7 +3,7 @@ import  { useEffect, useState } from "react";
 import Image from "next/image";
 import Head from "next/head";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "@/components/products/product-grid";
 import toast from "react-hot-toast";
 import ImageUpScale from "@/components/ImageUpScale";
+import { useAuth } from "@/components/auth/auth-provider";
 type Offer = { 
   id: number;
   name: string;
@@ -51,8 +52,10 @@ type AddCartParams = {
 
 export default function Page() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const id = params.id;
   const tS = useTranslations("specialProducts");
+  const {isAuthenticated} = useAuth()
   const tP = useTranslations('product');
   const tid = useTranslations('productId');
   const [language, setLanguage] = useState('en');
@@ -128,6 +131,7 @@ const updateCartItemsCount = (count: number) => {
 };
 
 const handleAddCart = async ({ id }: AddCartParams) => {
+  if(isAuthenticated) {
   try {
     setLoadingCart(true);
     const res = await fetch(
@@ -160,8 +164,10 @@ const handleAddCart = async ({ id }: AddCartParams) => {
     console.error("Error adding to cart:", err);
     setLoadingCart(false);
   }
+  }else{
+    router.push('/login')
+  }
 };
-
 const getCartItemsCount = (): number => {
   if (typeof window !== 'undefined') {
     const count = localStorage.getItem('cartItemsCount');

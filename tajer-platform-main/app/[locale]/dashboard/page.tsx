@@ -63,7 +63,7 @@ const DashboardPage: React.FC = () => {
         { credentials: "include" }
       );
       const res: OrdersResponse = await data.json();
-      setOrdersData(res.data || []);
+      setOrdersData(res.data.slice(0, 5) || []);
       setStats(res.stats || {
         totalOrders: 0,
         totalSpent: 0,

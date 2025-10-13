@@ -167,7 +167,6 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
         {label}
       </span>
 
-      {/* Hover Effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl" />
     </Link>
   );

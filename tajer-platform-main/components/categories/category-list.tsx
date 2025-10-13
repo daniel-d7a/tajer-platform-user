@@ -6,9 +6,8 @@ import { Card } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "../ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
 interface SubCategory {
   id: number;
   name: string;
@@ -40,7 +39,8 @@ export default function CategoryList({ search }: { search: string }) {
   const [meta, setMeta] = useState<Meta | null>(null);
   const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-
+  const searchParams = useSearchParams();
+  const currentSearch = searchParams.get("search") || "";
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0];
@@ -62,12 +62,12 @@ export default function CategoryList({ search }: { search: string }) {
         console.error("error fetching categories", err);
       } finally {
         setLoading(false);
-      }
+      };
     };
     fetchCategories();
-  }, [page, search]);
+    // eslint-disable-next-line
+  }, [page, currentSearch]);
 
-  // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -114,29 +114,22 @@ export default function CategoryList({ search }: { search: string }) {
     const totalPages = meta.last_page;
     const currentPage = page;
     
-    // Always show first page
     pages.push(1);
-    
-    // Calculate range around current page
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
     
-    // Add ellipsis after first page if needed
     if (start > 2) {
-      pages.push(-1); // -1 represents ellipsis
+      pages.push(-1); 
     }
     
-    // Add pages around current page
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
     
-    // Add ellipsis before last page if needed
     if (end < totalPages - 1) {
-      pages.push(-2); // -2 represents ellipsis
+      pages.push(-2); 
     }
     
-    // Always show last page if there is more than one page
     if (totalPages > 1) {
       pages.push(totalPages);
     }

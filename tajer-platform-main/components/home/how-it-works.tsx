@@ -89,13 +89,11 @@ function StepCard({ step, index }: { step: Step; index: number }) {
       initial={{ opacity: 0, y: 60, scale: 0.9 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 60, scale: 0.9 }}
       transition={{ 
-        duration: 0.8, 
-        delay: index * 0.2,
         ease: "easeOut"
       }}
       whileHover={{ 
         y: -10,
-        transition: { duration: 0.3 }
+       
       }}
     >
       <motion.div 
@@ -104,7 +102,6 @@ function StepCard({ step, index }: { step: Step; index: number }) {
         animate={inView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
         transition={{ 
           duration: 0.6, 
-          delay: index * 0.2 + 0.3,
           type: "spring",
           stiffness: 100
         }}

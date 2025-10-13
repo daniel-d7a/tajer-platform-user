@@ -1,8 +1,5 @@
 "use client"
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ProductGrid from '@/components/products/product-grid';
 import CategoryList from '@/components/categories/category-list';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -33,23 +30,7 @@ export default function CategoriesPage() {
           className="pr-10"
         />
       </form>
-      <Tabs defaultValue="products" className="mb-8">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="categories">{t('tabsCategories')}</TabsTrigger>
-          <TabsTrigger value="products">{t('tabsProducts')}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="categories">
-          <CategoryList  search={String(searchValue)}/>
-        </TabsContent>
-        <TabsContent value="products">
-          <Card>
-            <CardContent className="p-6">
-              <ProductGrid factoryId={0} categoryId={0}/>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <CategoryList  search={String(searchValue)}/>
     </div>
   );
 };
