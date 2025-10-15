@@ -27,6 +27,13 @@ interface ProductBase {
   discountType: "percentage" | "fixed_amount" | string | null;
 }
 
+interface FeaturedProduct {
+  id: number;
+  productId: number;
+  position: number | null;
+  product: ProductBase;
+}
+
 export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
@@ -38,7 +45,6 @@ export default function SpecialProducts() {
   const [direction, setDirection] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const pathname = usePathname();
-  console.log(autoPlay)
   
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
@@ -51,8 +57,17 @@ export default function SpecialProducts() {
       const data = await fetch(
         "https://tajer-backend.tajerplatform.workers.dev/api/featured/featured-products"
       );
-      const res = await data.json();
-      setProducts(res);
+      const res: FeaturedProduct[] = await data.json();
+      
+      const uniqueProducts = res.reduce((acc: ProductBase[], current) => {
+        const exists = acc.find(product => product.id === current.product.id);
+        if (!exists) {
+          acc.push(current.product);
+        }
+        return acc;
+      }, []);
+      
+      setProducts(uniqueProducts);
       if(!data.ok){
         SetLoading(true)
       }else{
@@ -91,27 +106,15 @@ export default function SpecialProducts() {
     };
   }, []);
 
-  // إنشاء الشرائح بنظام أبسط
   const createSlideGroups = () => {
     if (!Products || Products.length === 0) return [];
     if (Products.length <= cardsPerSlide) return [Products];
 
     const groups = [];
-    const step = 3; 
     
-    for (let i = 0; i < Products.length; i += step) {
-      const group = [];
-      
-      for (let j = 0; j < cardsPerSlide; j++) {
-        const index = (i + j) % Products.length;
-        group.push(Products[index]);
-      }
-      
+    for (let i = 0; i < Products.length; i += cardsPerSlide) {
+      const group = Products.slice(i, i + cardsPerSlide);
       groups.push(group);
-      
-      if (groups.length * step >= Products.length + step) {
-        break;
-      }
     }
     
     return groups;
@@ -136,32 +139,16 @@ export default function SpecialProducts() {
     setTimeout(() => setAutoPlay(true), 10000);
   };
 
+  // Auto-play effect
+  useEffect(() => {
+    if (!autoPlay || totalSlides <= 1) return;
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 1,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 1,
-    })
-  };
-
-  const dotVariants = {
-    inactive: {
-      scale: 1,
-      opacity: 0.5,
-    },
-    active: {
-      scale: 1.2,
-      opacity: 1,
-    }
-  };
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [autoPlay, totalSlides, nextSlide]);
 
   const goToSlide = (slideIndex: number) => {
     setAutoPlay(false);
@@ -211,14 +198,22 @@ export default function SpecialProducts() {
                     <motion.div
                       key={groupIndex}
                       custom={direction}
-                      variants={slideVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
+                      initial={{ 
+                        x: direction > 0 ? '100%' : '-100%',
+                        opacity: 1 
+                      }}
+                      animate={{ 
+                        x: 0,
+                        opacity: 1 
+                      }}
+                      exit={{ 
+                        x: direction < 0 ? '100%' : '-100%',
+                        opacity: 1 
+                      }}
                       transition={{
                         x: { 
-                          type: "tween", 
-                          ease: "easeInOut",
+                          type: "tween" as const, 
+                          ease: "easeInOut" as const,
                           duration: 0.4 
                         }
                       }}
@@ -231,7 +226,7 @@ export default function SpecialProducts() {
                             product={product} 
                             idx={idx}
                             language={language}
-                            type="product"
+                            type="offer"
                             t={t}
                             tb={tb}
                             tc={tc}
@@ -250,9 +245,8 @@ export default function SpecialProducts() {
               {Array.from({ length: totalSlides }, (_, index) => (
                 <motion.button
                   key={index}
-                  variants={dotVariants}
-                  initial="inactive"
-                  animate={index === currentSlide ? "active" : "inactive"}
+                  initial={{ scale: 1, opacity: 0.5 }}
+                  animate={index === currentSlide ? { scale: 1.2, opacity: 1 } : { scale: 1, opacity: 0.5 }}
                   className={`h-3 w-3 rounded-full ${
                     index === currentSlide
                       ? "bg-primary"

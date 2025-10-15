@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function CallToAction() {
   const [language, setLanguage] = useState('en');
@@ -49,26 +50,52 @@ export default function CallToAction() {
   }
 
   return (
-    <section className="relative w-full overflow-visible bg-[#C9F4DE] mt-30">
+    <motion.section 
+      className="relative w-full overflow-visible bg-[#C9F4DE] mt-30"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.8 }}
+    >
       <div
         className="
           max-w-6xl mx-auto flex flex-col lg:flex-row
-          items-center justify-between gap-8  lg:px-10 relative
+          items-center justify-between gap-8 lg:px-10 relative
         "
       >
+        {/* النص والأزرار */}
         <div className="flex flex-col items-center pt-10 lg:items-start text-center lg:text-left w-full lg:w-2/5 min-h-[60%]">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 leading-tight">
+          <motion.h2 
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 leading-tight"
+            initial={{ y: 40, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
             {language === 'ar'
               ? callAction.callToActionAr || 'نفتح آفاق جديدة لتجارتك'
               : callAction.callToAction || 'Opening new horizons for your business'}
-          </h2>
-          <p className="text-black mb-6 max-w-md">
+          </motion.h2>
+          
+          <motion.p 
+            className="text-black mb-6 max-w-md"
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
             {language === 'ar'
               ? 'نفتح آفاق جديدة لتجارتك'
               : 'Opening new horizons for your business'}
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-5">
+          <motion.div 
+            className="flex flex-col sm:flex-row items-center gap-5"
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+          >
             <Link
               href={callAction.iosAppLink || '#'}
               className="flex hover:scale-105 transition-transform duration-300"
@@ -94,23 +121,35 @@ export default function CallToAction() {
                 quality={100}
               />
             </Link>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="relative w-full lg:w-3/5 flex justify-start md:justify-center md:mb-0 md:items-start lg:justify-end overflow-visible lg:mb-0">
-          <div className="relative w-72 h-[400px] lg:w-[420px] lg:h-[400px]  lg:-mt-24">
+        {/* الصورة */}
+        <motion.div 
+          className="relative w-full lg:w-3/5 flex justify-start md:justify-center md:mb-0 md:items-start lg:justify-end overflow-visible lg:mb-0"
+          initial={{ y: 50, opacity: 0, scale: 0.95 }}
+          whileInView={{ y: 0, opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ 
+            duration: 0.8, 
+            delay: 0.5,
+            type: "spring",
+            stiffness: 80
+          }}
+        >
+          <div className="relative w-72 h-[400px] lg:w-[420px] lg:h-[400px] lg:-mt-24">
             <Image
               src={callAction.appImageUrl || '/placeholder-phone.png'}
               alt={language === 'ar' ? 'تطبيق تاجر' : 'Tajer App'}
               fill
-              className="object-cover md:object-cover  flex items-start lg:object-contain object-center drop-shadow-2xl"
+              className="object-cover md:object-cover flex items-start lg:object-contain object-center drop-shadow-2xl"
               priority
               quality={100}
               sizes="(max-width: 768px) 70vw, (max-width: 1200px) 40vw, 35vw"
             />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

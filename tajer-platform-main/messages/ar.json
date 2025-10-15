@@ -195,6 +195,7 @@
   "categories": {
     "browseProducts": "تصفح التصنيفات الرائجه ",
     "searchPlaceholder": "ابحث عن تصنيفات ...",
+        "searchPlaceholderProducts" : "ابحث عن المنتجات ...",
     "tabsCategories": "التصنيفات",
     "tabsProducts": "المنتجات",
     "productsCount": "{{count}} منتج",

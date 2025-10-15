@@ -152,6 +152,7 @@
   "categories": {
     "browseProducts": "Browse Featured Categories",
     "searchPlaceholder": "search for categories...",
+    "searchPlaceholderProducts" : "search for products ...",
     "tabsCategories": "Categories",
     "tabsProducts": "Products",
     "productsCount": "{{count}} products",

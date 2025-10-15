@@ -14,6 +14,7 @@ import { getLangDir } from "rtl-detect";
 import { Toaster } from "react-hot-toast";
 import LoadingAnimation from "@/components/common/Loading";
 import "@/lib/global-fix";
+import GlobalLoader from "@/components/common/GlobalLoader";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -25,12 +26,12 @@ type Locale = (typeof routing.locales)[number];
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: { locale: string }; 
+  params: { locale: string };
 }
 
 export async function generateMetadata({ params }: RootLayoutProps) {
   const { locale } = params;
-  
+
   if (!routing.locales.includes(locale as Locale)) {
     return {
       title: "Tajer Platform",
@@ -39,9 +40,9 @@ export async function generateMetadata({ params }: RootLayoutProps) {
   }
 
   try {
-    const t = await getTranslations({ 
-      locale: locale as Locale, 
-      namespace: "common" 
+    const t = await getTranslations({
+      locale: locale as Locale,
+      namespace: "common",
     });
 
     return {
@@ -59,12 +60,9 @@ export async function generateMetadata({ params }: RootLayoutProps) {
   }
 }
 
-export default async function RootLayout({ 
-  children, 
-  params 
-}: RootLayoutProps) {
+export default async function RootLayout({ children, params }: RootLayoutProps) {
   const { locale } = params;
-  
+
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
@@ -85,16 +83,20 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
+              <GlobalLoader/>
               <Suspense fallback={<LoadingAnimation />}>
                 <Header />
                 <main className="min-h-screen">
-                  {children}
-                  <Toaster 
+                  <Suspense fallback={<LoadingAnimation />}>
+                    {children}
+                  </Suspense>
+
+                  <Toaster
                     toastOptions={{
                       className: "bg-primary text-primary-foreground",
                     }}
-                    position="top-right" 
-                    reverseOrder={false} 
+                    position="top-right"
+                    reverseOrder={false}
                   />
                 </main>
                 <Footer />

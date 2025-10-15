@@ -12,7 +12,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
-// استخدم نفس الـ interface اللي في ProductCard
 interface ProductBase {
   id: number;
   barcode: string | null;

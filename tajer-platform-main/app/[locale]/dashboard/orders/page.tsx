@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Boxes, ShoppingCart, ChevronLeft, ChevronRight, Clock, RefreshCw, Truck, PackageCheck } from "lucide-react";
+import { ShoppingCart, ChevronLeft, ChevronRight, Clock, RefreshCw, Truck, PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { OrderRow } from "@/components/dashboard/OrderRow";
@@ -166,7 +166,7 @@ export default function Page() {
             className="inline-flex items-center px-4 py-2 gap-2 bg-primary text-white rounded-md hover:bg-primary/90"
           >
             {to('BrowseProducts')}
-            <Boxes />
+            <ShoppingCart />
           </Link>
         </div>
       </div>
@@ -240,7 +240,7 @@ export default function Page() {
           <div className="p-8 text-center w-full">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                <Boxes className="w-8 h-8 text-muted-foreground" />
+                <ShoppingCart className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-medium text-muted-foreground">

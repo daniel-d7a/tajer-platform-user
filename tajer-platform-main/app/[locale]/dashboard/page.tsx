@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
-import { Truck, Wallet, DollarSign, Boxes, ShoppingCart } from "lucide-react";
+import { Truck, Wallet, DollarSign, ShoppingCart } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import Link from "next/link";
 import { OrderRow } from "@/components/dashboard/OrderRow";
@@ -174,7 +174,7 @@ const DashboardPage: React.FC = () => {
                   <td colSpan={6} className="p-8 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                        <Boxes className="w-8 h-8 text-muted-foreground" />
+                        <ShoppingCart className="w-8 h-8 text-muted-foreground" />
                       </div>
                       <div className="space-y-2">
                         <p className="text-lg font-medium text-muted-foreground">

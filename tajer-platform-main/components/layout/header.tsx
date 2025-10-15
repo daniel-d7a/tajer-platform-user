@@ -21,6 +21,7 @@ import { Badge } from "../ui/badge";
 import { getCartItemsCount } from "@/app/[locale]/cart/helper";
 import { Input } from "../ui/input";
 import { useSearchParams } from "next/navigation";
+
 export default function Header() {
   const t = useTranslations("header");
   const tc = useTranslations("common");
@@ -35,6 +36,7 @@ export default function Header() {
   const lastScrollY = useRef(0);
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
+
   useEffect(() => {
     const updateCartCount = () => {
       const count = getCartItemsCount();
@@ -57,6 +59,9 @@ export default function Header() {
     const handleScroll = () => {
       if (isMenuOpen) return;
       const currentY = window.scrollY;
+      
+      // إخفاء الـ suggestions عند التمرير
+      setShowSuggestions(false);
       
       if (currentY < 36) {
         setShowHeader(true);
@@ -337,10 +342,12 @@ export default function Header() {
           </Button>
         </div>
       </div>
-          <div className="md:hidden flex items-center justify-between p-3 border-t border-border mt-2">
-                <ThemeToggle />
-                <LocaleSwitcher />
-              </div>
+      
+      <div className="md:hidden flex items-center justify-between p-3 border-t border-border mt-2">
+        <ThemeToggle />
+        <LocaleSwitcher />
+      </div>
+
       {isMenuOpen && (
         <div className="md:hidden border-t bg-background/95 backdrop-blur">
           <div className="px-4 py-4">
@@ -468,8 +475,6 @@ export default function Header() {
                   </Link>
                 </div>
               )}
-
-            
             </nav>
           </div>
         </div>

@@ -111,7 +111,7 @@ export default function Companies() {
 
   return (
     <>
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-3xl font-bold mb-8 text-center">{t('Registeredcompanies')}</h2>
       
       <form onSubmit={handleSearch} className="relative mb-6">
@@ -124,7 +124,7 @@ export default function Companies() {
         />
       </form>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 gap-6">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
               <div
@@ -164,7 +164,7 @@ export default function Companies() {
                 </h3>
                 <Link
                   href={`/companies/${company.id}`}
-                  className="flex items-center justify-center gap-2 bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors hover:bg-primary/90"
+                  className="flex items-center justify-center gap-2 mt-3 bg-primary w-full text-center text-white px-4 py-2 rounded-md transition-colors hover:bg-primary/90"
                 >
                   {t('Details')} <Boxes className="w-4 h-4"/>
                 </Link>

@@ -1,12 +1,14 @@
 "use client";
 import {useEffect, useState} from 'react'
-import { useParams,usePathname} from 'next/navigation';
+import { useParams,usePathname, useRouter} from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProductGrid from '@/components/products/product-grid';
-
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useTranslations } from 'next-intl';
 interface Product {
   id: number,
   name: string,
@@ -31,18 +33,23 @@ interface Product {
 
 
 export default function Page() {
+      const t = useTranslations('categories');
+    const router = useRouter()
   const [loading,setLoading] = useState(false)
   const [language, setLanguage] = useState('en');
   const pathname = usePathname();
   const [data,setData] = useState<Product>();
   const [isVisible, setIsVisible] = useState(false);
-  
+  const [searchValue,setSearchValue] = useState('')
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
     const lang = segments[0] || 'en';
     setLanguage(lang);
   }, [pathname]);
-  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(`?search=${encodeURIComponent(searchValue)}&page=1`);
+  };
   const {id} = useParams();
   
   const fetchData = async () =>{
@@ -70,11 +77,10 @@ export default function Page() {
     // eslint-disable-next-line
   },[])
 
-  // Check if category has children or not
   const hasChildren = data?.children && data.children.length > 0;
 
   return (
-    <div className="w-[90%] flex flex-col gap-5 py-10 mx-auto">
+    <div className=" flex flex-col gap-5 py-10 mx-auto">
       {!loading && 
         <h1 className='text-3xl font-bold text-center p-5'>
           {language === 'ar' 
@@ -82,6 +88,7 @@ export default function Page() {
             : (hasChildren ? `Sub Categories for ${data?.name}` : `Products in ${data?.name}`)
           }
         </h1>
+
       }
       
       {loading ? (
@@ -109,7 +116,7 @@ export default function Page() {
                 transitionDelay: isVisible ? `${index * 100}ms` : '0ms'
               }}
             >
-              <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 rounded-md overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500">
+              <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80  overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500">
                 <Image
                   src={children.imageUrl || '/coffee.jpg'}
                   alt={children.name}
@@ -131,7 +138,19 @@ export default function Page() {
           ))}
         </div>
       ) : (
-        <ProductGrid categoryId={Number(id)} factoryId={0}  />
+        <div className='p-5'>
+        <form onSubmit={handleSearch} className="relative mb-6">
+                <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder={t('searchPlaceholderProducts')}
+                  className="pr-10"
+                />
+              </form>
+            <ProductGrid  categoryId={Number(id)} factoryId={0}  />
+
+        </div >
       )}
     </div>
   );

@@ -69,35 +69,15 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [autoPlay, banners?.length, nextSlide]);
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 1,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 1,
-    })
-  };
-
-  const dotVariants = {
-    inactive: {
-      scale: 1,
-      opacity: 0.5,
-    },
-    active: {
-      scale: 1.2,
-      opacity: 1,
-    }
-  };
-
   return (
-    <div dir='ltr' className="relative overflow-hidden h-[60%] w-full">
-      <div className="relative h-[300px] md:h-[400px]">
+    <motion.div 
+      dir='ltr' 
+      className="relative overflow-hidden h-[50vh] lg:h-[70vh] w-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <div className="relative h-full w-full">
         {loading ? (
           <div className="flex items-center h-full justify-center">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
@@ -109,16 +89,25 @@ export default function Hero() {
                 <motion.div
                   key={slide.id}
                   custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
+                  initial={{ 
+                    x: direction > 0 ? '100%' : '-100%',
+                    opacity: 1 
+                  }}
+                  animate={{ 
+                    x: 0,
+                    opacity: 1 
+                  }}
+                  exit={{ 
+                    x: direction < 0 ? '100%' : '-100%',
+                    opacity: 1 
+                  }}
                   transition={{
                     x: { 
-                      type: "tween", 
-                      ease: "easeInOut",
-                      duration: 0.4 
-                    }
+                      type: "tween" as const, 
+                      ease: "easeInOut" as const,
+                      duration: 0.4
+                    },
+                    opacity: { duration: 0.2 }
                   }}
                   className="absolute inset-0 w-full h-full"
                 >
@@ -139,11 +128,11 @@ export default function Hero() {
           </AnimatePresence>
         )}
       </div>
-
+ 
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 border rounded-full p-3 shadow-lg transition-all duration-300 bg-background/80 hover:bg-background hover:scale-110 cursor-pointer"
         onClick={() => handleManualNavigation(prevSlide)}
       >
         <ChevronLeft className="h-6 w-6" />
@@ -153,7 +142,7 @@ export default function Hero() {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 border rounded-full p-3 shadow-lg transition-all duration-300 bg-background/80 hover:bg-background hover:scale-110 cursor-pointer"
         onClick={() => handleManualNavigation(nextSlide)}
       >
         <ChevronRight className="h-6 w-6" />
@@ -162,13 +151,10 @@ export default function Hero() {
 
       <div className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 space-x-2">
         {banners?.map((_, index) => (
-          <motion.button
+          <button
             key={index}
-            variants={dotVariants}
-            initial="inactive"
-            animate={index === currentSlide ? "active" : "inactive"}
-            className={`h-2 w-2 rounded-full ${
-              index === currentSlide ? 'bg-white' : 'bg-white/50'
+            className={`h-2 w-2 rounded-full transition-all duration-300 ${
+              index === currentSlide ? 'bg-white scale-110' : 'bg-white/50'
             }`}
             onClick={() => {
               setAutoPlay(false);
@@ -181,9 +167,9 @@ export default function Hero() {
             }}
           >
             <span className="sr-only">شريحة {index + 1}</span>
-          </motion.button>
+          </button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
-};
+}

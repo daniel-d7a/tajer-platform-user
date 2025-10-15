@@ -1,6 +1,6 @@
 "use client";
 import  { useEffect, useState } from "react";
-import { Boxes, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import {  ShoppingCart, ChevronLeft, ChevronRight, TicketSlash } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -128,7 +128,7 @@ export default function Page() {
           <Link href="/categories">
             <button className="inline-flex text-md items-center px-4 py-2 gap-2 bg-primary text-white rounded-md hover:bg-primary/90 cursor-pointer">
               {t('browseProducts')}
-              <Boxes className="w-5 h-5"/>
+              <ShoppingCart className="w-5 h-5"/>
             </button>
           </Link>
         </div>
@@ -161,11 +161,11 @@ export default function Page() {
           <div className="p-8 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                <Boxes className="w-8 h-8 text-muted-foreground" />
+                <TicketSlash className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-medium text-muted-foreground">
-                  {to('noOrders')}
+                  {language === 'ar' ? "لا يوجد اي طلبات مكتمله حتي الآن!" : "No Orders Completed Yet!"}
                 </p>
               </div>
               <Link href="/categories">

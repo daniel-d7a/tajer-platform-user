@@ -207,7 +207,7 @@ export default function SpecialOffers() {
   if (hasProducts && !hasCategories) {
     return (
       <section className="py-12 rounded-lg">
-        <h1 className="text-2xl font-bold mb-6"> {tc('searchFor')} :{searchValue}</h1>
+        <h1 className="text-2xl mr-5 font-bold mb-6"> {tc('searchFor')} :{searchValue}</h1>
         <Card>
           <CardContent className="p-6">
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
@@ -260,7 +260,6 @@ export default function SpecialOffers() {
                       )
                     ))}
                   </div>
-
                   <Button
                     variant="outline"
                     size="sm"
@@ -283,7 +282,7 @@ export default function SpecialOffers() {
   if (!hasProducts && hasCategories) {
     return (
       <section className="py-12 rounded-lg">
-        <h1 className="text-2xl font-bold mb-6">{tc('searchFor')} : {searchValue}</h1>
+        <h1 className="text-2xl font-bold mr-5 mb-6">{tc('searchFor')} : {searchValue}</h1>
         <CategoryList search={String(searchValue)} />
       </section>
     );

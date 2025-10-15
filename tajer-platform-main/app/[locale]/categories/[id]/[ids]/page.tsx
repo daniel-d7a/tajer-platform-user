@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 export default function Page() {
     const router = useRouter();
     const t = useTranslations('categories');
-
+ 
   const [searchValue,setSearchValue] = useState('')
   const {id} = useParams();
     const handleSearch = (e: React.FormEvent) => {
@@ -16,13 +16,13 @@ export default function Page() {
     router.push(`?search=${encodeURIComponent(searchValue)}&page=1`);
   };
   return (
-    <div className="w-[90%] py-8 mx-auto">
+    <div className="w-[95%] py-8 mx-auto">
        <form onSubmit={handleSearch} className="relative mb-6">
         <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          placeholder={t('searchPlaceholder')}
+          placeholder={t('searchPlaceholderProducts')}
           className="pr-10"
         />
       </form>
