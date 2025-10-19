@@ -111,7 +111,7 @@ export default function Hero() {
                   }}
                   className="absolute inset-0 w-full h-full"
                 >
-                  <Link href={slide.link}>
+                  <Link href={slide.link===null ? "#" :slide.link }>
                     <div className="absolute inset-0 z-10" />
                     <Image
                       src={slide.imageUrl || '/placeholder.svg'}
