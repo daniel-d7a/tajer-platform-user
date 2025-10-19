@@ -1,29 +1,28 @@
+import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 
-const { locales } = routing;
-
-type Locale = (typeof locales)[number];
-
-const intlMiddleware = createMiddleware(routing);
+const intlMiddleware = createMiddleware({
+  locales: routing.locales,
+  defaultLocale: routing.defaultLocale,
+  localePrefix: 'as-needed'
+});
 
 export function middleware(request: NextRequest) {
   const userLocale = request.cookies.get('user-locale')?.value;
-  
-  const locale = userLocale as Locale;
-  
-  if (userLocale && locales.includes(locale)) {
+
+  const locale = routing.locales.find((loc) => loc === userLocale);
+
+  if (locale) {
     const { pathname } = request.nextUrl;
-    
-    const pathnameHasLocale = locales.some(
-      (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    const hasLocaleInPath = routing.locales.some((loc) =>
+      pathname.startsWith(`/${loc}`)
     );
 
-    if (!pathnameHasLocale) {
-      request.nextUrl.pathname = `/${locale}${pathname}`;
-      return NextResponse.redirect(request.nextUrl);
+    if (!hasLocaleInPath) {
+      const newUrl = new URL(`/${locale}${pathname}`, request.url);
+      return NextResponse.redirect(newUrl);
     }
   }
 
@@ -31,5 +30,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };
