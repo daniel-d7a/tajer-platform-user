@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { ShoppingCart } from "lucide-react";
 import ImageUpScale from "../ImageUpScale";
 import { useState } from "react";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import { createPortal } from "react-dom";
 
 interface ProductType {

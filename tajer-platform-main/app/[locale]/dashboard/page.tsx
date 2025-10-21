@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Truck, Wallet, DollarSign, ShoppingCart } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import { OrderRow } from "@/components/dashboard/OrderRow";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

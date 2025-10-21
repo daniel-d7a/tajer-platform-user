@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import { ShoppingCart, ChevronLeft, ChevronRight, Clock, RefreshCw, Truck, PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";

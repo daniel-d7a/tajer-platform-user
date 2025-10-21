@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import {Link} from '@/i18n/navigation';
 import { Truck } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import toast from 'react-hot-toast';

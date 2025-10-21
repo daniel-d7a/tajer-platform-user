@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { useTranslations } from "next-intl";

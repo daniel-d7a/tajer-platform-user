@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";

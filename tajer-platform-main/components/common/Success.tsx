@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import {Link} from '@/i18n/navigation';
 
 interface SuccessPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  autoCloseDelay?: number; // وقت الأوتو كلوز بالمللي ثانية
+  autoCloseDelay?: number; 
 }
 
 export default function SuccessPopup({ 

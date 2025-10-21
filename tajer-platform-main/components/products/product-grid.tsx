@@ -1,5 +1,5 @@
 "use client"
-import Link from 'next/link';
+import {Link} from '@/i18n/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Boxes, ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';

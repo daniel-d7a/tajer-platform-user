@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react'
 import { useParams,usePathname, useRouter} from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Card } from '@/components/ui/card';
-import Link from 'next/link';
+import {Link} from '@/i18n/navigation';
 import Image from 'next/image';
 import ProductGrid from '@/components/products/product-grid';
 import { Search } from 'lucide-react';

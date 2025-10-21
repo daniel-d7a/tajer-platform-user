@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
