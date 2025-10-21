@@ -1,8 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-
-// Lazy load components
 const Hero = dynamic(() => import('@/components/home/hero'));
 const FeaturedCategories = dynamic(() => import('@/components/home/featured-categories'));
 const SpecialOffers = dynamic(() => import('@/components/home/special-offers'));

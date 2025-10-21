@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import {Link} from '@/i18n/navigation';
 import Image from "next/image";
 import { Menu, X, ShoppingCart, User, LogOut, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-
 interface BannersType {
   id: number;
   imageUrl: string;
