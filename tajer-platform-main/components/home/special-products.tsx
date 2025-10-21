@@ -43,7 +43,6 @@ export default function SpecialProducts() {
   const [language, setLanguage] = useState('en');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
   const pathname = usePathname();
   
   useEffect(() => {
@@ -134,27 +133,14 @@ export default function SpecialProducts() {
   }, [totalSlides]);
 
   const handleManualNavigation = (navigationFunction: () => void) => {
-    setAutoPlay(false);
     navigationFunction();
-    setTimeout(() => setAutoPlay(true), 10000);
   };
 
-  // Auto-play effect
-  useEffect(() => {
-    if (!autoPlay || totalSlides <= 1) return;
 
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [autoPlay, totalSlides, nextSlide]);
 
   const goToSlide = (slideIndex: number) => {
-    setAutoPlay(false);
     setDirection(slideIndex > currentSlide ? 1 : -1);
     setCurrentSlide(slideIndex);
-    setTimeout(() => setAutoPlay(true), 10000);
   };
 
   return (

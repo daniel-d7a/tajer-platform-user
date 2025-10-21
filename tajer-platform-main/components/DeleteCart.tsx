@@ -1,15 +1,12 @@
 import { Trash2, X } from "lucide-react";
 import { Button } from "./ui/button";
 
-
-
-
-export default function DeleteConfirmationPopup({ 
-  isOpen, 
-  onClose, 
+export default function DeleteConfirmationPopup({
+  isOpen,
+  onClose,
   onConfirm,
-  t 
-}: { 
+  t,
+}: {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -20,15 +17,18 @@ export default function DeleteConfirmationPopup({
   return (
     <div className="fixed inset-0  z-50 flex items-center justify-center p-4">
       {/* Overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Popup Content */}
       <div className="relative bg-background  rounded-lg shadow-xl w-full max-w-xl animate-in slide-in-from-left duration-300">
         {/* Header */}
-        <div dir="ltr" className="w-full flex items-center justify-between p-4 border-b">
+        <div
+          dir="ltr"
+          className="w-full flex items-center justify-between p-4 border-b"
+        >
           <button
             onClick={onClose}
             className="p-1 hover:bg-text-100 rounded-full transition-colors"
@@ -36,9 +36,9 @@ export default function DeleteConfirmationPopup({
             <X className="h-5 w-5 " />
           </button>
           <h3 className="text-lg font-semibold w-full  text-right  ">
-              {t('confirmDeleteTitle')}
+            {t("confirmDeleteTitle")}
           </h3>
-          <div className="w-6" /> 
+          <div className="w-6" />
         </div>
 
         {/* Body */}
@@ -48,13 +48,14 @@ export default function DeleteConfirmationPopup({
               <Trash2 className="h-8 w-8 text-red-600" />
             </div>
           </div>
-          
+
           <h4 className="text-lg font-medium  text-center mb-2">
-            {t('deleteAll') || 'حذف جميع العناصر'}
+            {t("deleteAll") || "حذف جميع العناصر"}
           </h4>
-          
+
           <p className="opacity-70 text-center text-sm mb-6">
-            {t('confirmDeleteAllMessage') || 'هل أنت متأكد أنك تريد حذف جميع العناصر من سلة التسوق؟ لا يمكن التراجع عن هذا الإجراء.'}
+            {t("confirmDeleteAllMessage") ||
+              "هل أنت متأكد أنك تريد حذف جميع العناصر من سلة التسوق؟ لا يمكن التراجع عن هذا الإجراء."}
           </p>
 
           {/* Buttons */}
@@ -64,13 +65,13 @@ export default function DeleteConfirmationPopup({
               onClick={onClose}
               className="flex-1 border-gray-300 "
             >
-                {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button
               onClick={onConfirm}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             >
-                {t('delete')}
+              {t("delete")}
             </Button>
           </div>
         </div>

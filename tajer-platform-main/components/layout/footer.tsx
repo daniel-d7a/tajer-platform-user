@@ -1,11 +1,11 @@
-import {Link} from '@/i18n/navigation';
-import Image from 'next/image';
-import { Facebook, Instagram, Linkedin } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Link } from "@/i18n/navigation";
+import Image from "next/image";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function Footer() {
-  const t = useTranslations('footer');
-  const tc = useTranslations('common');
+  const t = useTranslations("footer");
+  const tc = useTranslations("common");
 
   return (
     <div className="bg-muted z-999">
@@ -26,7 +26,7 @@ export default function Footer() {
               <span className="text-xl font-bold text-primary">تاجر</span>
             </Link>
             <p className="mt-4 md:text-sm text-muted-foreground">
-              {t('footerLine')}
+              {t("footerLine")}
             </p>
             <div className="mt-4 flex space-x-4">
               <Link
@@ -53,14 +53,14 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">{t('quickLinks')}</h3>
+            <h3 className="text-lg font-semibold">{t("quickLinks")}</h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link
                   href="/categories"
                   className="md:text-sm text-muted-foreground hover:text-primary"
                 >
-                  {tc('categories')}
+                  {tc("categories")}
                 </Link>
               </li>
               <li>
@@ -68,7 +68,7 @@ export default function Footer() {
                   href="/companies"
                   className="md:text-sm text-muted-foreground hover:text-primary"
                 >
-                  {tc('companies')}
+                  {tc("companies")}
                 </Link>
               </li>
               <li>
@@ -76,20 +76,20 @@ export default function Footer() {
                   href="/about"
                   className="md:text-sm text-muted-foreground hover:text-primary"
                 >
-                  {tc('about')}
+                  {tc("about")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">{t('support')}</h3>
+            <h3 className="text-lg font-semibold">{t("support")}</h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link
                   href="/faq"
                   className="md:text-sm text-muted-foreground hover:text-primary"
                 >
-                  {t('faq')}
+                  {t("faq")}
                 </Link>
               </li>
               <li>
@@ -97,47 +97,46 @@ export default function Footer() {
                   href="/terms"
                   className="md:text-sm text-muted-foreground hover:text-primary"
                 >
-                  {t('terms')}
+                  {t("terms")}
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">{t('contactUs')}</h3>
-        <ul className="mt-4 space-y-2">
-  <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
-    <Link
-      href="mailto:info@tajer-jo.com"
-      className="hover:text-primary "
-    >
-      {t('email')} info@tajer-jo.com
-    </Link>
-  </li>
+            <h3 className="text-lg font-semibold">{t("contactUs")}</h3>
+            <ul className="mt-4 space-y-2">
+              <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
+                <Link
+                  href="mailto:info@tajer-jo.com"
+                  className="hover:text-primary "
+                >
+                  {t("email")} info@tajer-jo.com
+                </Link>
+              </li>
 
-  <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
-    <Link
-      href="https://wa.me/962797560047"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:text-primary"
-    >
-      {t('phone')} 0797560047
-    </Link>
-  </li>
+              <li className="md:text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2">
+                <Link
+                  href="https://wa.me/962797560047"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary"
+                >
+                  {t("phone")} 0797560047
+                </Link>
+              </li>
 
-  <li className="md:text-sm text-muted-foreground">
-    {t('address')}
-  </li>
-</ul>
-
+              <li className="md:text-sm text-muted-foreground">
+                {t("address")}
+              </li>
+            </ul>
           </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center">
           <p className="md:text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} {t('copyright')} - Tajer.
+            &copy; {new Date().getFullYear()} {t("copyright")} - Tajer.
           </p>
         </div>
       </div>
     </div>
   );
-};
+}

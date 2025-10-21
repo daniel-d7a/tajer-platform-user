@@ -15,7 +15,7 @@ import { Toaster } from "react-hot-toast";
 import LoadingAnimation from "@/components/common/Loading";
 import "@/lib/global-fix";
 import GlobalLoader from "@/components/common/GlobalLoader";
-
+import Start from "@/components/common/Start";
 const cairo = Cairo({
   subsets: ["arabic"],
   display: "swap",
@@ -60,7 +60,10 @@ export async function generateMetadata({ params }: RootLayoutProps) {
   }
 }
 
-export default async function RootLayout({ children, params }: RootLayoutProps) {
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
   const { locale } = params;
 
   if (!routing.locales.includes(locale as Locale)) {
@@ -83,14 +86,14 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>
             <NextIntlClientProvider locale={locale as Locale}>
-              <GlobalLoader/>
+              <GlobalLoader />
               <Suspense fallback={<LoadingAnimation />}>
+                <Start />
                 <Header />
                 <main className="min-h-screen">
                   <Suspense fallback={<LoadingAnimation />}>
                     {children}
                   </Suspense>
-
                   <Toaster
                     toastOptions={{
                       className: "bg-primary text-primary-foreground",
@@ -107,4 +110,4 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
       </body>
     </html>
   );
-}
+};
