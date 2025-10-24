@@ -1,14 +1,18 @@
-'use client';
-import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-const Hero = dynamic(() => import('@/components/home/hero'));
-const FeaturedCategories = dynamic(() => import('@/components/home/featured-categories'));
-const SpecialOffers = dynamic(() => import('@/components/home/special-offers'));
-const HowItWorks = dynamic(() => import('@/components/home/how-it-works'));
-const CallToAction = dynamic(() => import('@/components/home/call-to-action'));
-const SpecialProducts = dynamic(() => import('@/components/home/special-products'));
-const Factories = dynamic(() => import('@/components/home/factories'));
-const Page = dynamic(() => import('@/app/[locale]/faq/page'));
+"use client";
+import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+const Hero = dynamic(() => import("@/components/home/hero"));
+const FeaturedCategories = dynamic(
+  () => import("@/components/home/featured-categories")
+);
+const SpecialOffers = dynamic(() => import("@/components/home/special-offers"));
+const HowItWorks = dynamic(() => import("@/components/home/how-it-works"));
+const CallToAction = dynamic(() => import("@/components/home/call-to-action"));
+const SpecialProducts = dynamic(
+  () => import("@/components/home/special-products")
+);
+const Factories = dynamic(() => import("@/components/home/factories"));
+const Page = dynamic(() => import("@/app/[locale]/faq/page"));
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -16,9 +20,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.2,
-      delayChildren: 0.3
-    }
-  }
+      delayChildren: 0.3,
+    },
+  },
 };
 
 const itemVariants = {
@@ -28,9 +32,9 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut" as const 
-    }
-  }
+      ease: "easeOut" as const,
+    },
+  },
 };
 
 export default function Home() {
@@ -41,7 +45,7 @@ export default function Home() {
       variants={containerVariants}
       className="mx-auto"
     >
-      <motion.div variants={itemVariants} >
+      <motion.div variants={itemVariants}>
         <Hero />
       </motion.div>
 
@@ -74,4 +78,4 @@ export default function Home() {
       </motion.div>
     </motion.div>
   );
-};
+}

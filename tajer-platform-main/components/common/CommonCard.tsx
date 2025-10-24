@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { ShoppingCart } from "lucide-react";
 import ImageUpScale from "../ImageUpScale";
 import { useState } from "react";
-import {Link} from '@/i18n/navigation';
+import { Link } from "@/i18n/navigation";
 import { createPortal } from "react-dom";
 
 interface ProductType {
@@ -84,9 +84,7 @@ export default function ProductCard({
     offer: ProductBase,
     isPack: boolean = false
   ) => {
-    const originalPrice = isPack
-      ? offer.packPrice ?? 0
-      : offer.piecePrice ?? 0;
+    const originalPrice = isPack ? offer.packPrice ?? 0 : offer.piecePrice ?? 0;
     const discount = offer.discountAmount ?? 0;
 
     if (discount <= 0) return originalPrice;
@@ -145,7 +143,9 @@ export default function ProductCard({
               <Badge className="absolute top-2 right-2 bg-primary z-10">
                 {productDetails.discountType === "percentage"
                   ? `${productDetails.discountAmount ?? 0}% ${t("offer")}`
-                  : `${productDetails.discountAmount ?? 0} ${tc("coins")} ${t("offer")}`}
+                  : `${productDetails.discountAmount ?? 0} ${tc("coins")} ${t(
+                      "offer"
+                    )}`}
               </Badge>
             )}
             <div
@@ -176,7 +176,10 @@ export default function ProductCard({
                       {(productDetails.discountAmount ?? 0) > 0 ? (
                         <div className="flex gap-2">
                           <span className="text-lg font-bold text-primary">
-                            {calculateDiscountedPrice(productDetails, false).toFixed(2)}{" "}
+                            {calculateDiscountedPrice(
+                              productDetails,
+                              false
+                            ).toFixed(2)}{" "}
                             {tc("coins")}
                           </span>
                           <span className="line-through text-muted-foreground text-sm">
@@ -199,7 +202,9 @@ export default function ProductCard({
                   <div>
                     <span className="text-md w-[100%] mr-2 font-medium">
                       {t("PackPrice")}:{" "}
-                      {calculateDiscountedPrice(productDetails, true).toFixed(2)}{" "}
+                      {calculateDiscountedPrice(productDetails, true).toFixed(
+                        2
+                      )}{" "}
                       {tc("coins")}
                       {(productDetails.discountAmount ?? 0) > 0 && (
                         <span className="line-through text-muted-foreground text-sm ml-2">
@@ -212,8 +217,8 @@ export default function ProductCard({
 
                   <div className="flex flex-col gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {t("piecesPerPack")}: {productDetails.piecesPerPack ?? 0} /{" "}
-                      {language === "en" ? "pieces" : "قطع في الحزمة"}
+                      {t("piecesPerPack")}: {productDetails.piecesPerPack ?? 0}{" "}
+                      / {language === "en" ? "pieces" : "قطع في الحزمة"}
                     </span>
                   </div>
                 </div>
@@ -232,7 +237,8 @@ export default function ProductCard({
                     </div>
                   ) : (
                     <span className="text-lg font-bold text-primary">
-                      {(productDetails.piecePrice ?? 0).toFixed(2)} {tc("coins")}
+                      {(productDetails.piecePrice ?? 0).toFixed(2)}{" "}
+                      {tc("coins")}
                     </span>
                   )}
                 </div>

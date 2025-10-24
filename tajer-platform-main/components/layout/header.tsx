@@ -41,7 +41,7 @@ interface Suggestion {
   type: "category" | "product";
   imageUrl?: string;
 }
-type Offer = { 
+type Offer = {
   id: number;
   name: string;
   name_ar: string;
@@ -55,11 +55,11 @@ type Offer = {
   piecePrice: number;
   packPrice: number;
   piecesPerPack: number;
-  
-  categories: { 
-    id: number; 
+
+  categories: {
+    id: number;
     name: string;
-    name_ar: string; 
+    name_ar: string;
   }[];
   manufacturer: string;
   factory: {
@@ -82,7 +82,7 @@ export default function Header() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [language, setLanguage] = useState("en");
-  
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [showHeader, setShowHeader] = useState(true);
@@ -104,7 +104,7 @@ export default function Header() {
 
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0]; 
+    const lang = segments[0];
     setLanguage(lang);
   }, [pathname]);
 
@@ -184,15 +184,15 @@ export default function Header() {
       if (!showSuggestions) return;
 
       const totalItems = suggestions.length + recentSearches.length;
-      
+
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setActiveSuggestionIndex(prev => 
+        setActiveSuggestionIndex((prev) =>
           prev < totalItems - 1 ? prev + 1 : 0
         );
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setActiveSuggestionIndex(prev => 
+        setActiveSuggestionIndex((prev) =>
           prev > 0 ? prev - 1 : totalItems - 1
         );
       } else if (e.key === "Tab" && suggestions.length > 0) {
@@ -218,23 +218,25 @@ export default function Header() {
       setSuggestions([]);
       return;
     }
-
     setIsLoading(true);
     try {
       const categoriesResponse = await fetch(
-        `https://tajer-backend.tajerplatform.workers.dev/api/public/all_categories?search=${encodeURIComponent(query)}`
+        `https://tajer-backend.tajerplatform.workers.dev/api/public/all_categories?search=${encodeURIComponent(
+          query
+        )}`
       );
-      
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json();
         if (categoriesData && categoriesData.length > 0) {
-          const categorySuggestions: Suggestion[] = categoriesData.slice(0, 5).map((category: Category) => ({
-            id: category.id,
-            name: category.name,
-            name_ar: category.name_ar,
-            type: "category",
-            imageUrl: category.imageUrl
-          }));
+          const categorySuggestions: Suggestion[] = categoriesData
+            .slice(0, 5)
+            .map((category: Category) => ({
+              id: category.id,
+              name: category.name,
+              name_ar: category.name_ar,
+              type: "category",
+              imageUrl: category.imageUrl,
+            }));
           setSuggestions(categorySuggestions);
           setIsLoading(false);
           return;
@@ -242,19 +244,23 @@ export default function Header() {
       }
 
       const productsResponse = await fetch(
-        `https://tajer-backend.tajerplatform.workers.dev/api/public/all_products?categoryId=&factoryId=&search=${encodeURIComponent(query)}`
+        `https://tajer-backend.tajerplatform.workers.dev/api/public/all_products?categoryId=&factoryId=&search=${encodeURIComponent(
+          query
+        )}`
       );
-      
+
       if (productsResponse.ok) {
         const productsData = await productsResponse.json();
         if (productsData && productsData.length > 0) {
-          const productSuggestions: Suggestion[] = productsData.slice(0, 5).map((product : Offer) => ({
-            id: product.id,
-            name: product.name,
-            name_ar: product.name_ar,
-            type: "product",
-            imageUrl: product.imageUrl
-          }));
+          const productSuggestions: Suggestion[] = productsData
+            .slice(0, 5)
+            .map((product: Offer) => ({
+              id: product.id,
+              name: product.name,
+              name_ar: product.name_ar,
+              type: "product",
+              imageUrl: product.imageUrl,
+            }));
           setSuggestions(productSuggestions);
         } else {
           setSuggestions([]);
@@ -276,11 +282,10 @@ export default function Header() {
     if (searchValue.trim()) {
       searchTimeoutRef.current = setTimeout(() => {
         fetchSuggestions(searchValue);
-      }, 500);
+      }, 1000);
     } else {
       setSuggestions([]);
     }
-
     return () => {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
@@ -322,11 +327,14 @@ export default function Header() {
     router.push("/products?search=" + encodeURIComponent(trimmedValue));
   };
 
-  const handleSuggestionClick = (value: string, type?: "category" | "product") => {
+  const handleSuggestionClick = (
+    value: string,
+    type?: "category" | "product"
+  ) => {
     setSearchValue(value);
     setShowSuggestions(false);
     setActiveSuggestionIndex(-1);
-    
+
     if (type === "category") {
       router.push(`/categories?search=${encodeURIComponent(value)}`);
     } else {
@@ -364,9 +372,11 @@ export default function Header() {
   };
 
   const getSuggestionIcon = (type: "category" | "product") => {
-    return type === "category" ? 
-      <Tag className="h-4 w-4 text-green-600 flex-shrink-0" /> :
-      <Package className="h-4 w-4 text-blue-600 flex-shrink-0" />;
+    return type === "category" ? (
+      <Tag className="h-4 w-4 text-green-600 flex-shrink-0" />
+    ) : (
+      <Package className="h-4 w-4 text-blue-600 flex-shrink-0" />
+    );
   };
 
   const getSuggestionName = (suggestion: Suggestion) => {
@@ -437,7 +447,11 @@ export default function Header() {
           <div ref={searchRef} className="relative w-full">
             <form onSubmit={handleSearchSubmit} className="w-full">
               <div className="relative">
-                <Search className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground`} />
+                <Search
+                  className={`absolute ${
+                    isRTL ? "left-3" : "right-3"
+                  } top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground`}
+                />
                 <Input
                   ref={inputRef}
                   placeholder={t("searchPlaceholder")}
@@ -448,113 +462,131 @@ export default function Header() {
                     setActiveSuggestionIndex(-1);
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  className={`${isRTL ? 'pl-10' : 'pr-10'} w-full`}
+                  className={`${isRTL ? "pl-10" : "pr-10"} w-full`}
                 />
               </div>
             </form>
 
-            {showSuggestions && (suggestions.length > 0 || recentSearches.length > 0 || isLoading) && (
-              <div 
-                ref={suggestionsRef}
-                className="absolute top-full mt-1 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
-              >
-                {/* الاقتراحات التلقائية */}
-                {suggestions.length > 0 && (
-                  <>
-                    <div className="p-2 border-b border-border">
-                      <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                        <Package className="h-3 w-3" />
-                        {t("suggestions")}
-                      </p>
-                    </div>
-                    <div className="py-1">
-                      {suggestions.map((suggestion, idx) => (
-                        <button
-                          key={`${suggestion.type}-${suggestion.id}`}
-                          type="button"
-                          onClick={() => handleSuggestionClick(getSuggestionName(suggestion), suggestion.type)}
-                          className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex items-center gap-3 ${
-                            isRTL ? 'text-right' : 'text-left'
-                          } ${activeSuggestionIndex === idx ? 'bg-muted/50' : ''}`}
-                        >
-                          {suggestion.imageUrl ? (
-                            <Image
-                              src={suggestion.imageUrl}
-                              alt={getSuggestionName(suggestion)}
-                              width={32}
-                              height={32}
-                              className="w-8 h-8 rounded object-cover flex-shrink-0"
-                            />
-                          ) : (
-                            getSuggestionIcon(suggestion.type)
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <span className="truncate">
-                              {highlightMatch(getSuggestionName(suggestion), searchValue)}
-                            </span>
-                          </div>
-                          <span className="text-xs text-muted-foreground capitalize flex-shrink-0">
-                            {getSuggestionTypeText(suggestion.type)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {/* خط فاصل بين الاقتراحات وعمليات البحث الأخيرة */}
-                {suggestions.length > 0 && recentSearches.length > 0 && (
-                  <div className="border-t border-border my-1" />
-                )}
-
-                {/* عمليات البحث الأخيرة */}
-                {recentSearches.length > 0 && (
-                  <>
-                    <div className="p-2 border-b border-border">
-                      <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                        <Clock className="h-3 w-3" />
-                        {t("recentSearches")}
-                      </p>
-                    </div>
-                    <div className="py-1">
-                      {recentSearches.map((item, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => handleSuggestionClick(item)}
-                          className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex justify-between items-center group ${
-                            activeSuggestionIndex === suggestions.length + idx ? 'bg-muted/50' : ''
-                          }`}
-                        >
-                          <span className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                            <span>{highlightMatch(item, searchValue)}</span>
-                          </span>
+            {showSuggestions &&
+              (suggestions.length > 0 ||
+                recentSearches.length > 0 ||
+                isLoading) && (
+                <div
+                  ref={suggestionsRef}
+                  className="absolute top-full mt-1 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
+                >
+                  {suggestions.length > 0 && (
+                    <>
+                      <div className="p-2 border-b border-border">
+                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                          <Package className="h-3 w-3" />
+                          {t("suggestions")}
+                        </p>
+                      </div>
+                      <div className="py-1">
+                        {suggestions.map((suggestion, idx) => (
                           <button
+                            key={`${suggestion.type}-${suggestion.id}`}
                             type="button"
-                            onClick={(e) => handleDeleteSearch(item, e)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-red-500"
+                            onClick={() =>
+                              handleSuggestionClick(
+                                getSuggestionName(suggestion),
+                                suggestion.type
+                              )
+                            }
+                            className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex items-center gap-3 ${
+                              isRTL ? "text-right" : "text-left"
+                            } ${
+                              activeSuggestionIndex === idx ? "bg-muted/50" : ""
+                            }`}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {suggestion.imageUrl ? (
+                              <Image
+                                src={suggestion.imageUrl}
+                                alt={getSuggestionName(suggestion)}
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                              />
+                            ) : (
+                              getSuggestionIcon(suggestion.type)
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <span className="truncate">
+                                {highlightMatch(
+                                  getSuggestionName(suggestion),
+                                  searchValue
+                                )}
+                              </span>
+                            </div>
+                            <span className="text-xs text-muted-foreground capitalize flex-shrink-0">
+                              {getSuggestionTypeText(suggestion.type)}
+                            </span>
                           </button>
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
+                        ))}
+                      </div>
+                    </>
+                  )}
 
-                {/* Loading State */}
-                {isLoading && (
-                  <div className="p-3">
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
+                  {/* خط فاصل بين الاقتراحات وعمليات البحث الأخيرة */}
+                  {suggestions.length > 0 && recentSearches.length > 0 && (
+                    <div className="border-t border-border my-1" />
+                  )}
+
+                  {/* عمليات البحث الأخيرة */}
+                  {recentSearches.length > 0 && (
+                    <>
+                      <div className="p-2 border-b border-border">
+                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                          <Clock className="h-3 w-3" />
+                          {t("recentSearches")}
+                        </p>
+                      </div>
+                      <div className="py-1">
+                        {recentSearches.map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleSuggestionClick(item)}
+                            className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex justify-between items-center group ${
+                              activeSuggestionIndex === suggestions.length + idx
+                                ? "bg-muted/50"
+                                : ""
+                            }`}
+                          >
+                            <span
+                              className={`flex items-center gap-3 ${
+                                isRTL ? "flex-row-reverse" : ""
+                              }`}
+                            >
+                              <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                              <span>{highlightMatch(item, searchValue)}</span>
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteSearch(item, e)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-red-500"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Loading State */}
+                  {isLoading && (
+                    <div className="p-3">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-4 w-1/2" />
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
           </div>
         </div>
 
@@ -660,7 +692,11 @@ export default function Header() {
               <div className="relative" ref={searchRef}>
                 <form onSubmit={handleSearchSubmit}>
                   <div className="relative">
-                    <Search className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground`} />
+                    <Search
+                      className={`absolute ${
+                        isRTL ? "left-3" : "right-3"
+                      } top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground`}
+                    />
                     <Input
                       placeholder={t("searchPlaceholder")}
                       value={searchValue}
@@ -670,108 +706,122 @@ export default function Header() {
                         setActiveSuggestionIndex(-1);
                       }}
                       onFocus={() => setShowSuggestions(true)}
-                      className={`${isRTL ? 'pl-10' : 'pr-10'} w-full`}
+                      className={`${isRTL ? "pl-10" : "pr-10"} w-full`}
                     />
                   </div>
                 </form>
 
-                {showSuggestions && (suggestions.length > 0 || recentSearches.length > 0 || isLoading) && (
-                  <div className="absolute top-full mt-1 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                    {/* الاقتراحات التلقائية */}
-                    {suggestions.length > 0 && (
-                      <>
-                        <div className="p-2 border-b border-border">
-                          <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                            <Package className="h-3 w-3" />
-                            {t("suggestions")}
-                          </p>
-                        </div>
-                        <div className="py-1">
-                          {suggestions.map((suggestion) => (
-                            <button
-                              key={`${suggestion.type}-${suggestion.id}`}
-                              type="button"
-                              onClick={() => handleSuggestionClick(getSuggestionName(suggestion), suggestion.type)}
-                              className={`w-full px-3 py-3 text-base hover:bg-muted/50 transition-colors flex items-center gap-3 ${
-                                isRTL ? 'text-right' : 'text-left'
-                              } border-b border-border last:border-b-0`}
-                            >
-                              {suggestion.imageUrl ? (
-                                <Image
-                                  src={suggestion.imageUrl}
-                                  alt={getSuggestionName(suggestion)}
-                                  width={40}
-                                  height={40}
-                                  className="w-10 h-10 rounded object-cover flex-shrink-0"
-                                />
-                              ) : (
-                                getSuggestionIcon(suggestion.type)
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <span className="truncate">
-                                  {highlightMatch(getSuggestionName(suggestion), searchValue)}
-                                </span>
-                              </div>
-                              <span className="text-xs text-muted-foreground capitalize flex-shrink-0">
-                                {getSuggestionTypeText(suggestion.type)}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {/* خط فاصل بين الاقتراحات وعمليات البحث الأخيرة */}
-                    {suggestions.length > 0 && recentSearches.length > 0 && (
-                      <div className="border-t border-border my-1" />
-                    )}
-
-                    {/* عمليات البحث الأخيرة */}
-                    {recentSearches.length > 0 && (
-                      <>
-                        <div className="p-2 border-b border-border">
-                          <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                            <Clock className="h-3 w-3" />
-                            {t("recentSearches")}
-                          </p>
-                        </div>
-                        <div className="py-1">
-                          {recentSearches.map((item, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={() => handleSuggestionClick(item)}
-                              className="w-full px-3 py-3 text-base hover:bg-muted/50 transition-colors flex justify-between items-center group border-b border-border last:border-b-0"
-                            >
-                              <span className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                                <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                                <span>{highlightMatch(item, searchValue)}</span>
-                              </span>
+                {showSuggestions &&
+                  (suggestions.length > 0 ||
+                    recentSearches.length > 0 ||
+                    isLoading) && (
+                    <div className="absolute top-full mt-1 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                      {suggestions.length > 0 && (
+                        <>
+                          <div className="p-2 border-b border-border">
+                            <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                              <Package className="h-3 w-3" />
+                              {t("suggestions")}
+                            </p>
+                          </div>
+                          <div className="py-1">
+                            {suggestions.map((suggestion) => (
                               <button
+                                key={`${suggestion.type}-${suggestion.id}`}
                                 type="button"
-                                onClick={(e) => handleDeleteSearch(item, e)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-red-500"
+                                onClick={() =>
+                                  handleSuggestionClick(
+                                    getSuggestionName(suggestion),
+                                    suggestion.type
+                                  )
+                                }
+                                className={`w-full px-3 py-3 text-base hover:bg-muted/50 transition-colors flex items-center gap-3 ${
+                                  isRTL ? "text-right" : "text-left"
+                                } border-b border-border last:border-b-0`}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                {suggestion.imageUrl ? (
+                                  <Image
+                                    src={suggestion.imageUrl}
+                                    alt={getSuggestionName(suggestion)}
+                                    width={40}
+                                    height={40}
+                                    className="w-10 h-10 rounded object-cover flex-shrink-0"
+                                  />
+                                ) : (
+                                  getSuggestionIcon(suggestion.type)
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <span className="truncate">
+                                    {highlightMatch(
+                                      getSuggestionName(suggestion),
+                                      searchValue
+                                    )}
+                                  </span>
+                                </div>
+                                <span className="text-xs text-muted-foreground capitalize flex-shrink-0">
+                                  {getSuggestionTypeText(suggestion.type)}
+                                </span>
                               </button>
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
+                            ))}
+                          </div>
+                        </>
+                      )}
 
-                    {/* Loading State */}
-                    {isLoading && (
-                      <div className="p-3">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-full" />
-                          <Skeleton className="h-4 w-3/4" />
-                          <Skeleton className="h-4 w-1/2" />
+                      {suggestions.length > 0 && recentSearches.length > 0 && (
+                        <div className="border-t border-border my-1" />
+                      )}
+
+                      {recentSearches.length > 0 && (
+                        <>
+                          <div className="p-2 border-b border-border">
+                            <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                              <Clock className="h-3 w-3" />
+                              {t("recentSearches")}
+                            </p>
+                          </div>
+                          <div className="py-1">
+                            {recentSearches.map((item, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => handleSuggestionClick(item)}
+                                className="w-full px-3 py-3 text-base hover:bg-muted/50 transition-colors flex justify-between items-center group border-b border-border last:border-b-0"
+                              >
+                                <span
+                                  className={`flex items-center gap-3 ${
+                                    isRTL ? "flex-row-reverse" : ""
+                                  }`}
+                                >
+                                  <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                  <span>
+                                    {highlightMatch(item, searchValue)}
+                                  </span>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleDeleteSearch(item, e)}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-red-500"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+
+                      {/* Loading State */}
+                      {isLoading && (
+                        <div className="p-3">
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      )}
+                    </div>
+                  )}
               </div>
 
               <div className="flex flex-col space-y-2">

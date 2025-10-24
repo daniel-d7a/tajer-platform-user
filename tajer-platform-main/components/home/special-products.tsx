@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import {Link} from '@/i18n/navigation';
+import { Link } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
@@ -38,17 +38,17 @@ export default function SpecialProducts() {
   const t = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
   const tc = useTranslations("common");
-  const [Products, setProducts] = useState<ProductBase[] | null>(null); 
+  const [Products, setProducts] = useState<ProductBase[] | null>(null);
   const [loading, SetLoading] = useState(true);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
   const pathname = usePathname();
-  
+
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0]; 
-    setLanguage(lang)
+    const lang = segments[0];
+    setLanguage(lang);
   }, [pathname]);
 
   const fetchSpecialProducts = async () => {
@@ -57,25 +57,25 @@ export default function SpecialProducts() {
         "https://tajer-backend.tajerplatform.workers.dev/api/featured/featured-products"
       );
       const res: FeaturedProduct[] = await data.json();
-      
+
       const uniqueProducts = res.reduce((acc: ProductBase[], current) => {
-        const exists = acc.find(product => product.id === current.product.id);
+        const exists = acc.find((product) => product.id === current.product.id);
         if (!exists) {
           acc.push(current.product);
         }
         return acc;
       }, []);
-      
+
       setProducts(uniqueProducts);
-      if(!data.ok){
-        SetLoading(true)
-      }else{
-        SetLoading(false)
+      if (!data.ok) {
+        SetLoading(true);
+      } else {
+        SetLoading(false);
       }
     } catch {
       setProducts(null);
       SetLoading(false);
-    };
+    }
   };
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function SpecialProducts() {
   }, []);
 
   const getCardsPerSlide = () => {
-    if (typeof window === 'undefined') return 4;
+    if (typeof window === "undefined") return 4;
     const width = window.innerWidth;
     if (width < 768) return 1;
     if (width < 1024) return 2;
@@ -97,11 +97,11 @@ export default function SpecialProducts() {
       setCardsPerSlide(getCardsPerSlide());
     };
 
-    handleResize(); 
-    window.addEventListener('resize', handleResize);
-    
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -110,12 +110,12 @@ export default function SpecialProducts() {
     if (Products.length <= cardsPerSlide) return [Products];
 
     const groups = [];
-    
+
     for (let i = 0; i < Products.length; i += cardsPerSlide) {
       const group = Products.slice(i, i + cardsPerSlide);
       groups.push(group);
     }
-    
+
     return groups;
   };
 
@@ -124,19 +124,17 @@ export default function SpecialProducts() {
 
   const nextSlide = useCallback(() => {
     setDirection(1);
-    setCurrentSlide(prev => (prev === totalSlides - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
   }, [totalSlides]);
 
   const prevSlide = useCallback(() => {
     setDirection(-1);
-    setCurrentSlide(prev => (prev === 0 ? totalSlides - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   }, [totalSlides]);
 
   const handleManualNavigation = (navigationFunction: () => void) => {
     navigationFunction();
   };
-
-
 
   const goToSlide = (slideIndex: number) => {
     setDirection(slideIndex > currentSlide ? 1 : -1);
@@ -144,13 +142,11 @@ export default function SpecialProducts() {
   };
 
   return (
-    <section dir='ltr' className="py-12 bg-muted/30 rounded-lg">
+    <section dir="ltr" className="py-12 bg-muted/30 rounded-lg">
       <div>
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold">{t('title')}</h2>
-          <p className="mt-2 text-muted-foreground">
-            {t('subTitle')}
-          </p>
+          <h2 className="text-3xl font-bold">{t("title")}</h2>
+          <p className="mt-2 text-muted-foreground">{t("subTitle")}</p>
         </div>
         <div className="relative w-[95%] mx-auto">
           {slideGroups.length > 1 && (
@@ -171,57 +167,62 @@ export default function SpecialProducts() {
               </button>
             </>
           )}
-          
+
           <div className="overflow-hidden rounded-xl relative h-[550px] md:h-[550px] lg:h-[550px]">
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
               </div>
             ) : (
-              <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                {slideGroups.map((slideGroup, groupIndex) => (
-                  groupIndex === currentSlide && (
-                    <motion.div
-                      key={groupIndex}
-                      custom={direction}
-                      initial={{ 
-                        x: direction > 0 ? '100%' : '-100%',
-                        opacity: 1 
-                      }}
-                      animate={{ 
-                        x: 0,
-                        opacity: 1 
-                      }}
-                      exit={{ 
-                        x: direction < 0 ? '100%' : '-100%',
-                        opacity: 1 
-                      }}
-                      transition={{
-                        x: { 
-                          type: "tween" as const, 
-                          ease: "easeInOut" as const,
-                          duration: 0.4 
-                        }
-                      }}
-                      className="absolute inset-0 w-full h-full"
-                    >
-                      <div className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
-                        {slideGroup.map((product, idx) => (
-                          <ProductCard
-                            key={`${product.id}-${groupIndex}-${idx}`}
-                            product={product} 
-                            idx={idx}
-                            language={language}
-                            type="offer"
-                            t={t}
-                            tb={tb}
-                            tc={tc}
-                          />
-                        ))}
-                      </div>
-                    </motion.div>
-                  )
-                ))}
+              <AnimatePresence
+                initial={false}
+                custom={direction}
+                mode="popLayout"
+              >
+                {slideGroups.map(
+                  (slideGroup, groupIndex) =>
+                    groupIndex === currentSlide && (
+                      <motion.div
+                        key={groupIndex}
+                        custom={direction}
+                        initial={{
+                          x: direction > 0 ? "100%" : "-100%",
+                          opacity: 1,
+                        }}
+                        animate={{
+                          x: 0,
+                          opacity: 1,
+                        }}
+                        exit={{
+                          x: direction < 0 ? "100%" : "-100%",
+                          opacity: 1,
+                        }}
+                        transition={{
+                          x: {
+                            type: "tween" as const,
+                            ease: "easeInOut" as const,
+                            duration: 0.4,
+                          },
+                        }}
+                        className="absolute inset-0 w-full h-full"
+                      >
+                        <div className="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
+                          {slideGroup.map((product, idx) => (
+                            <ProductCard
+                              key={`${product.id}-${groupIndex}-${idx}`}
+                              product={product}
+                              idx={idx}
+                              language={language}
+                              type="offer"
+                              t={t}
+                              tb={tb}
+                              tc={tc}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    )
+                )}
               </AnimatePresence>
             )}
           </div>
@@ -232,7 +233,11 @@ export default function SpecialProducts() {
                 <motion.button
                   key={index}
                   initial={{ scale: 1, opacity: 0.5 }}
-                  animate={index === currentSlide ? { scale: 1.2, opacity: 1 } : { scale: 1, opacity: 0.5 }}
+                  animate={
+                    index === currentSlide
+                      ? { scale: 1.2, opacity: 1 }
+                      : { scale: 1, opacity: 0.5 }
+                  }
                   className={`h-3 w-3 rounded-full ${
                     index === currentSlide
                       ? "bg-primary"
@@ -251,7 +256,7 @@ export default function SpecialProducts() {
               variant="outline"
               className="text-base py-2 px-6 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors border-primary"
             >
-              {tb('featuredProducts')}
+              {tb("featuredProducts")}
             </Badge>
           </Link>
         </div>

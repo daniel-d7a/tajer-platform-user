@@ -1,6 +1,6 @@
 import CountUp from "react-countup";
 import { useTranslations } from "next-intl";
- 
+
 type StatCardProps = {
   title: string;
   value: number;
@@ -8,9 +8,14 @@ type StatCardProps = {
   loading?: boolean;
 };
 
-export const StatCard: React.FC<StatCardProps> = ({ title, value, icon, loading }) => {
-  const tc = useTranslations('common');
-  const td = useTranslations('dashboard.cardreview');
+export const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  icon,
+  loading,
+}) => {
+  const tc = useTranslations("common");
+  const td = useTranslations("dashboard.cardreview");
   return (
     <div className="flex gap-3 items-center border-1 hover:border-[var(--primary)] duration-300 rounded-2xl h-[100px] p-5 w-[100%] shadow">
       <div className="text-[var(--primary)]">{icon}</div>
@@ -21,7 +26,11 @@ export const StatCard: React.FC<StatCardProps> = ({ title, value, icon, loading 
           ) : (
             <div>
               <CountUp end={value} duration={2.5} />
-              {title === td('totalSpent') ? tc('coins') : title === td('totalCashback') ?  tc('coins') : ""}
+              {title === td("totalSpent")
+                ? tc("coins")
+                : title === td("totalCashback")
+                ? tc("coins")
+                : ""}
             </div>
           )}
         </span>

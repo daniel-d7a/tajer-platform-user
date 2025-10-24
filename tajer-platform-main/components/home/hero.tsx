@@ -1,10 +1,10 @@
-'use client';
-import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface BannersType {
   id: number;
@@ -16,20 +16,22 @@ interface BannersType {
 export default function Hero() {
   const [banners, setBanners] = useState<BannersType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   const fetchBanners = async () => {
     try {
-      const data = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/banners');
+      const data = await fetch(
+        "https://tajer-backend.tajerplatform.workers.dev/api/admin/banners"
+      );
       const res = await data.json();
       setBanners(res || []);
-      if(data.ok) {
-        setLoading(false)
-      }else{
-        setLoading(true)
+      if (data.ok) {
+        setLoading(false);
+      } else {
+        setLoading(true);
       }
     } catch (error) {
       console.error(error);
-    } 
+    }
   };
 
   useEffect(() => {
@@ -42,18 +44,18 @@ export default function Hero() {
 
   const nextSlide = useCallback(() => {
     setDirection(1);
-    setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === banners?.length - 1 ? 0 : prev + 1));
   }, [banners?.length]);
 
   const prevSlide = useCallback(() => {
     setDirection(-1);
-    setCurrentSlide(prev => (prev === 0 ? banners?.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? banners?.length - 1 : prev - 1));
   }, [banners?.length]);
 
   const handleManualNavigation = (navigationFunction: () => void) => {
     setAutoPlay(false);
     navigationFunction();
-    
+
     setTimeout(() => {
       setAutoPlay(true);
     }, 10000);
@@ -65,13 +67,13 @@ export default function Hero() {
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [autoPlay, banners?.length, nextSlide]);
 
   return (
-    <motion.div 
-      dir='ltr' 
+    <motion.div
+      dir="ltr"
       className="relative overflow-hidden h-[50vh] lg:h-[70vh] w-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -84,51 +86,52 @@ export default function Hero() {
           </div>
         ) : (
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
-            {banners?.map((slide, index) => (
-              index === currentSlide && (
-                <motion.div
-                  key={slide.id}
-                  custom={direction}
-                  initial={{ 
-                    x: direction > 0 ? '100%' : '-100%',
-                    opacity: 1 
-                  }}
-                  animate={{ 
-                    x: 0,
-                    opacity: 1 
-                  }}
-                  exit={{ 
-                    x: direction < 0 ? '100%' : '-100%',
-                    opacity: 1 
-                  }}
-                  transition={{
-                    x: { 
-                      type: "tween" as const, 
-                      ease: "easeInOut" as const,
-                      duration: 0.4
-                    },
-                    opacity: { duration: 0.2 }
-                  }}
-                  className="absolute inset-0 w-full h-full"
-                >
-                  <Link href={slide.link===null ? "#" :slide.link }>
-                    <div className="absolute inset-0 z-10" />
-                    <Image
-                      src={slide.imageUrl || '/placeholder.svg'}
-                      alt={slide.headline || 'Banner image'}
-                      fill
-                      quality={100}
-                      className="object-cover object-center"
-                      priority={index === 0}
-                    />
-                  </Link>
-                </motion.div>
-              )
-            ))}
+            {banners?.map(
+              (slide, index) =>
+                index === currentSlide && (
+                  <motion.div
+                    key={slide.id}
+                    custom={direction}
+                    initial={{
+                      x: direction > 0 ? "100%" : "-100%",
+                      opacity: 1,
+                    }}
+                    animate={{
+                      x: 0,
+                      opacity: 1,
+                    }}
+                    exit={{
+                      x: direction < 0 ? "100%" : "-100%",
+                      opacity: 1,
+                    }}
+                    transition={{
+                      x: {
+                        type: "tween" as const,
+                        ease: "easeInOut" as const,
+                        duration: 0.4,
+                      },
+                      opacity: { duration: 0.2 },
+                    }}
+                    className="absolute inset-0 w-full h-full"
+                  >
+                    <Link href={slide.link === null ? "#" : slide.link}>
+                      <div className="absolute inset-0 z-10" />
+                      <Image
+                        src={slide.imageUrl || "/placeholder.svg"}
+                        alt={slide.headline || "Banner image"}
+                        fill
+                        quality={100}
+                        className="object-cover object-center"
+                        priority={index === 0}
+                      />
+                    </Link>
+                  </motion.div>
+                )
+            )}
           </AnimatePresence>
         )}
       </div>
- 
+
       <Button
         variant="ghost"
         size="icon"
@@ -138,7 +141,7 @@ export default function Hero() {
         <ChevronLeft className="h-6 w-6" />
         <span className="sr-only">السابق</span>
       </Button>
-      
+
       <Button
         variant="ghost"
         size="icon"
@@ -154,13 +157,13 @@ export default function Hero() {
           <button
             key={index}
             className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index === currentSlide ? 'bg-white scale-110' : 'bg-white/50'
+              index === currentSlide ? "bg-white scale-110" : "bg-white/50"
             }`}
             onClick={() => {
               setAutoPlay(false);
               setDirection(index > currentSlide ? 1 : -1);
               setCurrentSlide(index);
-              
+
               setTimeout(() => {
                 setAutoPlay(true);
               }, 10000);

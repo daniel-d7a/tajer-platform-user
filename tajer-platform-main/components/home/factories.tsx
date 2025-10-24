@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import {Link} from '@/i18n/navigation';
-import { Truck } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Link } from "@/i18n/navigation";
+import { Truck } from "lucide-react";
+import { usePathname } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface Factory {
   id: number;
@@ -31,7 +31,7 @@ export default function Factories() {
     const fetchFactories = async () => {
       try {
         const response = await fetch(
-          'https://tajer-backend.tajerplatform.workers.dev/api/admin/factories/all_factories'
+          "https://tajer-backend.tajerplatform.workers.dev/api/admin/factories/all_factories"
         );
         const data = await response.json();
         setFactories(data || []);
@@ -41,8 +41,8 @@ export default function Factories() {
           setLoading(true);
         }
       } catch (error) {
-        console.error('Error fetching factories:', error);
-        toast.error('something went wrong please try again');
+        console.error("Error fetching factories:", error);
+        toast.error("something went wrong please try again");
       }
     };
     fetchFactories();
@@ -82,13 +82,13 @@ export default function Factories() {
       animateScroll();
     };
 
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    scrollContainer.addEventListener("mouseenter", handleMouseEnter);
+    scrollContainer.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
+      scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [factories.length, isRTL, pathname]);
 
@@ -132,12 +132,15 @@ export default function Factories() {
                           sizes="80px"
                           className="object-contain transition-transform duration-300 hover:scale-110"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.style.display = "none";
                           }}
                         />
                       </div>
                     ) : (
-                      <Truck size={48} className="text-muted-foreground opacity-50" />
+                      <Truck
+                        size={48}
+                        className="text-muted-foreground opacity-50"
+                      />
                     )}
                   </motion.div>
                 </Link>

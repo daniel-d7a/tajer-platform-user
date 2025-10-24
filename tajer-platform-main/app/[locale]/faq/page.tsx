@@ -2,44 +2,45 @@
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 interface FAQ {
-  answer_ar:string;
-  id:number;
-  answer_en:string;
-  question_ar:string;
-  question_en:string;
+  answer_ar: string;
+  id: number;
+  answer_en: string;
+  question_ar: string;
+  question_en: string;
 }
 export default function FAQ() {
-  const [data,setData] = useState<FAQ[]>([])
-    const [language,setLanguage] = useState('en')
-    const pathname = usePathname();
-        useEffect(() => {
-        const segments = pathname.split("/").filter(Boolean);
-        const lang = segments[0]; 
-        setLanguage(lang)
-      }, [pathname]);
-    const fetchFaq  = async () =>{
-      try{
-        const response = await fetch('https://tajer-backend.tajerplatform.workers.dev/api/admin/faqs')
-        const data = await response.json()
-        if(data){
-          setData(data);
-        };
-      }catch(err){
-        console.log(err); 
-      };
-    };
-  useEffect(() =>{
-    fetchFaq()
-  },[]);
+  const [data, setData] = useState<FAQ[]>([]);
+  const [language, setLanguage] = useState("en");
+  const pathname = usePathname();
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0];
+    setLanguage(lang);
+  }, [pathname]);
+  const fetchFaq = async () => {
+    try {
+      const response = await fetch(
+        "https://tajer-backend.tajerplatform.workers.dev/api/admin/faqs"
+      );
+      const data = await response.json();
+      if (data) {
+        setData(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchFaq();
+  }, []);
   return (
     <div className="max-w-full mx-auto p-6 flex flex-col ">
-    
       <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">
-        {language === 'ar' ? 'تعرف علينا اكثر' : 'Discover More About Tajer:'}
+        {language === "ar" ? "تعرف علينا اكثر" : "Discover More About Tajer:"}
       </h2>
       <Accordion.Root type="single" collapsible className="space-y-5">
         {data.map((faq, i) => (
@@ -54,7 +55,9 @@ export default function FAQ() {
                 "focus:outline-none "
               )}
             >
-              <span className="transition-colors  group-hover:text-primary">{language === 'ar' ? faq.question_ar : faq.question_en}</span>
+              <span className="transition-colors  group-hover:text-primary">
+                {language === "ar" ? faq.question_ar : faq.question_en}
+              </span>
               <ChevronDown
                 className="transition-transform duration-300 group-data-[state=open]:rotate-180 text-white-500"
                 aria-hidden
@@ -66,7 +69,9 @@ export default function FAQ() {
                 "data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out"
               )}
             >
-              <span className="block leading-relaxed">{language === 'ar' ? faq.answer_ar : faq.answer_en}</span>
+              <span className="block leading-relaxed">
+                {language === "ar" ? faq.answer_ar : faq.answer_en}
+              </span>
             </Accordion.Content>
           </Accordion.Item>
         ))}
@@ -93,12 +98,12 @@ export default function FAQ() {
           }
         }
         .animate-fade-in {
-          animation: fade-in 0.4s cubic-bezier(0.4,0,0.2,1);
+          animation: fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .animate-fade-out {
-          animation: fade-out 0.3s cubic-bezier(0.4,0,0.2,1);
+          animation: fade-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
       `}</style>
     </div>
   );
-};
+}

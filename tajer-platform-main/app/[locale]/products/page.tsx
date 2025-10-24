@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CategoryList from "@/components/categories/category-list";
 import ProductCard from "@/components/common/CommonCard";
 import { PackageX, ChevronLeft, ChevronRight } from "lucide-react";
@@ -13,63 +13,63 @@ import { PackageX, ChevronLeft, ChevronRight } from "lucide-react";
 interface ProductsData {
   data: [
     {
-      id: number,
-      barcode: null,
-      name: string,
-      name_ar: string,
-      description: null,
-      description_ar: null,
-      unitType: "piece_only" | "pack_only" | "piece_or_pack" | string,
-      piecePrice: null,
-      packPrice: null,
-      piecesPerPack: null,
-      factoryId: number,
-      imageUrl: null,
-      image_public_id: null,
-      minOrderQuantity: null,
-      discountAmount: null,
-      discountType: "percentage" | "fixed_amount" | string,
+      id: number;
+      barcode: null;
+      name: string;
+      name_ar: string;
+      description: null;
+      description_ar: null;
+      unitType: "piece_only" | "pack_only" | "piece_or_pack" | string;
+      piecePrice: null;
+      packPrice: null;
+      piecesPerPack: null;
+      factoryId: number;
+      imageUrl: null;
+      image_public_id: null;
+      minOrderQuantity: null;
+      discountAmount: null;
+      discountType: "percentage" | "fixed_amount" | string;
     }
-  ],
+  ];
   meta: {
-    from: number,
-    to: number,
-    page: number,
-    last_page: number,
-    total: number,
-    per_page: number
-  }
+    from: number;
+    to: number;
+    page: number;
+    last_page: number;
+    total: number;
+    per_page: number;
+  };
 }
 
 interface CategoryData {
   data: [
     {
-      id: number,
-      name: string,
-      name_ar: string,
-      parentId: null,
-      imageUrl: null,
-      image_public_id: null,
+      id: number;
+      name: string;
+      name_ar: string;
+      parentId: null;
+      imageUrl: null;
+      image_public_id: null;
       children: [
         {
-          id: number,
-          name: string,
-          name_ar: string,
-          parentId: null,
-          imageUrl: null,
-          image_public_id: null
+          id: number;
+          name: string;
+          name_ar: string;
+          parentId: null;
+          imageUrl: null;
+          image_public_id: null;
         }
-      ]
+      ];
     }
-  ],
+  ];
   meta: {
-    from: number,
-    to: number,
-    page: number,
-    last_page: number,
-    total: number,
-    per_page: number
-  }
+    from: number;
+    to: number;
+    page: number;
+    last_page: number;
+    total: number;
+    per_page: number;
+  };
 }
 
 export default function SpecialOffers() {
@@ -77,8 +77,8 @@ export default function SpecialOffers() {
   const tc = useTranslations("common");
   const tp = useTranslations("specialProducts");
   const tb = useTranslations("buttons");
-  const tn = useTranslations('noProducts');
-  const to = useTranslations('orders');
+  const tn = useTranslations("noProducts");
+  const to = useTranslations("orders");
 
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -88,14 +88,14 @@ export default function SpecialOffers() {
   const [categoriesData, setCategoriesData] = useState<CategoryData>();
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("products");
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const pathname = usePathname();
-    
-    useEffect(() => {
-      const segments = pathname.split("/").filter(Boolean);
-      const lang = segments[0] || 'en';
-      setLanguage(lang);
-    }, [pathname]);
+
+  useEffect(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0] || "en";
+    setLanguage(lang);
+  }, [pathname]);
   const fetchProducts = async (pageNum: number = 1) => {
     try {
       setLoading(true);
@@ -107,11 +107,12 @@ export default function SpecialOffers() {
         setProductsData(json);
         setPage(pageNum);
       } else {
-        toast.error('something went wrong please try to show more');
+        toast.error("something went wrong please try to show more");
       }
     } catch (err) {
       console.error("something went wrong", err);
-      const errorMsg = t("errorMessage") || "something went wrong, try again later please.";
+      const errorMsg =
+        t("errorMessage") || "something went wrong, try again later please.";
       setErrorMessage(errorMsg);
       toast.error(errorMessage);
     } finally {
@@ -128,7 +129,8 @@ export default function SpecialOffers() {
       setCategoriesData(json);
     } catch (err) {
       console.error("something went wrong", err);
-      const errorMsg = t("errorMessage") || "something went wrong, try again later please.";
+      const errorMsg =
+        t("errorMessage") || "something went wrong, try again later please.";
       setErrorMessage(errorMsg);
       toast.error(errorMsg);
     }
@@ -153,12 +155,16 @@ export default function SpecialOffers() {
     const range = [];
     const rangeWithDots = [];
 
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(lastPage - 1, currentPage + delta); i++) {
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(lastPage - 1, currentPage + delta);
+      i++
+    ) {
       range.push(i);
     }
 
     if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
+      rangeWithDots.push(1, "...");
     } else {
       rangeWithDots.push(1);
     }
@@ -166,7 +172,7 @@ export default function SpecialOffers() {
     rangeWithDots.push(...range);
 
     if (currentPage + delta < lastPage - 1) {
-      rangeWithDots.push('...', lastPage);
+      rangeWithDots.push("...", lastPage);
     } else {
       rangeWithDots.push(lastPage);
     }
@@ -195,24 +201,28 @@ export default function SpecialOffers() {
             <PackageX className="w-20 h-20 text-muted-foreground" />
           </div>
           <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
-            {tn('title') || "لا توجد أي تصنيفات أو منتجات بهذا الاسم"}
+            {tn("title") || "لا توجد أي تصنيفات أو منتجات بهذا الاسم"}
           </h2>
           <p className="mt-2 text-muted-foreground text-center max-w-md">
-            {tn('subTitle') || "لا توجد أي تصنيفات أو منتجات بهذا الاسم جرب البحث بكلمة مختلفة مثل: حليب"}
+            {tn("subTitle") ||
+              "لا توجد أي تصنيفات أو منتجات بهذا الاسم جرب البحث بكلمة مختلفة مثل: حليب"}
           </p>
         </div>
       </section>
     );
-  };
+  }
   if (hasProducts && !hasCategories) {
     return (
       <section className="py-12 rounded-lg">
-        <h1 className="text-2xl mr-5 font-bold mb-6"> {tc('searchFor')} :{searchValue}</h1>
-        <Card>
-          <CardContent className="p-6">
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+        <h1 className="text-2xl font-bold mr-5 ml-5 mb-6">
+          {" "}
+          {tc("searchFor")} :{searchValue}
+        </h1>
+        <Card className="border-0">
+          <CardContent className="p-6 border-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {productsData.data.map((product) => (
-                <ProductCard 
+                <ProductCard
                   idx={product.id}
                   product={product}
                   key={product.id}
@@ -224,12 +234,12 @@ export default function SpecialOffers() {
                 />
               ))}
             </div>
-            
+
             {/* Pagination */}
             {productsData.meta.last_page === 0 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
                 <div className="text-sm text-muted-foreground">
-                  {to('page')} {page} {to('of')} {productsData.meta.last_page}
+                  {to("page")} {page} {to("of")} {productsData.meta.last_page}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -240,13 +250,15 @@ export default function SpecialOffers() {
                     className="flex items-center gap-1"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    {to('previous')}
+                    {to("previous")}
                   </Button>
 
                   <div className="flex gap-1 mx-2">
-                    {getPageNumbers().map((pageNum, index) => (
-                      pageNum === '...' ? (
-                        <span key={`dots-${index}`} className="px-2 py-1">...</span>
+                    {getPageNumbers().map((pageNum, index) =>
+                      pageNum === "..." ? (
+                        <span key={`dots-${index}`} className="px-2 py-1">
+                          ...
+                        </span>
                       ) : (
                         <Button
                           key={pageNum}
@@ -258,7 +270,7 @@ export default function SpecialOffers() {
                           {pageNum}
                         </Button>
                       )
-                    ))}
+                    )}
                   </div>
                   <Button
                     variant="outline"
@@ -267,7 +279,7 @@ export default function SpecialOffers() {
                     disabled={page === productsData.meta.last_page}
                     className="flex items-center gap-1"
                   >
-                    {to('next')}
+                    {to("next")}
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -282,7 +294,9 @@ export default function SpecialOffers() {
   if (!hasProducts && hasCategories) {
     return (
       <section className="py-12 rounded-lg">
-        <h1 className="text-2xl font-bold mr-5 mb-6">{tc('searchFor')} : {searchValue}</h1>
+        <h1 className="text-2xl font-bold mr-5 ml-5 mb-6">
+          {tc("searchFor")} : {searchValue}
+        </h1>
         <CategoryList search={String(searchValue)} />
       </section>
     );
@@ -290,12 +304,20 @@ export default function SpecialOffers() {
 
   return (
     <section className="py-12 rounded-lg p-5">
-      <h1 className="text-2xl font-bold mb-6"> {tc('searchFor')} :{searchValue}</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {" "}
+        {tc("searchFor")} :{searchValue}
+      </h1>
 
-        <Tabs defaultValue="categories" value={activeTab} onValueChange={setActiveTab} className="mb-8">
+      <Tabs
+        defaultValue="categories"
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="mb-8"
+      >
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="categories">{t('tabsCategories')}</TabsTrigger>
-          <TabsTrigger value="products">{t('tabsProducts')}</TabsTrigger>
+          <TabsTrigger value="categories">{t("tabsCategories")}</TabsTrigger>
+          <TabsTrigger value="products">{t("tabsProducts")}</TabsTrigger>
         </TabsList>
         <TabsContent value="categories">
           <CategoryList search={String(searchValue)} />
@@ -303,9 +325,12 @@ export default function SpecialOffers() {
         <TabsContent value="products">
           <Card>
             <CardContent className="p-6">
-              <div dir={language === 'ar' ? 'rtl' : 'ltr'} className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+              <div
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              >
                 {productsData?.data.map((product) => (
-                  <ProductCard 
+                  <ProductCard
                     idx={product.id}
                     product={product}
                     key={product.id}
@@ -317,60 +342,65 @@ export default function SpecialOffers() {
                   />
                 ))}
               </div>
-              
-              {productsData?.meta.last_page && productsData.meta.last_page === 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-                  <div className="text-sm text-muted-foreground">
-                    {to('page')} {page} {to('of')} {productsData.meta.last_page}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(page - 1)}
-                      disabled={page === 1}
-                      className="flex items-center gap-1"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      {to('previous')}
-                    </Button>
 
-                    <div className="flex gap-1 mx-2">
-                      {getPageNumbers().map((pageNum, index) => (
-                        pageNum === '...' ? (
-                          <span key={`dots-${index}`} className="px-2 py-1">...</span>
-                        ) : (
-                          <Button
-                            key={pageNum}
-                            variant={page === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handlePageChange(pageNum as number)}
-                            className="min-w-[40px]"
-                          >
-                            {pageNum}
-                          </Button>
-                        )
-                      ))}
+              {productsData?.meta.last_page &&
+                productsData.meta.last_page === 0 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                    <div className="text-sm text-muted-foreground">
+                      {to("page")} {page} {to("of")}{" "}
+                      {productsData.meta.last_page}
                     </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                        className="flex items-center gap-1"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        {to("previous")}
+                      </Button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(page + 1)}
-                      disabled={page === productsData.meta.last_page}
-                      className="flex items-center gap-1"
-                    >
-                      {to('next')}
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
+                      <div className="flex gap-1 mx-2">
+                        {getPageNumbers().map((pageNum, index) =>
+                          pageNum === "..." ? (
+                            <span key={`dots-${index}`} className="px-2 py-1">
+                              ...
+                            </span>
+                          ) : (
+                            <Button
+                              key={pageNum}
+                              variant={page === pageNum ? "default" : "outline"}
+                              size="sm"
+                              onClick={() =>
+                                handlePageChange(pageNum as number)
+                              }
+                              className="min-w-[40px]"
+                            >
+                              {pageNum}
+                            </Button>
+                          )
+                        )}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === productsData.meta.last_page}
+                        className="flex items-center gap-1"
+                      >
+                        {to("next")}
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </CardContent>
           </Card>
         </TabsContent>
-        </Tabs>
-    
+      </Tabs>
     </section>
   );
-};
+}

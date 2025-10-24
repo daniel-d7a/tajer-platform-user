@@ -1,18 +1,18 @@
 "use client";
-import { Download, X, FileText, Table } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
+import { Download, X, FileText, Table } from "lucide-react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import ImageUpScale from "../ImageUpScale";
-import { Button } from '../ui/button';
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface Product {
   id: number;
@@ -33,7 +33,7 @@ interface Product {
 interface Item {
   id: number;
   product: Product;
-  quantity: number
+  quantity: number;
 }
 
 const statusColor: Record<string, string> = {
@@ -57,20 +57,21 @@ interface OrderData {
     text_id: string;
   };
   items: Item[];
-};
+}
 
 interface OpenOrderProps {
   Id: number;
   text_id: string;
   onClose: () => void;
-};
+}
 
 const calculateDiscountedPrice = (product: Product): number => {
   const originalPrice = product.piecePrice;
-  
-  if (!product.discountAmount || product.discountAmount <= 0) return originalPrice;
-  
-  if (product.discountType === 'percentage') {
+
+  if (!product.discountAmount || product.discountAmount <= 0)
+    return originalPrice;
+
+  if (product.discountType === "percentage") {
     return originalPrice * (1 - product.discountAmount / 100);
   } else {
     return Math.max(0, originalPrice - product.discountAmount);
@@ -78,63 +79,67 @@ const calculateDiscountedPrice = (product: Product): number => {
 };
 
 const isProductOnSale = (product: Product): boolean => {
-  return product.isOnSale || (product.discountAmount && product.discountAmount > 0) || false;
+  return (
+    product.isOnSale ||
+    (product.discountAmount && product.discountAmount > 0) ||
+    false
+  );
 };
 
 export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
   const [data, setData] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [downloadLoading, setDownloadLoading] = useState(false);
-  const [downloadFormat, setDownloadFormat] = useState<'pdf' | 'excel'>('pdf');
-  
-  const tod = useTranslations('orderDetails');
-  const tc = useTranslations('common');
-  const [language, setLanguage] = useState('en');
+  const [downloadFormat, setDownloadFormat] = useState<"pdf" | "excel">("pdf");
+
+  const tod = useTranslations("orderDetails");
+  const tc = useTranslations("common");
+  const [language, setLanguage] = useState("en");
   const pathname = usePathname();
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0]; 
+    const lang = segments[0];
     setLanguage(lang);
   }, [pathname]);
 
-  const to = useTranslations('orders');
+  const to = useTranslations("orders");
 
   const download = async () => {
     try {
       setDownloadLoading(true);
-      const endpoint = downloadFormat === 'pdf' 
-        ? `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/${Id}/pdf`
-        : `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/${Id}/excel`;
-      
+      const endpoint =
+        downloadFormat === "pdf"
+          ? `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/${Id}/pdf`
+          : `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/${Id}/excel`;
+
       const response = await fetch(endpoint, {
-        credentials: 'include'
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Download failed');
+        throw new Error("Download failed");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      
-      const extension = downloadFormat === 'pdf' ? 'pdf' : 'xlsx';
+
+      const extension = downloadFormat === "pdf" ? "pdf" : "xlsx";
       const filename = `order-${text_id}.${extension}`;
       link.download = filename;
-      
+
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
     } catch (error) {
-      console.error('Download error:', error);
-      setErrorMessage(tod('downloadError'));
+      console.error("Download error:", error);
+      setErrorMessage(tod("downloadError"));
     } finally {
       setDownloadLoading(false);
     }
@@ -144,20 +149,20 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
     try {
       const response = await fetch(
         `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/${Id}`,
-        { credentials: 'include' }
+        { credentials: "include" }
       );
       const res = await response.json();
       if (!response.ok) {
-        setErrorMessage(tod('errorMessage'));
+        setErrorMessage(tod("errorMessage"));
         setData(null);
       } else {
         setData(res.data || null);
-        setErrorMessage('');
+        setErrorMessage("");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
       setData(null);
-      setErrorMessage(tod('errorMessage'));
+      setErrorMessage(tod("errorMessage"));
     } finally {
       setLoading(false);
     }
@@ -170,23 +175,26 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
 
   const formatOptions = [
     {
-      value: 'pdf' as const,
-      label: language === 'ar' ? 'PDF' : 'PDF',
-      icon: <FileText className="w-4 h-4" />
+      value: "pdf" as const,
+      label: language === "ar" ? "PDF" : "PDF",
+      icon: <FileText className="w-4 h-4" />,
     },
     {
-      value: 'excel' as const,
-      label: language === 'ar' ? 'Excel' : 'Excel',
-      icon: <Table className="w-4 h-4" />
-    }
+      value: "excel" as const,
+      label: language === "ar" ? "Excel" : "Excel",
+      icon: <Table className="w-4 h-4" />,
+    },
   ];
 
   return (
     <>
       <div className="fixed inset-0 bg-black/80 z-50">
-        <div className="rounded-xl shadow-lg bg-background w-[90%] max-w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div
+          className="rounded-xl shadow-lg bg-background w-[90%] max-w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          dir={language === "ar" ? "rtl" : "ltr"}
+        >
           {errorMessage && (
-            <div className='flex items-center w-full justify-between'>
+            <div className="flex items-center w-full justify-between">
               <p className="text-red-600 font-bold">{errorMessage}</p>
               <button onClick={onClose}>
                 <X />
@@ -194,48 +202,71 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
             </div>
           )}
           {loading ? (
-            <h2>{tod('loading')}</h2>
+            <h2>{tod("loading")}</h2>
           ) : data ? (
-            <div className='flex flex-col gap-5' dir={language === 'ar' ? 'rtl' : 'ltr'}>
-              <div className='flex items-center justify-between'>
-                <h2 className='text-sm lg:text-xl'>{tod('orderdetails')} : #{text_id}</h2>
+            <div
+              className="flex flex-col gap-5"
+              dir={language === "ar" ? "rtl" : "ltr"}
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm lg:text-xl">
+                  {tod("orderdetails")} : #{text_id}
+                </h2>
                 <button onClick={onClose}>
                   <X />
                 </button>
               </div>
-              <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
-                <p className='text-right'>{tod('commercialName')} : {data.order.merchant?.commercialName ?? "-"}</p>
-                <p className={'text-right flex flex-row gap-2 ' + (language === 'ar' ? 'justify-start' : 'justify-end')}>
-                  {tod('status')}: 
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <p className="text-right">
+                  {tod("commercialName")} :{" "}
+                  {data.order.merchant?.commercialName ?? "-"}
+                </p>
+                <p
+                  className={
+                    "text-right flex flex-row gap-2 " +
+                    (language === "ar" ? "justify-start" : "justify-end")
+                  }
+                >
+                  {tod("status")}:
                   <p className={statusColor[data.order.status] || ""}>
-                    {
-                      data.order.status === 'OUT_FOR_DELIVERY' ? to('status.OUT_FOR_DELIVERY')
-                      : data.order.status === 'PENDING' ? to('status.PENDING')
-                      : data.order.status === 'PROCESSING' ? to('status.PROCESSING')
-                      : data.order.status === 'DELIVERED' ? to('status.Delivered')
-                      : data.order.status
-                    }  
+                    {data.order.status === "OUT_FOR_DELIVERY"
+                      ? to("status.OUT_FOR_DELIVERY")
+                      : data.order.status === "PENDING"
+                      ? to("status.PENDING")
+                      : data.order.status === "PROCESSING"
+                      ? to("status.PROCESSING")
+                      : data.order.status === "DELIVERED"
+                      ? to("status.Delivered")
+                      : data.order.status}
                   </p>
                 </p>
-                <p className='text-right'>{tod('value')} : {data.order.totalValue?.toFixed(2)} <strong>{tc('coins')}</strong></p>
-                <p className='text-right'>
-                  {tod('orderDate')} : {
-                    data.order.createdAt
-                      ? new Date(data.order.createdAt).toLocaleDateString("ar-EG").replace(/\//g, '-')
-                      : tc('noData')
-                  }
+                <p className="text-right">
+                  {tod("value")} : {data.order.totalValue?.toFixed(2)}{" "}
+                  <strong>{tc("coins")}</strong>
                 </p>
-                <p className='text-right'>{tod('orderProducts')} : {data.items?.length ?? 0}</p>
+                <p className="text-right">
+                  {tod("orderDate")} :{" "}
+                  {data.order.createdAt
+                    ? new Date(data.order.createdAt)
+                        .toLocaleDateString("ar-EG")
+                        .replace(/\//g, "-")
+                    : tc("noData")}
+                </p>
+                <p className="text-right">
+                  {tod("orderProducts")} : {data.items?.length ?? 0}
+                </p>
               </div>
-              <div className='border border-black-100 rounded-md p-5'>
-                <h2 className='text-right'>{tod('Demandproducts')}</h2>
-                <div className='overflow-auto h-full'>
+              <div className="border border-black-100 rounded-md p-5">
+                <h2 className="text-right">{tod("Demandproducts")}</h2>
+                <div className="overflow-auto h-full">
                   {data.items && data.items.length > 0 ? (
                     data.items.map((item) => {
                       const isOnSale = isProductOnSale(item.product);
                       const originalPrice = item.product.piecePrice;
-                      const discountedPrice = calculateDiscountedPrice(item.product);
-                      
+                      const discountedPrice = calculateDiscountedPrice(
+                        item.product
+                      );
+
                       return (
                         <div
                           key={item.id}
@@ -246,24 +277,30 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
                               <Image
                                 src={item.product.imageUrl}
                                 alt={item.product.name}
-                                onClick={() =>{
+                                onClick={() => {
                                   setOpen(true);
-                                  setSelectedImage(item.product.imageUrl)
+                                  setSelectedImage(item.product.imageUrl);
                                 }}
                                 fill
                                 className="object-cover"
                               />
                               {isOnSale && (
                                 <div className="absolute top-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-bl-lg">
-                                  {item.product.discountType === 'percentage' 
-                                    ? `${item.product.discountAmount}% ${tc('offer')}`
-                                    : `${item.product.discountAmount} ${tc('coins')} ${tc('offer')}`}
+                                  {item.product.discountType === "percentage"
+                                    ? `${item.product.discountAmount}% ${tc(
+                                        "offer"
+                                      )}`
+                                    : `${item.product.discountAmount} ${tc(
+                                        "coins"
+                                      )} ${tc("offer")}`}
                                 </div>
                               )}
                             </div>
                             <div className="flex flex-col items-center sm:items-start gap-2">
                               <p className="text-center sm:text-right">
-                                {language === "en" ? item.product.name : item.product.name_ar}
+                                {language === "en"
+                                  ? item.product.name
+                                  : item.product.name_ar}
                               </p>
                               <p className="text-center sm:text-right text-sm opacity-70">
                                 {language === "en"
@@ -286,31 +323,38 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
                             ) : (
                               <p>
                                 {originalPrice.toFixed(2)} {tc("coins")}
-                                
                               </p>
                             )}
-                            <p> {tod('quantity') + " : "+item.quantity}</p>
+                            <p> {tod("quantity") + " : " + item.quantity}</p>
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                    <p className="text-center text-muted-foreground py-5">{tod('noProducts')}</p>
+                    <p className="text-center text-muted-foreground py-5">
+                      {tod("noProducts")}
+                    </p>
                   )}
                 </div>
-                
+
                 {/* Download Section */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 mt-5">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">
-                      {language === 'ar' ? 'نوع الملف:' : 'File Format:'}
+                      {language === "ar" ? "نوع الملف:" : "File Format:"}
                     </span>
-                    <Select 
-                      value={downloadFormat} 
-                      onValueChange={(value: 'pdf' | 'excel') => setDownloadFormat(value)}
+                    <Select
+                      value={downloadFormat}
+                      onValueChange={(value: "pdf" | "excel") =>
+                        setDownloadFormat(value)
+                      }
                     >
                       <SelectTrigger className="w-[130px] border rounded-md px-2 py-1 text-sm h-9">
-                        <SelectValue placeholder={language === 'ar' ? 'اختر النوع' : 'Select format'} />
+                        <SelectValue
+                          placeholder={
+                            language === "ar" ? "اختر النوع" : "Select format"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {formatOptions.map((option) => (
@@ -324,21 +368,23 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
-                  <Button 
-                    onClick={download} 
+
+                  <Button
+                    onClick={download}
                     disabled={downloadLoading}
                     className="bg-primary hover:bg-primary/90 flex items-center gap-2"
                   >
                     {downloadLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {language === 'ar' ? 'جاري التحميل...' : 'Downloading...'}
+                        {language === "ar"
+                          ? "جاري التحميل..."
+                          : "Downloading..."}
                       </>
                     ) : (
                       <>
                         <Download className="w-4 h-4" />
-                        {language === 'ar' ? 'تحميل' : 'Download'}
+                        {language === "ar" ? "تحميل" : "Download"}
                       </>
                     )}
                   </Button>
@@ -347,14 +393,18 @@ export default function OpenOrder({ Id, onClose, text_id }: OpenOrderProps) {
             </div>
           ) : (
             <div className="text-center text-red-600 py-8 font-bold">
-              {errorMessage || tod('errorMessage')}
+              {errorMessage || tod("errorMessage")}
             </div>
           )}
         </div>
       </div>
       {selectedImage && open && (
-        <ImageUpScale alt='picture' src={selectedImage} onClose={() => setOpen(false)}/>
+        <ImageUpScale
+          alt="picture"
+          src={selectedImage}
+          onClose={() => setOpen(false)}
+        />
       )}
     </>
   );
-};
+}

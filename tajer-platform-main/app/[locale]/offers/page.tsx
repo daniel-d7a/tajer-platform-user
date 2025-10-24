@@ -1,16 +1,23 @@
 "use client";
-import {Link} from '@/i18n/navigation';
-import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  Search,
+  Clock,
+  Trash2,
+  Package,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
+import ProductCard from "@/components/common/CommonCard";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+
 type Offer = {
   id: number;
   name: string;
@@ -31,80 +38,487 @@ type Offer = {
   };
 };
 
+interface Suggestion {
+  id: string;
+  name: string;
+  name_ar: string;
+  imageUrl?: string;
+}
+
+interface ApiResponse {
+  data: Offer[];
+  meta: {
+    total: number;
+    page: number;
+    per_page: number;
+    last_page: number;
+    limit: number;
+    offset: number;
+    from: number;
+    to: number;
+  };
+}
+
 export default function SpecialOffers() {
   const t = useTranslations("home");
   const tc = useTranslations("common");
+  const to = useTranslations("orders");
+  const th = useTranslations("header");
+
   const router = useRouter();
-  const [searchValue,setSearchValue] = useState('')
-  const [offersData, setOffersData] = useState<Offer[]>([]);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("search") || "";
+  const page = Number(searchParams.get("page")) || 1;
+
+  const [searchValue, setSearchValue] = useState(search);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+
+  const [offersData, setOffersData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [language, setLanguage] = useState('en');
-  const pathname = usePathname();
-    const searchParams = useSearchParams();
-  
-  const search = searchParams.get("search")
-  
+  const [language, setLanguage] = useState("en");
+
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0] || 'en'; 
+    const lang = segments[0] || "en";
     setLanguage(lang);
   }, [pathname]);
-   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(`${pathname}?search=${encodeURIComponent(searchValue)}&page=1`);
+
+  const isRTL = language === "ar";
+
+  useEffect(() => {
+    const stored = localStorage.getItem("recentOfferSearches");
+    if (stored) {
+      try {
+        setRecentSearches(JSON.parse(stored));
+      } catch (error) {
+        console.error("Error parsing recent offer searches:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+        setActiveSuggestionIndex(-1);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showSuggestions) return;
+
+      const totalItems = suggestions.length + recentSearches.length;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveSuggestionIndex((prev) =>
+          prev < totalItems - 1 ? prev + 1 : 0
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveSuggestionIndex((prev) =>
+          prev > 0 ? prev - 1 : totalItems - 1
+        );
+      } else if (e.key === "Tab" && suggestions.length > 0) {
+        e.preventDefault();
+        const firstSuggestion = suggestions[0];
+        setSearchValue(getSuggestionName(firstSuggestion));
+        setActiveSuggestionIndex(0);
+      } else if (e.key === "Enter" && activeSuggestionIndex >= 0) {
+        e.preventDefault();
+        handleSuggestionSelect(activeSuggestionIndex);
+      } else if (e.key === "Escape") {
+        setShowSuggestions(false);
+        setActiveSuggestionIndex(-1);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showSuggestions, suggestions, recentSearches, activeSuggestionIndex]);
+
+  const fetchSuggestions = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    setIsLoadingSuggestions(true);
+    try {
+      const response = await fetch(
+        `https://tajer-backend.tajerplatform.workers.dev/api/public/offers?categoryId=&search=${encodeURIComponent(
+          query
+        )}&page=1&limit=5`
+      );
+
+      if (response.ok) {
+        const data: ApiResponse = await response.json();
+
+        if (data.data && data.data.length > 0) {
+          const offerSuggestions: Suggestion[] = data.data.map(
+            (offer: Offer) => ({
+              id: offer.id.toString(),
+              name: offer.name,
+              name_ar: offer.name_ar,
+              imageUrl: offer.imageUrl,
+            })
+          );
+          setSuggestions(offerSuggestions);
+        } else {
+          setSuggestions([]);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching offer suggestions:", error);
+      setSuggestions([]);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (searchValue.trim()) {
+      searchTimeoutRef.current = setTimeout(() => {
+        fetchSuggestions(searchValue);
+      }, 1000);
+    } else {
+      setSuggestions([]);
+    }
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchValue, fetchSuggestions]);
+
+  const handleSuggestionSelect = (index: number) => {
+    if (index < suggestions.length) {
+      const suggestion = suggestions[index];
+      handleSuggestionClick(getSuggestionName(suggestion));
+    } else {
+      const recentIndex = index - suggestions.length;
+      handleSuggestionClick(recentSearches[recentIndex]);
+    }
   };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedValue = searchValue.trim();
+
+    if (!trimmedValue) {
+      setShowSuggestions(false);
+      router.push(`${pathname}?page=1`);
+      return;
+    }
+
+    const updated = [
+      trimmedValue,
+      ...recentSearches.filter(
+        (item) => item.toLowerCase() !== trimmedValue.toLowerCase()
+      ),
+    ].slice(0, 5);
+
+    setRecentSearches(updated);
+    localStorage.setItem("recentOfferSearches", JSON.stringify(updated));
+    setShowSuggestions(false);
+    setSuggestions([]);
+    setActiveSuggestionIndex(-1);
+    router.push(
+      `${pathname}?search=${encodeURIComponent(trimmedValue)}&page=1`
+    );
+  };
+
+  const handleSuggestionClick = (value: string) => {
+    setSearchValue(value);
+    setShowSuggestions(false);
+    setActiveSuggestionIndex(-1);
+
+    const updated = [
+      value,
+      ...recentSearches.filter(
+        (item) => item.toLowerCase() !== value.toLowerCase()
+      ),
+    ].slice(0, 5);
+
+    setRecentSearches(updated);
+    localStorage.setItem("recentOfferSearches", JSON.stringify(updated));
+
+    router.push(`${pathname}?search=${encodeURIComponent(value)}&page=1`);
+  };
+
+  const handleDeleteSearch = (value: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = recentSearches.filter((item) => item !== value);
+    setRecentSearches(updated);
+    localStorage.setItem("recentOfferSearches", JSON.stringify(updated));
+  };
+
+  const highlightMatch = (text: string, query: string) => {
+    if (!query.trim()) return text;
+
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    const index = lowerText.indexOf(lowerQuery);
+
+    if (index === -1) return text;
+
+    const before = text.slice(0, index);
+    const match = text.slice(index, index + query.length);
+    const after = text.slice(index + query.length);
+
+    return (
+      <>
+        {before}
+        <strong className="font-semibold text-primary">{match}</strong>
+        {after}
+      </>
+    );
+  };
+
+  const getSuggestionName = (suggestion: Suggestion) => {
+    return isRTL && suggestion.name_ar ? suggestion.name_ar : suggestion.name;
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const getPageNumbers = () => {
+    if (!offersData?.meta.last_page) return [];
+
+    const currentPage = page;
+    const lastPage = offersData.meta.last_page;
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (let i = 1; i <= lastPage; i++) {
+      if (
+        i === 1 ||
+        i === lastPage ||
+        (i >= currentPage - delta && i <= currentPage + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    let prev = 0;
+    for (const i of range) {
+      if (prev) {
+        if (i - prev === 2) {
+          rangeWithDots.push(prev + 1);
+        } else if (i - prev !== 1) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      prev = i;
+    }
+
+    return rangeWithDots;
+  };
+
   useEffect(() => {
     const fetchOffers = async () => {
       try {
+        setLoading(true);
         const res = await fetch(
-          `https://tajer-backend.tajerplatform.workers.dev/api/public/offers?categoryId=&search=${search || ''}&page=&limit=`
+          `https://tajer-backend.tajerplatform.workers.dev/api/public/offers?categoryId=&search=${
+            search || ""
+          }&page=${page}&limit=8`
         );
-        const json = await res.json();
-        setOffersData(json.data); 
+        const json: ApiResponse = await res.json();
+        setOffersData(json);
       } catch (err) {
         console.error("something went wrong", err);
-        setErrorMessage(t('errorMessage') || "something went wrong, try again later please.");
+        setErrorMessage(
+          t("errorMessage") || "something went wrong, try again later please."
+        );
       } finally {
         setLoading(false);
       }
     };
     fetchOffers();
-  }, [t,search]);
-  const calculateDiscountedPrice = (offer: Offer, isPack: boolean = false) => {
-    const originalPrice = isPack ? offer.packPrice : offer.piecePrice;
-    
-    if (offer.discountAmount <= 0) return originalPrice;
-    
-    if (offer.discountType === 'percentage') {
-      return originalPrice * (1 - offer.discountAmount / 100);
-    } else {
-      return Math.max(0, originalPrice - offer.discountAmount);
-    }
-  };
+  }, [t, search, page]);
+
+  const tp = useTranslations("specialProducts");
+  const tb = useTranslations("buttons");
 
   return (
-    <section className="py-12 bg-muted/30 rounded-lg  mx-auto p-6">
-      
+    <section className="py-12   mx-auto p-6">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{t("specialOffers")}</h2>
         <p className="mt-2 text-muted-foreground">{t("specialOffersDesc")}</p>
       </div>
-         <form onSubmit={handleSearch} className="relative mb-6 ">
-          <div>
-                  <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
-                        placeholder={t('searchPlaceholder')}
-                        className="pr-10"
-                      />
-            </div>
 
-                </form>
+      <div ref={searchRef} className="relative mb-6 mx-auto">
+        <form onSubmit={handleSearch}>
+          <div className="relative">
+            <Search
+              className={`absolute ${
+                isRTL ? "left-3" : "right-3"
+              } top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground`}
+            />
+            <Input
+              ref={inputRef}
+              value={searchValue}
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+                setShowSuggestions(true);
+                setActiveSuggestionIndex(-1);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder={t("searchPlaceholder")}
+              className={isRTL ? "pl-10" : "pr-10"}
+            />
+          </div>
+        </form>
+
+        {showSuggestions &&
+          (suggestions.length > 0 ||
+            recentSearches.length > 0 ||
+            isLoadingSuggestions) && (
+            <div
+              ref={suggestionsRef}
+              className="absolute top-full mt-1 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
+            >
+              {suggestions.length > 0 && (
+                <>
+                  <div className="p-2 border-b border-border">
+                    <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <Package className="h-3 w-3" />
+                      {th("suggestions")}
+                    </p>
+                  </div>
+                  <div className="py-1">
+                    {suggestions.map((suggestion, idx) => (
+                      <button
+                        key={suggestion.id}
+                        type="button"
+                        onClick={() =>
+                          handleSuggestionClick(getSuggestionName(suggestion))
+                        }
+                        className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex items-center gap-3 ${
+                          isRTL ? "text-right" : "text-left"
+                        } ${
+                          activeSuggestionIndex === idx ? "bg-muted/50" : ""
+                        }`}
+                      >
+                        {suggestion.imageUrl ? (
+                          <Image
+                            src={suggestion.imageUrl}
+                            alt={getSuggestionName(suggestion)}
+                            width={32}
+                            height={32}
+                            className="w-8 h-8 rounded object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <Package className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className="truncate">
+                            {highlightMatch(
+                              getSuggestionName(suggestion),
+                              searchValue
+                            )}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {suggestions.length > 0 && recentSearches.length > 0 && (
+                <div className="border-t border-border my-1" />
+              )}
+
+              {recentSearches.length > 0 && (
+                <>
+                  <div className="p-2 border-b border-border">
+                    <p className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                      <Clock className="h-3 w-3" />
+                      {th("recentSearches")}
+                    </p>
+                  </div>
+                  <div className="py-1">
+                    {recentSearches.map((item, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSuggestionClick(item)}
+                        className={`w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors flex justify-between items-center group ${
+                          activeSuggestionIndex === suggestions.length + idx
+                            ? "bg-muted/50"
+                            : ""
+                        }`}
+                      >
+                        <span
+                          className={`flex items-center gap-3 ${
+                            isRTL ? "flex-row-reverse" : ""
+                          }`}
+                        >
+                          <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <span>{highlightMatch(item, searchValue)}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteSearch(item, e)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-red-500"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {isLoadingSuggestions && (
+                <div className="p-3">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+      </div>
+
       <div className="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
-          Array.from({ length: 4 }).map((_, idx) => (
+          Array.from({ length: 8 }).map((_, idx) => (
             <Card key={idx} className="animate-pulse h-full p-4">
               <Skeleton className="h-48 w-full" />
               <CardContent className="p-4 flex-grow">
@@ -118,126 +532,78 @@ export default function SpecialOffers() {
               </CardFooter>
             </Card>
           ))
-        ) : offersData.length > 0 ? (
-          offersData.map((offer) => (
-            <Link href={`products/${offer.id}`} key={offer.id} className="w-full h-full">
-              <Card className="overflow-hidden flex flex-col h-full rounded-2xl hover:scale-105 duration-300 transition-transform">
-                <div className="relative pt-[100%]">
-                  <Badge className="absolute top-2 right-2 bg-primary z-10">
-                    {offer.discountType === 'percentage' 
-                      ? `${offer.discountAmount}% ${tc('offer')}` 
-                      : `${offer.discountAmount} ${tc('coins')} ${tc('offer')}`}
-                  </Badge>
-                  <Image
-                    src={offer.imageUrl || "/placeholder.svg"}
-                    alt={language === 'en' ? offer.name : offer.name_ar}
-                    fill
-                    className="object-cover absolute top-0 left-0"
-                  />
-                </div>
-                <CardContent className="p-4 flex-grow">
-                  <h3 className="font-semibold mb-1 line-clamp-2 text-xl">
-                    {language === 'en' ? offer.name : offer.name_ar}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {language === 'en' ? offer.factory.name : offer.factory.name_ar}
-                  </p>
-
-                  <div className="flex items-baseline mt-2">
-                    {offer.unitType === "pack_only" || offer.unitType === "piece_or_pack" ? (
-                      <div className="flex gap-2 flex-col w-full">
-                        <div className="flex items-center">
-                          <div className="flex items-center gap-2 w-full">
-                            {offer.discountAmount > 0 ? (
-                              <div className="flex gap-2">
-                                <span className="text-lg font-bold">
-                                  {calculateDiscountedPrice(offer, false).toFixed(2)} {tc('coins')}
-                                </span>
-                                <span className="line-through text-muted-foreground">
-                                  {offer.piecePrice.toFixed(2)} {tc('coins')}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-lg font-bold">
-                                {offer.piecePrice.toFixed(2)} {tc('coins')}
-                              </span>
-                            )}
-                            <span className="text-xs text-muted-foreground">
-                              /{language === 'en' ? offer.name : offer.name_ar}
-                            </span>
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-md w-[100%] mr-2 ">
-                            {t('PackPrice')}: {calculateDiscountedPrice(offer, true).toFixed(2)} {tc('coins')}
-                            {offer.discountAmount > 0 && (
-                              <span className="line-through text-muted-foreground ml-2">
-                                {offer.packPrice.toFixed(2)} {tc('coins')}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            {t('piecesPerPack')}: {offer.piecesPerPack}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 w-full">
-                        {offer.discountAmount > 0 ? (
-                          <div className="flex gap-2">
-                            <span className="text-lg font-bold">
-                              {calculateDiscountedPrice(offer).toFixed(2)} {tc('coins')}
-                            </span>
-                            <span className="line-through text-muted-foreground">
-                              {offer.piecePrice.toFixed(2)} {tc('coins')}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-lg font-bold">
-                            {offer.piecePrice.toFixed(2)} {tc('coins')}
-                          </span>
-                        )}
-                        <span className="text-xs text-muted-foreground">
-                          {tc('perPiece')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-2 mt-2">
-                    <span className="text-xs text-muted-foreground">
-                      {t('UnitType')}: {offer.unitType === "piece_only" 
-                        ? t('pieceOnly') 
-                        : offer.unitType === "pack_only" 
-                        ? t('packOnly') 
-                        : t('pieceOrPack')}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('minOrder')}: {offer.minOrderQuantity} {offer.unitType === "pack_only" ? t('packs') : t('pieces')}
-                  </p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 flex flex-col gap-4">
-                  <Button
-                    className="w-full text-white p-2.5 text-center cursor-pointer hover:bg-secondary duration-300"
-                  >
-                    <ShoppingCart className="h-4 w-4 ml-2" />
-                    {t('viewOffer')}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </Link>
+        ) : offersData?.data && offersData.data.length > 0 ? (
+          offersData.data.map((offer) => (
+            <ProductCard
+              key={offer.id}
+              idx={offer.id}
+              language={language}
+              product={offer}
+              type="productGrid"
+              t={tp}
+              tb={tb}
+              tc={tc}
+            />
           ))
         ) : (
           <div className="col-span-full text-center text-muted-foreground">
-            {t('noOffers')}
+            {t("noOffers")}
             {errorMessage && <p>{errorMessage}</p>}
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {offersData?.meta && offersData.meta.last_page > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+          <div className="text-sm text-muted-foreground">
+            {to("page")} {page} {to("of")} {offersData.meta.last_page}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="flex items-center gap-1"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {to("previous")}
+            </Button>
+
+            <div className="flex gap-1 mx-2">
+              {getPageNumbers().map((pageNum, index) =>
+                pageNum === "..." ? (
+                  <span key={`dots-${index}`} className="px-2 py-1">
+                    ...
+                  </span>
+                ) : (
+                  <Button
+                    key={pageNum}
+                    variant={page === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(pageNum as number)}
+                    className="min-w-[40px]"
+                  >
+                    {pageNum}
+                  </Button>
+                )
+              )}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === offersData.meta.last_page}
+              className="flex items-center gap-1"
+            >
+              {to("next")}
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </section>
   );
-};
+}

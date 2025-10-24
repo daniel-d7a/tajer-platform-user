@@ -40,7 +40,8 @@
     "previous": "Previous",
     "more": "More",
     "ExpiresAt": "Expires At",
-    "title" :"Tajr | Wholesale Market for Every Merchant"
+    "title" :"Tajr | Wholesale Market for Every Merchant",
+    "category": "Category"
   },
   "LocaleSwitcher": {
     "label": "Change Language",
@@ -57,7 +58,9 @@
     "searchPlaceholder" : "search here ...",
     "menu": "Menu",
     "RecentSearch" : "Recent Search ",
-    "businessName": "Business Name"
+    "businessName": "Business Name",
+    "recentSearches": "Recent Searches",
+  "suggestions": "Suggestions"
   },
   "notFound": {
     "title": "Page Not Found",

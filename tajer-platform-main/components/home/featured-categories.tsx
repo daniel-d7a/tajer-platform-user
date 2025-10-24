@@ -1,14 +1,16 @@
 "use client";
-import {Link} from '@/i18n/navigation';
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { Link } from "@/i18n/navigation";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Custom hook for one-time animation
-function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { threshold?: number }) {
+function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: {
+  threshold?: number;
+}) {
   const ref = useRef<T | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [inView, setInView] = useState(false);
@@ -26,9 +28,11 @@ function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { thres
       window.requestAnimationFrame(() => {
         if (!node) return;
         const rect = node.getBoundingClientRect();
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        const visible = rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
-        
+        const windowHeight =
+          window.innerHeight || document.documentElement.clientHeight;
+        const visible =
+          rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
+
         if (visible && !hasAnimated) {
           setInView(true);
           setHasAnimated(true);
@@ -40,7 +44,7 @@ function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { thres
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
@@ -67,7 +71,9 @@ function AnimatedCategoryCard({
   language: string;
   idx: number;
 }) {
-  const [cardRef, inView] = useOneTimeAnimation<HTMLDivElement>({ threshold: 0.16 });
+  const [cardRef, inView] = useOneTimeAnimation<HTMLDivElement>({
+    threshold: 0.16,
+  });
 
   return (
     <div
@@ -75,8 +81,8 @@ function AnimatedCategoryCard({
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0px)" : "translateY(60px)",
-        transition: inView 
-          ? "opacity 0.75s cubic-bezier(.4,.2,0,1), transform 0.75s cubic-bezier(.4,.2,0,1)" 
+        transition: inView
+          ? "opacity 0.75s cubic-bezier(.4,.2,0,1), transform 0.75s cubic-bezier(.4,.2,0,1)"
           : "none",
         transitionDelay: inView ? `${idx * 0.09}s` : "0s",
         willChange: inView ? "opacity, transform" : "auto",
@@ -86,7 +92,7 @@ function AnimatedCategoryCard({
       <Link href={`/categories/${category.id}`} className="block w-full">
         <div className="relative w-full h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden shadow-lg group hover:shadow-xl transition-all duration-500">
           <Image
-            src={category.imageUrl || '/coffee.jpg'}
+            src={category.imageUrl || "/coffee.jpg"}
             alt={category.name}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -94,11 +100,11 @@ function AnimatedCategoryCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          
+
           <div className="absolute inset-0 flex items-center justify-center text-center p-6">
             <div className="transform group-hover:scale-105 transition-transform duration-300">
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg mb-2">
-                {language === 'en' ? category.name : category.name_ar}
+                {language === "en" ? category.name : category.name_ar}
               </h3>
             </div>
           </div>
@@ -109,54 +115,54 @@ function AnimatedCategoryCard({
 }
 
 export default function FeaturedCategories() {
-  const t = useTranslations('home');
+  const t = useTranslations("home");
   const [data, setData] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const pathname = usePathname();
-  
+
   useEffect(() => {
     const segments = pathname.split("/").filter(Boolean);
-    const lang = segments[0]; 
-    setLanguage(lang)
+    const lang = segments[0];
+    setLanguage(lang);
   }, [pathname]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          'https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page='
+          "https://tajer-backend.tajerplatform.workers.dev/api/public/categories?limit=&page="
         );
         const res: { data: Category[] } = await response.json();
         setData(res.data);
-        setLoading(!response.ok)
+        setLoading(!response.ok);
       } catch {
-        setLoading(true)
-      } 
+        setLoading(true);
+      }
     };
     fetchData();
   }, []);
 
-  const cardsPerSlide = 1; 
+  const cardsPerSlide = 1;
   const totalSlides = Math.ceil(data.length / cardsPerSlide);
-  
+
   const nextSlide = useCallback(() => {
     setDirection(1);
-    setCurrentSlide(prev => (prev === totalSlides - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
   }, [totalSlides]);
 
   const prevSlide = useCallback(() => {
     setDirection(-1);
-    setCurrentSlide(prev => (prev === 0 ? totalSlides - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   }, [totalSlides]);
 
   const handleManualNavigation = (navigationFunction: () => void) => {
     setAutoPlay(false);
     navigationFunction();
-    
+
     setTimeout(() => {
       setAutoPlay(true);
     }, 10000);
@@ -168,13 +174,13 @@ export default function FeaturedCategories() {
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [autoPlay, data.length, nextSlide]);
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
+      x: direction > 0 ? "100%" : "-100%",
       opacity: 1,
     }),
     center: {
@@ -182,9 +188,9 @@ export default function FeaturedCategories() {
       opacity: 1,
     },
     exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
+      x: direction < 0 ? "100%" : "-100%",
       opacity: 1,
-    })
+    }),
   };
 
   const dotVariants = {
@@ -193,7 +199,7 @@ export default function FeaturedCategories() {
     },
     active: {
       scale: 1.2,
-    }
+    },
   };
 
   const slideGroups = [];
@@ -202,16 +208,19 @@ export default function FeaturedCategories() {
   }
 
   return (
-    <section dir='ltr' className="py-12 bg-gradient-to-b from-background to-muted/20 overflow-hidden">
+    <section
+      dir="ltr"
+      className="py-12 bg-gradient-to-b from-background to-muted/20 overflow-hidden"
+    >
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold ">
-          {t('featuredCategories')}
+          {t("featuredCategories")}
         </h2>
         <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
-          {t('featuredCategoriesDesc')}
+          {t("featuredCategoriesDesc")}
         </p>
       </div>
-      
+
       <div className="relative w-full">
         {data.length > cardsPerSlide && (
           <>
@@ -242,11 +251,11 @@ export default function FeaturedCategories() {
               animate="center"
               exit="exit"
               transition={{
-                x: { 
-                  type: "tween", 
+                x: {
+                  type: "tween",
                   ease: "easeInOut",
-                  duration: 0.4 
-                }
+                  duration: 0.4,
+                },
               }}
               className="w-full"
             >
@@ -277,15 +286,15 @@ export default function FeaturedCategories() {
                 initial="inactive"
                 animate={index === currentSlide ? "active" : "inactive"}
                 className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                  index === currentSlide 
-                    ? "bg-primary scale-110" 
+                  index === currentSlide
+                    ? "bg-primary scale-110"
                     : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
                 }`}
                 onClick={() => {
                   setAutoPlay(false);
                   setDirection(index > currentSlide ? 1 : -1);
                   setCurrentSlide(index);
-                  
+
                   setTimeout(() => {
                     setAutoPlay(true);
                   }, 10000);

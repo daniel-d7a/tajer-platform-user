@@ -1,33 +1,33 @@
-'use client';
-import {Link} from '@/i18n/navigation';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+"use client";
+import { Link } from "@/i18n/navigation";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function CallToAction() {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState("en");
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [callAction, setCallAction] = useState({
-    appImageUrl: '',
-    callToActionAr: '',
-    callToAction: '',
-    androidAppLink: '',
-    iosAppLink: '',
+    appImageUrl: "",
+    callToActionAr: "",
+    callToAction: "",
+    androidAppLink: "",
+    iosAppLink: "",
   });
 
   const fetchCallAction = async () => {
     try {
       const data = await fetch(
-        'https://tajer-backend.tajerplatform.workers.dev/api/admin/settings',
-        { credentials: 'include' }
+        "https://tajer-backend.tajerplatform.workers.dev/api/admin/settings",
+        { credentials: "include" }
       );
       const res = await data.json();
       setCallAction(res);
       if (data.ok) setLoading(false);
     } catch (error) {
-      console.error('Error fetching call to action data:', error);
+      console.error("Error fetching call to action data:", error);
     }
   };
 
@@ -36,8 +36,8 @@ export default function CallToAction() {
   }, []);
 
   useEffect(() => {
-    const segments = pathname.split('/').filter(Boolean);
-    const lang = segments[0] || 'en';
+    const segments = pathname.split("/").filter(Boolean);
+    const lang = segments[0] || "en";
     setLanguage(lang);
   }, [pathname]);
 
@@ -50,7 +50,7 @@ export default function CallToAction() {
   }
 
   return (
-    <motion.section 
+    <motion.section
       className="relative w-full overflow-visible bg-[#C9F4DE] mt-30"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
@@ -65,31 +65,32 @@ export default function CallToAction() {
       >
         {/* النص والأزرار */}
         <div className="flex flex-col items-center pt-10 lg:items-start text-center lg:text-left w-full lg:w-2/5 min-h-[60%]">
-          <motion.h2 
+          <motion.h2
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 leading-tight"
             initial={{ y: 40, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            {language === 'ar'
-              ? callAction.callToActionAr || 'نفتح آفاق جديدة لتجارتك'
-              : callAction.callToAction || 'Opening new horizons for your business'}
+            {language === "ar"
+              ? callAction.callToActionAr || "نفتح آفاق جديدة لتجارتك"
+              : callAction.callToAction ||
+                "Opening new horizons for your business"}
           </motion.h2>
-          
-          <motion.p 
+
+          <motion.p
             className="text-black mb-6 max-w-md"
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            {language === 'ar'
-              ? 'نفتح آفاق جديدة لتجارتك'
-              : 'Opening new horizons for your business'}
+            {language === "ar"
+              ? "نفتح آفاق جديدة لتجارتك"
+              : "Opening new horizons for your business"}
           </motion.p>
 
-          <motion.div 
+          <motion.div
             className="flex flex-col sm:flex-row items-center gap-5"
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -97,7 +98,7 @@ export default function CallToAction() {
             transition={{ duration: 0.7, delay: 0.4 }}
           >
             <Link
-              href={callAction.iosAppLink || '#'}
+              href={callAction.iosAppLink || "#"}
               className="flex hover:scale-105 transition-transform duration-300"
             >
               <Image
@@ -109,7 +110,7 @@ export default function CallToAction() {
               />
             </Link>
             <Link
-              href={callAction.androidAppLink || '#'}
+              href={callAction.androidAppLink || "#"}
               className="flex scale-110 hover:scale-115 transition-transform duration-300"
             >
               <Image
@@ -125,22 +126,22 @@ export default function CallToAction() {
         </div>
 
         {/* الصورة */}
-        <motion.div 
+        <motion.div
           className="relative w-full lg:w-3/5 flex justify-start md:justify-center md:mb-0 md:items-start lg:justify-end overflow-visible lg:mb-0"
           initial={{ y: 50, opacity: 0, scale: 0.95 }}
           whileInView={{ y: 0, opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ 
-            duration: 0.8, 
+          transition={{
+            duration: 0.8,
             delay: 0.5,
             type: "spring",
-            stiffness: 80
+            stiffness: 80,
           }}
         >
           <div className="relative w-72 h-[400px] lg:w-[420px] lg:h-[400px] lg:-mt-24">
             <Image
-              src={callAction.appImageUrl || '/placeholder-phone.png'}
-              alt={language === 'ar' ? 'تطبيق تاجر' : 'Tajer App'}
+              src={callAction.appImageUrl || "/placeholder-phone.png"}
+              alt={language === "ar" ? "تطبيق تاجر" : "Tajer App"}
               fill
               className="object-cover md:object-cover flex items-start lg:object-contain object-center drop-shadow-2xl"
               priority

@@ -1,5 +1,5 @@
-'use client';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+"use client";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 export default function LoadingAnimation() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-background">
@@ -8,9 +8,9 @@ export default function LoadingAnimation() {
           src="/loading.json"
           autoplay
           loop
-          style={{ height: '500px', width: '500px' }}
+          style={{ height: "500px", width: "500px" }}
         />
       </div>
     </div>
   );
-};
+}

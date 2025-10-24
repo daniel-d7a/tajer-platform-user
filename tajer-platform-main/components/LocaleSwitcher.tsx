@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useLocale, useTranslations } from 'next-intl';
-import { routing } from '@/i18n/routing';
+import { useLocale, useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
 
-type Locale = 'ar' | 'en';
-import Image from 'next/image';
-import { useState, useRef, useEffect, useTransition } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
+type Locale = "ar" | "en";
+import Image from "next/image";
+import { useState, useRef, useEffect, useTransition } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 export function setUserLocaleClient(locale: string) {
   document.cookie = `user-locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
@@ -16,11 +16,16 @@ export function setUserLocaleClient(locale: string) {
 interface LocaleOptionProps {
   locale: Locale;
   currentLocale: Locale;
-  t: ReturnType<typeof useTranslations<'LocaleSwitcher'>>;
+  t: ReturnType<typeof useTranslations<"LocaleSwitcher">>;
   onSelect: () => void;
 }
 
-function LocaleOption({ locale, currentLocale, t, onSelect }: LocaleOptionProps) {
+function LocaleOption({
+  locale,
+  currentLocale,
+  t,
+  onSelect,
+}: LocaleOptionProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -29,33 +34,36 @@ function LocaleOption({ locale, currentLocale, t, onSelect }: LocaleOptionProps)
     setUserLocaleClient(locale);
 
     startTransition(() => {
-      const segments = pathname.split('/');
-      if (segments.length > 1 && routing.locales.includes(segments[1] as Locale)) {
+      const segments = pathname.split("/");
+      if (
+        segments.length > 1 &&
+        routing.locales.includes(segments[1] as Locale)
+      ) {
         segments[1] = locale;
       } else {
         segments.splice(1, 0, locale);
       }
-      const newPath = segments.join('/');
+      const newPath = segments.join("/");
       router.push(newPath);
       onSelect();
     });
   };
 
   const getFlagSrc = (locale: Locale) => {
-    return locale === 'ar' ? '/JD.jpeg' : '/US.jpeg';
+    return locale === "ar" ? "/JD.jpeg" : "/US.jpeg";
   };
 
   const getLocaleName = (locale: Locale) => {
-    return t('locale', { locale });
+    return t("locale", { locale });
   };
 
   return (
     <button
       className={`flex items-center w-full gap-2 px-4 py-3 text-sm transition-colors duration-200 ${
         locale === currentLocale
-          ? 'border-r-2 border-primary font-semibold bg-primary/10'
-          : 'hover:bg-muted/30'
-      } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+          ? "border-r-2 border-primary font-semibold bg-primary/10"
+          : "hover:bg-muted/30"
+      } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
       onClick={handleLocaleChange}
       disabled={isPending}
     >
@@ -81,20 +89,23 @@ function LocaleOption({ locale, currentLocale, t, onSelect }: LocaleOptionProps)
 }
 
 export default function LocaleSwitcher() {
-  const t = useTranslations('LocaleSwitcher');
+  const t = useTranslations("LocaleSwitcher");
   const locale = useLocale() as Locale;
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -102,11 +113,11 @@ export default function LocaleSwitcher() {
   }, [locale]);
 
   const getCurrentFlag = () => {
-    return locale === 'ar' ? '/JD.jpeg' : '/US.jpeg';
+    return locale === "ar" ? "/JD.jpeg" : "/US.jpeg";
   };
 
   const getCurrentLocaleName = () => {
-    return t('locale', { locale });
+    return t("locale", { locale });
   };
 
   return (
@@ -114,7 +125,7 @@ export default function LocaleSwitcher() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-lg shadow-sm hover:bg-muted transition-colors duration-200 min-w-[120px] justify-center"
-        aria-label={t('label')}
+        aria-label={t("label")}
         aria-expanded={isOpen}
       >
         <Image
@@ -129,7 +140,9 @@ export default function LocaleSwitcher() {
 
         <ChevronDown
           size={16}
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
         />
       </button>
 

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 
-
-
-export default  function useOneTimeAnimation<T extends HTMLElement = HTMLElement>(opts?: { threshold?: number }) {
+export default function useOneTimeAnimation<
+  T extends HTMLElement = HTMLElement
+>(opts?: { threshold?: number }) {
   const ref = useRef<T | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [inView, setInView] = useState(false);
@@ -21,9 +21,11 @@ export default  function useOneTimeAnimation<T extends HTMLElement = HTMLElement
       window.requestAnimationFrame(() => {
         if (!node) return;
         const rect = node.getBoundingClientRect();
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        const visible = rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
-        
+        const windowHeight =
+          window.innerHeight || document.documentElement.clientHeight;
+        const visible =
+          rect.top + rect.height * threshold < windowHeight && rect.bottom > 0;
+
         if (visible && !hasAnimated) {
           setInView(true);
           setHasAnimated(true);
@@ -35,7 +37,7 @@ export default  function useOneTimeAnimation<T extends HTMLElement = HTMLElement
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);

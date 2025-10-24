@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,7 @@ export default function GlobalLoader() {
 
   useEffect(() => {
     setLoading(true);
-    const timeout = setTimeout(() => setLoading(false), 600); 
+    const timeout = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timeout);
   }, [pathname]);
 
@@ -21,4 +21,4 @@ export default function GlobalLoader() {
       <LoadingAnimation />
     </div>
   );
-};
+}

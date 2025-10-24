@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Locale } from 'next-intl';
-import { ChangeEvent, ReactNode, useTransition } from 'react';
-import clsx from 'clsx';
-import { useRouter, usePathname } from 'next/navigation';
+import { Locale } from "next-intl";
+import { ChangeEvent, ReactNode, useTransition } from "react";
+import clsx from "clsx";
+import { useRouter, usePathname } from "next/navigation";
 
 type Props = {
   children: ReactNode;
@@ -30,11 +30,11 @@ export default function LocaleSwitcherSelect({
     setUserLocaleClient(nextLocale);
 
     startTransition(() => {
-      const segments = pathname.split('/');
+      const segments = pathname.split("/");
       if (segments.length > 1) {
         segments[1] = nextLocale;
       }
-      const newPath = segments.join('/');
+      const newPath = segments.join("/");
       router.push(newPath);
     });
   }
@@ -42,8 +42,8 @@ export default function LocaleSwitcherSelect({
   return (
     <label
       className={clsx(
-        'relative text-gray-400',
-        isPending && 'transition-opacity [&:disabled]:opacity-30'
+        "relative text-gray-400",
+        isPending && "transition-opacity [&:disabled]:opacity-30"
       )}
     >
       <p className="sr-only">{label}</p>
