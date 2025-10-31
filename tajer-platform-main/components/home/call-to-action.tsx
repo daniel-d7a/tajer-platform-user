@@ -63,7 +63,6 @@ export default function CallToAction() {
           items-center justify-between gap-8 lg:px-10 relative
         "
       >
-        {/* النص والأزرار */}
         <div className="flex flex-col items-center pt-10 lg:items-start text-center lg:text-left w-full lg:w-2/5 min-h-[60%]">
           <motion.h2
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4 leading-tight"
@@ -125,7 +124,6 @@ export default function CallToAction() {
           </motion.div>
         </div>
 
-        {/* الصورة */}
         <motion.div
           className="relative w-full lg:w-3/5 flex justify-start md:justify-center md:mb-0 md:items-start lg:justify-end overflow-visible lg:mb-0"
           initial={{ y: 50, opacity: 0, scale: 0.95 }}
@@ -143,7 +141,7 @@ export default function CallToAction() {
               src={callAction.appImageUrl || "/placeholder-phone.png"}
               alt={language === "ar" ? "تطبيق تاجر" : "Tajer App"}
               fill
-              className="object-cover md:object-cover flex items-start lg:object-contain object-center drop-shadow-2xl"
+              className="object-cover md:object-cover flex items-start lg:object-cover object-center drop-shadow-2xl"
               priority
               quality={100}
               sizes="(max-width: 768px) 70vw, (max-width: 1200px) 40vw, 35vw"

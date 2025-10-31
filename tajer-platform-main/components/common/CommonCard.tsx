@@ -137,7 +137,7 @@ export default function ProductCard({
         style={getAnimationStyle()}
         className="w-full h-full flex-shrink-0"
       >
-        <Card className="overflow-hidden flex flex-col h-fit rounded-2xl duration-300 transition-transform border-2 hover:border-primary/30">
+        <Card className="overflow-hidden flex flex-col h-full w-full rounded-2xl border-2 transition-transform duration-300 hover:border-primary/30">
           <div className="relative pt-[100%]">
             {(productDetails.discountAmount ?? 0) > 0 && (
               <Badge className="absolute top-2 right-2 bg-primary z-10">

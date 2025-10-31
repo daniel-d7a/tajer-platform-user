@@ -65,19 +65,29 @@ export default function DashboardLayout({
     const lang = segments[0] || "en";
     setLanguage(lang);
   }, [pathname]);
+useEffect(() => {
+  if (typeof window === "undefined") return;
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const data = localStorage.getItem("userData");
-        if (data) {
-          setUserData(JSON.parse(data));
-        }
-      } catch (error) {
-        console.error("Error parsing user data from localStorage:", error);
-      }
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === "userData") {
+      const newData = event.newValue ? JSON.parse(event.newValue) : null;
+      setUserData(newData);
     }
-  }, []);
+  };
+
+  // أول تحميل
+  const initialData = localStorage.getItem("userData");
+  if (initialData) {
+    setUserData(JSON.parse(initialData));
+  }
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

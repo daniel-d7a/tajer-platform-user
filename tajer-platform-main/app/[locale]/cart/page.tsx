@@ -14,11 +14,11 @@ import {
   Plus,
   Trash2,
   ShoppingBag,
-  Boxes,
   House,
   TicketSlash,
   Settings,
   Truck,
+  ShoppingCart,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -512,7 +512,7 @@ function CartContent() {
             </p>
             <Link href="/categories">
               <Button className="bg-primary hover:bg-primary/90 text-sm sm:text-base">
-                {t("browseProducts")} <Boxes className="ml-2 h-4 w-4" />
+                {t("browseProducts")} <ShoppingCart className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>

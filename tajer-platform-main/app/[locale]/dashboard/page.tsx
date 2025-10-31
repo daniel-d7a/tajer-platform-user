@@ -3,12 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
-import { Truck, Wallet, DollarSign, ShoppingCart } from "lucide-react";
+import { Truck, Wallet, DollarSign, ShoppingCart, Copy } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Link } from "@/i18n/navigation";
 import { OrderRow } from "@/components/dashboard/OrderRow";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import toast from "react-hot-toast";
+import { Input } from "@/components/ui/input";
 
 type StatsType = {
   totalOrders: number;
@@ -39,8 +41,11 @@ const DashboardPage: React.FC = () => {
   const tc = useTranslations("common");
   const td = useTranslations("dashboard");
   const to = useTranslations("orders");
-  const router = useRouter();
+  const [userData, setUserData] = useState<{ id?: number } | null>(
+    null
+  );  const router = useRouter();
   const [ordersData, setOrdersData] = useState<OrderType[]>([]);
+  const [amount, setAmount] = useState<number>(0);
   const [stats, setStats] = useState<StatsType>({
     totalOrders: 0,
     totalSpent: 0,
@@ -48,7 +53,27 @@ const DashboardPage: React.FC = () => {
     totalCashback: 0,
   });
   const [loading, setLoading] = useState(true);
-
+  const fetchRefferralAmount = async () =>{
+    try{
+      const data = await fetch("https://tajer-backend.tajerplatform.workers.dev/api/admin/settings");
+      const res = await data.json();
+      setAmount(res.referralBonus);
+    }catch (e){
+      toast.error('Error While Fetching Data')
+    }
+  }
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        try {
+          const data = localStorage.getItem("userData");
+          if (data) {
+            setUserData(JSON.parse(data));
+          }
+        } catch (error) {
+          console.error("Error parsing user data from localStorage:", error);
+        }
+      }
+    }, []);
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
@@ -88,6 +113,7 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     fetchOrders();
+    fetchRefferralAmount();
   }, []);
 
   if (!isAuthenticated) {
@@ -134,7 +160,21 @@ const DashboardPage: React.FC = () => {
           loading={loading}
         />
       </div>
-
+      <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-bold text-center">{td("refferal", {amount: amount})}</h2>
+          <div className="flex gap-2">
+              <Input
+                value={`https://tajer-jo.com/register?referredByRepId=${userData?.id || 0}`}
+              />
+              <Button 
+                onClick={() =>{
+                  navigator.clipboard.writeText(`https://tajer-jo.com/register?referredByRepId=${userData?.id || 0} `);
+                  toast.success(td("referralLinkCopied"));
+                }}
+                className="bg-secondary hover:bg-secondary/90 "
+              ><Copy></Copy></Button>
+          </div>
+      </div>
       {/* Recent Orders */}
       <div className="bg-card rounded-2xl shadow-sm mb-5">
         <div className="flex justify-between items-center mb-6">

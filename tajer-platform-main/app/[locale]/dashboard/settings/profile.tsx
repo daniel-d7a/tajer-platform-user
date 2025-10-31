@@ -243,7 +243,7 @@ export default function Profile() {
     } else {
       toast.success(t("success"));
     }
-    localStorage.setItem("data", JSON.stringify(res));
+    localStorage.setItem("userData", JSON.stringify(res));
     SetState(!state);
     SetLoading(false);
   };

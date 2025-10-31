@@ -221,10 +221,12 @@
   "dashboard" : {
     "browseProducts" : "Browse Products",
     "recentOrders" :"Recent Orders" ,
+    "refferal" : "Share this referral link for JD{amount} when someone registers using it.",
     "titel1" : "Take a quick look at your store's performance",
     "subTitle1" : "Detailed statistics about your store's performance!",
     "orders" : "Take a quick look at your requests",
     "empty" : "No Orders Yet!",
+    "referralLinkCopied" : "referral link copied successfully!",
     "emptyDesc" : "Start by adding products to your cart",
     "ordersSubTitle" : "Detailed statistics about your current requests!",
     "invice" : "Your Invoices on the platform ",
@@ -454,7 +456,8 @@
     "UnitType": "Unit Type"
   },
   "auth": {
-    "login": "Login",
+    "logintitle": "Welcome Back !",
+    "loginBtn" : "log in",
     "register": "Create a new account",
     "registerNow": "Register Now",
     "email": "Email",

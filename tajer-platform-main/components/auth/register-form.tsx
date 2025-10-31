@@ -245,7 +245,7 @@ export default function RegisterForm() {
           },
           body: JSON.stringify({
             commercialName: values.businessName,
-            phone: values.phone,
+            phone:values.phone.trim().startsWith("+") ? values.phone.trim() : `+${values.phone.trim()}`,
             email: null,
             passwordHash: values.password,
             city: values.city,

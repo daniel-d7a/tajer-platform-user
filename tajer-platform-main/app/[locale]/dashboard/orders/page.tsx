@@ -195,7 +195,7 @@ export default function Page() {
             className={
               activeBtn === s.value
                 ? `bg-primary hover:bg-primary/90 text-white flex items-center gap-2`
-                : `bg-background hover:bg-secondary border flex items-center gap-2`
+                : `bg-background hover:bg-secondary text-black dark:text-white border flex items-center gap-2`
             }
           >
             {s.icon}

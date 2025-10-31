@@ -48,11 +48,12 @@ export default function LoginForm() {
       password: "",
     },
   });
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
     try {
       setIsLoading(true);
       setApiError(null);
+    
       setSuccessMsg(null);
       const response = await fetch(
         "https://tajer-backend.tajerplatform.workers.dev/api/auth/login",
@@ -63,7 +64,7 @@ export default function LoginForm() {
           },
           credentials: "include",
           body: JSON.stringify({
-            phone: values.phone,
+            phone: values.phone.trim().startsWith("+") ? values.phone.trim() : `+${values.phone.trim()}`,
             passwordHash: values.password,
           }),
         }
@@ -123,7 +124,7 @@ export default function LoginForm() {
                 <FormControl className="mt-2">
                   <Input
                     {...field}
-                    placeholder="07xxxxxxxx"
+                    placeholder="+07xxxxxxxx"
                     disabled={isLoading}
                     dir="ltr"
                     className="text-left"
@@ -187,7 +188,7 @@ export default function LoginForm() {
                 <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
               </div>
             ) : (
-              t("login") || "تسجيل الدخول"
+              t("loginBtn") || "تسجيل الدخول"
             )}
           </Button>
 

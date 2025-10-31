@@ -14,6 +14,7 @@ import {
   Clock,
   Tag,
   Package,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -443,7 +444,7 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex-1 flex justify-center px-2 lg:px-4 max-w-xl">
+        <div className="flex-1 flex justify-center  px-2 lg:px-4 max-w-xl">
           <div ref={searchRef} className="relative w-full">
             <form onSubmit={handleSearchSubmit} className="w-full">
               <div className="relative">
@@ -462,7 +463,7 @@ export default function Header() {
                     setActiveSuggestionIndex(-1);
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  className={`${isRTL ? "pl-10" : "pr-10"} w-full`}
+                  className={`hover:ring-1 hover:ring-primary ${isRTL ? "pl-10" : "pr-10"} w-full`}
                 />
               </div>
             </form>
@@ -528,12 +529,10 @@ export default function Header() {
                     </>
                   )}
 
-                  {/* خط فاصل بين الاقتراحات وعمليات البحث الأخيرة */}
                   {suggestions.length > 0 && recentSearches.length > 0 && (
                     <div className="border-t border-border my-1" />
                   )}
 
-                  {/* عمليات البحث الأخيرة */}
                   {recentSearches.length > 0 && (
                     <>
                       <div className="p-2 border-b border-border">
@@ -589,7 +588,10 @@ export default function Header() {
               )}
           </div>
         </div>
-
+          <div className="flex gap-2 items-center border-primary border- p-3">
+            <p>{user?.walletBalance.toFixed(2) || 0} {tc('coins')}</p>
+            <Wallet className="w-5 h-5 text-primary "/>
+          </div>
         <div className="flex items-center justify-end flex-1 min-w-0 gap-1 lg:gap-2">
           <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />

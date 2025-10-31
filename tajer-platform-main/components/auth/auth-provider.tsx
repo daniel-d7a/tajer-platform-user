@@ -6,12 +6,14 @@ interface User {
   id: string;
   phone: string;
   name: string;
+  walletBalance : number;
   email: string;
   role: "ADMIN" | "MERCHANT" | "SALES_REP";
   commercialName?: string;
   city?: string;
   area?: string;
   businessType?: string;
+  referredByRepId?: number;
   isActive?: boolean;
 }
 
