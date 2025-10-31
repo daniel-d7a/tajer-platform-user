@@ -12,5 +12,5 @@ export default function LoadingAnimation() {
         />
       </div>
     </div>
-  );
+  ); 
 }
