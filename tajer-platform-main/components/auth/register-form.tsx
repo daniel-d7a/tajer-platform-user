@@ -45,6 +45,7 @@ export default function RegisterForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const t = useTranslations("auth");
+  const [referredByRepId, setReferredByRepId] = useState<number | null>(null);
   const [language, setLanguage] = useState("en");
   const pathname = usePathname();
 
@@ -81,7 +82,19 @@ export default function RegisterForm() {
     const lang = segments[0];
     setLanguage(lang);
   }, [pathname]);
+  useEffect(() => {
+    const referredParam = searchParams.get("referredByRepId");
 
+    if (referredParam) {
+      localStorage.setItem("referredByRepId", referredParam);
+      setReferredByRepId(Number(referredParam));
+    } else {
+      const savedRef = localStorage.getItem("referredByRepId");
+      if (savedRef) {
+        setReferredByRepId(Number(savedRef));
+      }
+    }
+  }, [searchParams]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -245,7 +258,9 @@ export default function RegisterForm() {
           },
           body: JSON.stringify({
             commercialName: values.businessName,
-            phone:values.phone.trim().startsWith("+") ? values.phone.trim() : `+${values.phone.trim()}`,
+            phone: values.phone.trim().startsWith("+")
+              ? values.phone.trim()
+              : `+${values.phone.trim()}`,
             email: null,
             passwordHash: values.password,
             city: values.city,
@@ -253,8 +268,7 @@ export default function RegisterForm() {
             locationDetails: `Latitude : ${location?.lat} ,Longitude :${location?.lng}`,
             businessType: values.businessType,
             role: "MERCHANT",
-            referredByRepId:
-              Number(searchParams.get("referredByRepId")) || null,
+            referredByRepId: referredByRepId,
             referralCode: values.referralCode || null,
           }),
         }

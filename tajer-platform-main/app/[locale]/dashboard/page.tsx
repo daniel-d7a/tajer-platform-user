@@ -58,7 +58,7 @@ const DashboardPage: React.FC = () => {
       const data = await fetch("https://tajer-backend.tajerplatform.workers.dev/api/admin/settings");
       const res = await data.json();
       setAmount(res.referralBonus);
-    }catch (e){
+    }catch {
       toast.error('Error While Fetching Data')
     }
   }
