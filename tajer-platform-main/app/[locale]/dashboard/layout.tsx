@@ -11,6 +11,8 @@ import {
   Settings,
   Truck,
   ShoppingCart,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 
 function getNormalizedPath(pathname: string) {
@@ -36,6 +38,8 @@ export default function DashboardLayout({
 }) {
   const tc = useTranslations("common");
   const td = useTranslations("dashboard");
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
   const sidebarLinks = [
     { label: td("labels.main"), icon: <House />, href: "/dashboard" },
     {
@@ -65,29 +69,29 @@ export default function DashboardLayout({
     const lang = segments[0] || "en";
     setLanguage(lang);
   }, [pathname]);
-useEffect(() => {
-  if (typeof window === "undefined") return;
 
-  const handleStorageChange = (event: StorageEvent) => {
-    if (event.key === "userData") {
-      const newData = event.newValue ? JSON.parse(event.newValue) : null;
-      setUserData(newData);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "userData") {
+        const newData = event.newValue ? JSON.parse(event.newValue) : null;
+        setUserData(newData);
+      }
+    };
+
+    // أول تحميل
+    const initialData = localStorage.getItem("userData");
+    if (initialData) {
+      setUserData(JSON.parse(initialData));
     }
-  };
 
-  // أول تحميل
-  const initialData = localStorage.getItem("userData");
-  if (initialData) {
-    setUserData(JSON.parse(initialData));
-  }
+    window.addEventListener("storage", handleStorageChange);
 
-  window.addEventListener("storage", handleStorageChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
-
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -115,9 +119,32 @@ useEffect(() => {
       dir={language === "ar" ? "rtl" : "ltr"}
     >
       {/* Sidebar */}
-      <div className="hidden lg:block w-64 bg-background border-r ">
-        <aside className="sticky top-0 h-fit w-64 p-6 font-cairo flex flex-col gap-4">
-          <h2 className="text-2xl font-bold mb-2">{tc("DashboardTitle")}</h2>
+      <div className={`hidden lg:block bg-background border-r transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'w-20' : 'w-64'
+      }`}>
+        <aside className={`sticky top-0 h-fit p-6 font-cairo flex flex-col gap-4 transition-all duration-300 ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}>
+          {/* Header with toggle button */}
+          <div className={`flex items-center justify-between mb-2 ${
+            isCollapsed ? 'flex-col gap-2' : ''
+          }`}>
+            {!isCollapsed && (
+              <h2 className="text-2xl font-bold">{tc("DashboardTitle")}</h2>
+            )}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="flex items-center justify-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 cursor-pointer"
+              title={isCollapsed ? "فتح القائمة" : "طي القائمة"}
+            >
+              {language === "ar" ? (
+                isCollapsed ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />
+              ) : (
+                isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+          
           <nav className="flex-1 flex flex-col gap-2">
             {sidebarLinks.map((item) => (
               <SidebarButton
@@ -126,13 +153,17 @@ useEffect(() => {
                 icon={item.icon}
                 href={item.href}
                 active={isActiveRoute(pathname, item.href)}
+                isCollapsed={isCollapsed}
               />
             ))}
           </nav>
         </aside>
       </div>
+      
       {/* Main Content */}
-      <div className="flex-1 min-w-0">
+      <div className={`flex-1 min-w-0 transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+      }`}>
         <div className="p-4 md:p-6 space-y-6 pb-16 md:pb-0">
           {/* Welcome Header */}
           <div className="bg-card rounded-xl shadow-sm p-4 md:p-6">
@@ -154,6 +185,7 @@ type SidebarButtonProps = {
   icon: React.ReactNode;
   href: string;
   active?: boolean;
+  isCollapsed?: boolean;
 };
 
 const SidebarButton: React.FC<SidebarButtonProps> = ({
@@ -161,6 +193,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
   icon,
   href,
   active = false,
+  isCollapsed = false,
 }) => {
   return (
     <Link
@@ -173,7 +206,9 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
             ? "text-primary bg-primary/10 shadow-sm shadow-primary/20"
             : "text-foreground"
         }
+        ${isCollapsed ? 'justify-center' : ''}
       `}
+      title={isCollapsed ? label : ''}
     >
       {/* Active Indicator Animation */}
       {active && (
@@ -181,7 +216,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
       )}
 
       {/* Slide-in Animation Bar */}
-      {active && (
+      {active && !isCollapsed && (
         <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full transition-all duration-300" />
       )}
 
@@ -193,13 +228,15 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
         {icon}
       </span>
 
-      <span
-        className={`relative z-10 font-medium transition-all duration-300 ${
-          active ? "translate-x-1" : "translate-x-0"
-        }`}
-      >
-        {label}
-      </span>
+      {!isCollapsed && (
+        <span
+          className={`relative z-10 font-medium transition-all duration-300 ${
+            active ? "translate-x-1" : "translate-x-0"
+          }`}
+        >
+          {label}
+        </span>
+      )}
 
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl" />
     </Link>
