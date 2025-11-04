@@ -65,7 +65,7 @@ export default function Page() {
     try {
       setLoading(true);
       const data = await fetch(
-        `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=${limit}&page=${page}&status=DELIVERED&from=&to=`,
+        `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=${limit}&page=${page}&status=DELIVERED&from=2025-10-1&to=2025-10-31`,
         { credentials: "include" }
       );
       const res: ApiResponse = await data.json();

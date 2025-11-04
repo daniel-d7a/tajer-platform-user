@@ -161,9 +161,7 @@ export default function DashboardLayout({
       </div>
       
       {/* Main Content */}
-      <div className={`flex-1 min-w-0 transition-all duration-300 ease-in-out ${
-        isCollapsed ? 'lg:ml-20' : 'lg:ml-64'
-      }`}>
+      <div className={`flex-1 min-w-0 transition-all duration-300 ease-in-out`}>
         <div className="p-4 md:p-6 space-y-6 pb-16 md:pb-0">
           {/* Welcome Header */}
           <div className="bg-card rounded-xl shadow-sm p-4 md:p-6">
