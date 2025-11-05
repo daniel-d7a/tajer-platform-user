@@ -28,11 +28,11 @@ export default function Hero() {
       const response = await fetch(
         "https://tajer-backend.tajerplatform.workers.dev/api/admin/banners"
       );
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch banners: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setBanners(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -60,22 +60,28 @@ export default function Hero() {
     setCurrentSlide((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
   }, [banners.length]);
 
-  const goToSlide = useCallback((index: number) => {
-    if (banners.length === 0) return;
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
-  }, [banners.length, currentSlide]);
+  const goToSlide = useCallback(
+    (index: number) => {
+      if (banners.length === 0) return;
+      setDirection(index > currentSlide ? 1 : -1);
+      setCurrentSlide(index);
+    },
+    [banners.length, currentSlide]
+  );
 
-  const handleManualNavigation = useCallback((navigationFunction: () => void) => {
-    setAutoPlay(false);
-    navigationFunction();
-    
-    const timeout = setTimeout(() => {
-      setAutoPlay(true);
-    }, 10000);
-    
-    return () => clearTimeout(timeout);
-  }, []);
+  const handleManualNavigation = useCallback(
+    (navigationFunction: () => void) => {
+      setAutoPlay(false);
+      navigationFunction();
+
+      const timeout = setTimeout(() => {
+        setAutoPlay(true);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    },
+    []
+  );
 
   useEffect(() => {
     if (!autoPlay || banners.length === 0) return;
@@ -153,8 +159,8 @@ export default function Hero() {
             }}
             className="absolute inset-0 w-full h-full flex items-center justify-center"
           >
-            <Link 
-              href={banners[currentSlide].link || "#"} 
+            <Link
+              href={banners[currentSlide].link || "#"}
               className="block w-full h-full relative"
             >
               {/* Container للصورة مع تحديد نسبة العرض والارتفاع */}
@@ -208,8 +214,8 @@ export default function Hero() {
             <button
               key={index}
               className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                index === currentSlide 
-                  ? "bg-background scale-110" 
+                index === currentSlide
+                  ? "bg-background scale-110"
                   : "bg-background/50 hover:bg-background/70"
               }`}
               onClick={() => {

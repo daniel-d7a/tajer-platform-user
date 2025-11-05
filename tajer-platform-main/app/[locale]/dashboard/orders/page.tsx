@@ -112,8 +112,7 @@ export default function Page() {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=${limit}&page=${currentPage}&status=${status}&from=2025-06-01T00:00:00+02:00&to=2025-06-30T23:59:59+02:00
-`,
+        `https://tajer-backend.tajerplatform.workers.dev/api/orders/orders/user?limit=${limit}&page=${currentPage}&status=${status}&from=2025-6-5&to=2025-6-30`,
         { credentials: "include" }
       );
       const res: OrdersResponse = await response.json();

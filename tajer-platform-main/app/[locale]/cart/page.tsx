@@ -19,6 +19,9 @@ import {
   Settings,
   Truck,
   ShoppingCart,
+  ChevronLeft,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -106,21 +109,9 @@ const SidebarButton: React.FC<{
       className={`
         relative flex items-center gap-3 p-3 rounded-xl transition-all duration-300 text-base 
         hover:bg-muted/50 hover:text-secondary overflow-hidden
-        ${
-          active
-            ? "text-primary bg-primary/10 shadow-sm shadow-primary/20"
-            : "text-foreground"
-        }
+        ${active ? "text-primary  " : "text-foreground"}
       `}
     >
-      {active && (
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl" />
-      )}
-
-      {active && (
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full transition-all duration-300" />
-      )}
-
       <span
         className={`relative z-10 w-5 h-5 flex items-center justify-center transition-transform duration-300 ${
           active ? "scale-110" : "scale-100"
@@ -191,12 +182,16 @@ const BottomNavMobile: React.FC<{
 // Dashboard Layout Component
 const DashboardLayout: React.FC<{
   children: React.ReactNode;
-  isAuthenticated: boolean;
-}> = ({ children, isAuthenticated }) => {
+  isAuth: boolean;
+}> = ({ children, isAuth }) => {
   const tc = useTranslations("common");
+  const { isAuthenticated } = useAuth();
+
   const td = useTranslations("dashboard");
   const pathname = usePathname();
   const [language, setLanguage] = useState("en");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const sidebarLinks = [
     { label: td("labels.main"), icon: <House />, href: "/dashboard" },
@@ -225,11 +220,86 @@ const DashboardLayout: React.FC<{
       className="flex min-h-screen w-full bg-background"
       dir={language === "ar" ? "rtl" : "ltr"}
     >
-      {/* Sidebar - يظهر فقط لو مسجل دخول */}
-      {isAuthenticated && (
-        <div className="hidden lg:block w-64 bg-background border-r">
-          <aside className="sticky top-0 h-fit w-64 p-6 font-cairo flex flex-col gap-4">
-            <h2 className="text-2xl font-bold mb-2">{tc("DashboardTitle")}</h2>
+      {/* Mobile sidebar */}
+      {isAuth && (
+        <div
+          className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
+            sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+        >
+          <div
+            className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity duration-300"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div
+            className={`fixed inset-y-0 right-0 flex w-64 flex-col bg-background border-l shadow-xl transform transition-transform duration-300 ${
+              sidebarOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <div className="flex h-16 items-center justify-between px-6 border-b">
+              <h2 className="text-xl font-bold">{tc("DashboardTitle")}</h2>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <nav className="flex-1 px-4 py-6 space-y-2">
+              {sidebarLinks.map((item) => (
+                <SidebarButton
+                  key={item.href}
+                  label={item.label}
+                  icon={item.icon}
+                  href={item.href}
+                  active={isActiveRoute(pathname, item.href)}
+                />
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      {isAuth && (
+        <div
+          className={`hidden lg:block bg-background border-r transition-all duration-300 ease-in-out ${
+            isCollapsed ? "w-20" : "w-64"
+          }`}
+        >
+          <aside
+            className={`sticky top-0 h-screen p-6 font-cairo flex flex-col gap-4 transition-all duration-300 ${
+              isCollapsed ? "w-20" : "w-64"
+            }`}
+          >
+            {/* Header with toggle button */}
+            <div
+              className={`flex items-center justify-between mb-2 ${
+                isCollapsed ? "flex-col gap-2" : ""
+              }`}
+            >
+              {!isCollapsed && (
+                <h2 className="text-2xl font-bold">{tc("DashboardTitle")}</h2>
+              )}
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="flex items-center justify-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 cursor-pointer"
+                title={isCollapsed ? "فتح القائمة" : "طي القائمة"}
+              >
+                {language === "ar" ? (
+                  isCollapsed ? (
+                    <ChevronLeft className="h-5 w-5" />
+                  ) : (
+                    <ChevronRight className="h-5 w-5" />
+                  )
+                ) : isCollapsed ? (
+                  <ChevronRight className="h-5 w-5" />
+                ) : (
+                  <ChevronLeft className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
             <nav className="flex-1 flex flex-col gap-2">
               {sidebarLinks.map((item) => (
                 <SidebarButton
@@ -246,19 +316,25 @@ const DashboardLayout: React.FC<{
       )}
 
       {/* Main Content */}
-      <div className={`${isAuthenticated ? "flex-1 min-w-0" : "w-full"}`}>
+      <div
+        className={`flex-1 min-w-0 transition-all duration-300 ease-in-out `}
+      >
+        {/* Top bar */}
+
+        {/* Page Content */}
         <div className="p-4 md:p-6 space-y-6 pb-16 md:pb-0">
-          {/* Page Content */}
           <div className="min-w-0">{children}</div>
         </div>
       </div>
 
-      {/* Bottom Navigation Mobile - يظهر فقط لو مسجل دخول */}
-      <BottomNavMobile
-        pathname={pathname}
-        sidebarLinks={sidebarLinks}
-        isAuthenticated={isAuthenticated}
-      />
+      {/* Bottom Navigation Mobile */}
+      {isAuthenticated && (
+        <BottomNavMobile
+          isAuthenticated={isAuthenticated}
+          pathname={pathname}
+          sidebarLinks={sidebarLinks}
+        />
+      )}
     </div>
   );
 };
@@ -802,7 +878,7 @@ export default function CartPage() {
   }
 
   return (
-    <DashboardLayout isAuthenticated={isAuthenticated}>
+    <DashboardLayout isAuth={isAuthenticated}>
       <CartContent />
     </DashboardLayout>
   );

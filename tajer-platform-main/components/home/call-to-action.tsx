@@ -141,7 +141,7 @@ export default function CallToAction() {
               src={callAction.appImageUrl || "/placeholder-phone.png"}
               alt={language === "ar" ? "تطبيق تاجر" : "Tajer App"}
               fill
-              className="object-cover md:object-cover flex items-start lg:object-cover object-center drop-shadow-2xl"
+              className="object-contain md:object-contain flex items-start lg:object-contain object-center drop-shadow-2xl bg-transparent"
               priority
               quality={100}
               sizes="(max-width: 768px) 70vw, (max-width: 1200px) 40vw, 35vw"

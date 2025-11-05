@@ -221,7 +221,7 @@
   "dashboard" : {
     "browseProducts" : "Browse Products",
     "recentOrders" :"Recent Orders" ,
-    "refferal" : "Share this referral link for JD{amount} when someone registers using it.",
+    "refferal" : "Share this referral link for {amount}JD when someone registers using it.",
     "titel1" : "Take a quick look at your store's performance",
     "subTitle1" : "Detailed statistics about your store's performance!",
     "orders" : "Take a quick look at your requests",

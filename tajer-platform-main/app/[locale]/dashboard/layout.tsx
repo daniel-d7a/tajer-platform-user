@@ -80,7 +80,6 @@ export default function DashboardLayout({
       }
     };
 
-    // أول تحميل
     const initialData = localStorage.getItem("userData");
     if (initialData) {
       setUserData(JSON.parse(initialData));
@@ -201,7 +200,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
         hover:bg-muted/50 hover:text-secondary overflow-hidden
         ${
           active
-            ? "text-primary bg-primary/10 shadow-sm shadow-primary/20"
+            ? "text-primary"
             : "text-foreground"
         }
         ${isCollapsed ? 'justify-center' : ''}
@@ -209,15 +208,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
       title={isCollapsed ? label : ''}
     >
       {/* Active Indicator Animation */}
-      {active && (
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl" />
-      )}
-
-      {/* Slide-in Animation Bar */}
-      {active && !isCollapsed && (
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full transition-all duration-300" />
-      )}
-
+     
       <span
         className={`relative z-10 w-5 h-5 flex items-center justify-center transition-transform duration-300 ${
           active ? "scale-110" : "scale-100"

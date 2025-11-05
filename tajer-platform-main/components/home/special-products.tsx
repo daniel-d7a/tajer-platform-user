@@ -145,7 +145,7 @@ export default function SpecialProducts() {
     <section dir="ltr" className="py-12 bg-muted/30 rounded-lg">
       <div>
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold">{t("title")}</h2>
+          <h2 className="text-3xl font-bold">{tb("featuredProducts")}</h2>
           <p className="mt-2 text-muted-foreground">{t("subTitle")}</p>
         </div>
         <div className="relative w-[95%] mx-auto">
@@ -256,7 +256,7 @@ export default function SpecialProducts() {
               variant="outline"
               className="text-base py-2 px-6 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors border-primary"
             >
-              {tb("featuredProducts")}
+              {tb("viewProducts")}
             </Badge>
           </Link>
         </div>
