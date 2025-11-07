@@ -197,11 +197,11 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
       href={href}
       className={`
         relative flex items-center gap-3 p-3 rounded-xl transition-all duration-300 text-base 
-        hover:bg-muted/50 hover:text-secondary overflow-hidden
+         overflow-hidden
         ${
           active
-            ? "text-primary"
-            : "text-foreground"
+            ? "text-primary hover:text-primary"
+            : "text-foreground  hover:text-secondary"
         }
         ${isCollapsed ? 'justify-center' : ''}
       `}
@@ -211,7 +211,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
      
       <span
         className={`relative z-10 w-5 h-5 flex items-center justify-center transition-transform duration-300 ${
-          active ? "scale-110" : "scale-100"
+          active ? "scale-110 hover:text-primary" : "scale-100"
         }`}
       >
         {icon}
@@ -227,7 +227,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
         </span>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0  transition-opacity duration-300 rounded-xl" />
     </Link>
   );
 };
@@ -251,7 +251,7 @@ const BottomNavMobile: React.FC<BottomNavMobileProps> = ({
             relative flex flex-col items-center flex-1 py-1 px-2 text-xs transition-all duration-300
             ${
               isActiveRoute(pathname || "", item.href)
-                ? "text-primary font-semibold scale-110"
+                ? "text-primary font-semibold hover:none scale-110"
                 : "text-muted-foreground"
             }
           `}
