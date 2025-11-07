@@ -163,15 +163,15 @@ export default function Hero() {
               href={banners[currentSlide].link || "#"}
               className="block w-full h-full relative"
             >
-              {/* Container للصورة مع تحديد نسبة العرض والارتفاع */}
               <div className="relative w-full h-full max-w-7xl mx-auto">
                 <Image
                   src={banners[currentSlide].imageUrl || "/placeholder.svg"}
                   alt={banners[currentSlide].headline || "Banner image"}
+                  quality={99}
                   fill
                   className="object-contain md:object-cover"
                   priority={currentSlide === 0}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+                  sizes="(max-width: 2000px) 100vw, (max-width: 1200px) 100vw, 1200px"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/placeholder.svg";
@@ -183,7 +183,6 @@ export default function Hero() {
         </AnimatePresence>
       </div>
 
-      {/* أزرار التنقل */}
       {banners.length > 1 && (
         <>
           <Button
