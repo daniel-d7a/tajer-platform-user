@@ -463,7 +463,9 @@ export default function Header() {
                     setActiveSuggestionIndex(-1);
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  className={`hover:ring-1 hover:ring-primary ${isRTL ? "pl-10" : "pr-10"} w-full`}
+                  className={`hover:ring-1 hover:ring-primary ${
+                    isRTL ? "pl-10" : "pr-10"
+                  } w-full`}
                 />
               </div>
             </form>
@@ -588,10 +590,12 @@ export default function Header() {
               )}
           </div>
         </div>
-          <div className="flex gap-2 items-center border-primary border- p-3">
-            <p>{user?.walletBalance.toFixed(2) || 0} {tc('coins')}</p>
-            <Wallet className="w-5 h-5 text-primary "/>
-          </div>
+        <div className="flex gap-2 items-center border-primary border- p-3">
+          <p>
+            {user?.walletBalance.toFixed(2) || 0} {tc("coins")}
+          </p>
+          <Wallet className="w-5 h-5 text-primary " />
+        </div>
         <div className="flex items-center justify-end flex-1 min-w-0 gap-1 lg:gap-2">
           <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />
@@ -628,12 +632,20 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="cursor-pointer">
+                  <Link
+                    dir={language === "ar" ? "rtl" : "ltr"}
+                    href="/dashboard"
+                    className="cursor-pointer"
+                  >
                     {t("profile")}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/orders" className="cursor-pointer">
+                  <Link
+                    dir={language === "ar" ? "rtl" : "ltr"}
+                    href="/dashboard/orders"
+                    className="cursor-pointer"
+                  >
                     {t("orders")}
                   </Link>
                 </DropdownMenuItem>
@@ -641,9 +653,19 @@ export default function Header() {
                 <DropdownMenuItem
                   onClick={handleLogout}
                   className="cursor-pointer"
+                  dir={language === "ar" ? "rtl" : "ltr"}
                 >
-                  <LogOut className="h-4 w-4 ml-2" />
-                  {t("logout")}
+                  {language === "ar" ? (
+                    <>
+                      {t("logout")}
+                      <LogOut className="h-4 w-4 ml-2 rotate-180" />
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="h-4 w-4 ml-2 " />
+                      {t("logout")}
+                    </>
+                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
